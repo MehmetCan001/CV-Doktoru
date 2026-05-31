@@ -1,0 +1,39 @@
+Junior Python Developer
+
+Şirket: TechFlow Yazılım A.Ş.
+Lokasyon: Ankara (Hibrit)
+Çalışma Şekli: Tam Zamanlı
+
+Aradığımız Nitelikler:
+- Bilgisayar Mühendisliği, Bilgisayar Programcılığı veya benzer bölümlerden mezun
+- Python ile en az 6 ay - 1 yıl deneyim (staj, okul projesi, kişisel proje dahil)
+- FastAPI veya Flask gibi web framework'lerinden en az birine aşina
+- Git versiyon kontrol sistemi kullanabilen
+- SQL veritabanları (MySQL, PostgreSQL) hakkında temel bilgi
+- REST API kavramına aşina
+- İyi seviye İngilizce (teknik dokümantasyonu okuyabilecek)
+- GitHub profili olanlar tercih sebebidir
+- Takım içinde çalışabilen, öğrenmeye açık, problem çözme odaklı
+
+İş Tanımı:
+- Backend servislerin geliştirilmesi
+- RESTful API tasarımı ve implementasyonu
+- Mevcut sistemlere yeni özellikler ekleme
+- Veritabanı sorgularının yazılması ve optimize edilmesi
+- Code review süreçlerine aktif katılım
+- Senior geliştiricilerle birlikte mimari kararlara katkı sağlama
+
+Tercih Sebebi:
+- Docker kullanımı
+- Linux komut satırı deneyimi
+- Açık kaynak projelere katkı
+- Teknik blog yazımı
+
+Sunduklarımız:
+- Rekabetçi maaş
+- Yemek kartı
+- Özel sağlık sigortası
+- Eğitim bütçesi
+- Esnek çalışma saatleri
+
+Başvuru: kariyer@techflow.com.tr
