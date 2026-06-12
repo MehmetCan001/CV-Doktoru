@@ -15,9 +15,9 @@ EXAMPLES_DIR = PROMPTS_DIR / "examples"
 DATA_DIR = PROJECT_ROOT / "data"
 TESTS_DIR = PROJECT_ROOT / "tests"
 
-# Claude API ayarları
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5")
-MAX_TOKENS = 4096
+# Anthropic Claude API ayarları
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+MAX_TOKENS = 16384
 
 # Bilgi tabanı kullanılsın mı? (RAG benzeri sistem)
 USE_KNOWLEDGE_BASE = True

@@ -154,13 +154,31 @@ ve uzmanlaşmak istiyorum.
 
 ---
 
+## ✍️ YAZIM KALİTESİ
+
+### Pasif Cümleler → Aktif Dönüşümler
+
+CV'de belirgin pasif cümle yapısı yok.
+
+### Klişe İfadeler → Somut Alternatifler
+
+- ❌ "Takım çalışmasına yatkın, öğrenmeye açık ve sorumluluk sahibi bir bireyim." — Bu cümle binlerce CV'de kelimesi kelimesine geçiyor; işverenin gözünde görünmez hale geldi.  
+  ✅ "Hacettepe'de bir dönem projesinde 4 kişilik ekipte backend modülünü Python ile geliştirdim — görev dağılımını GitHub Issues üzerinden yönettik."
+
+- ❌ "Yazılım geliştirmeye ilgim var." — "İlgim var" tutumu değil niyeti anlatır; işveren ilgiyi değil eylemi arar.  
+  ✅ "Python ile kişisel bir proje geliştiriyorum; şu an FastAPI ile REST API yazmayı öğreniyorum."
+
+---
+
 ## ✅ GÜÇLÜ NOKTALAR
 
 ### 1. Hacettepe Bilgisayar Mühendisliği mezuniyeti
-Hacettepe Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyumlu. Bu bilgi üst bilgide veya özetinde daha vurgulu olmalı. "Hacettepe Üniversitesi Bilgisayar Mühendisliği mezunu" ifadesi ilk 3 satırda olsun.
+Hacettepe Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyumlu. Bu bilgi işverende güven yaratır ve teknik temelin sağlam olduğuna işaret eder.
+**Öne çıkarmak için:** "Özet" bölümünün ilk cümlesini "Hacettepe Üniversitesi Bilgisayar Mühendisliği mezunuyum" diye aç — hem ATS hem işveren için ilk satırda görünür olsun.
 
 ### 2. CV temiz ve okunaklı
-Şişirilmiş, fazla görsel kullanılmış değil. Bu önemli — ATS (otomatik tarayıcı) sistemler bu tip sade CV'leri okuyabilir. Sadeliği koru, içeriği geliştir.
+Şişirilmiş, fazla görsel kullanılmış değil. ATS sistemler bu tip sade CV'leri hatasız okur; birçok adayın grafikli CV'si burada elenirken sen geçiyorsun.
+**Öne çıkarmak için:** Sadeliği koru ama içeriği doldur — özellikle Projeler bölümü boş; sade format ancak içerikle değer kazanır.
 
 ---
 
@@ -214,12 +232,65 @@ Hacettepe Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyum
 
 ---
 
+## 💰 MAAŞ BEKLENTİSİ İPUCU
+
+**~38.000 – 58.000 TL/ay (net)**
+
+*Junior Seviye | Ankara | Yazılım / Teknoloji*
+
+**Bu aralığı etkileyen faktörler:**
+- **Şirket büyüklüğü:** İlandan girişim veya ürün şirketi izlenimi veriyor — orta bant beklenir. Kurumsal banka veya çok uluslu ise üst banta yaklaşır.
+- **Deneyim:** CV'de staj veya proje deneyimi yok; bu seni aralığın alt ucuna çekiyor. GitHub'a 2-3 proje koyarsan bu açığı kısmen kapatırsın.
+- **Lokasyon:** Ankara, İstanbul'un %10-15 gerisinde kalır. İlan uzaktan çalışmaya izin veriyorsa İstanbul bazlı şirketlere de başvurabilirsin.
+
+**"Maaş beklentiniz nedir?" sorusuna:**
+Önce işverene sor: "Bu pozisyon için belirlediğiniz bir bant var mı?" Konuşmazsa araştırdığın aralığı ver: "Araştırmalarıma göre 40–55 bin civarı bekliyorum, bunu görüşebiliriz." Tek rakam değil, bant ver — pazarlık alanı bırak.
+
+> ⚠️ Bu tahmin model eğitim verilerine dayanır; yüksek enflasyon nedeniyle güncelliğini hızla yitirebilir. Güncel ve sektöre özgü veriler için **Youthall Maaş Araştırması**'nı kontrol et.
+
+---
+
+## 🔗 LİNKEDİN PROFİL ÖNERİSİ
+
+CV'de LinkedIn URL'i yok. Bu tek başına kırmızı bayrak — ekle.
+
+### Başlık (Headline) Önerisi
+
+**`Junior Python Developer | Backend & API Geliştirme | Ankara`**
+
+Neden bu başlık: Recruiter "junior python developer ankara" diye filtrelediğinde bu profil görünsün. "Bilgisayar Mühendisi" yazmak ise pozisyon bazlı filtrelerde görünmez.
+
+### Özet (About) Bölümü — Taslak
+
+> "Hacettepe Üniversitesi Bilgisayar Mühendisliği mezunuyum. Python ile backend geliştirmeye odaklanıyorum; bitirme projemde Python kullandım ve şu anda FastAPI öğreniyorum.
+> Backend Developer pozisyonları için aktif olarak iş arıyorum — profili inceleyen recruiterlar benimle bağlantı kurabilir."
+
+### Eklenecek Beceriler (Skills Bölümü)
+- Python
+- FastAPI
+- Git
+- SQL
+- Backend Development
+
+---
+
+## 🎤 MÜLAKAT HAZIRLIĞI
+
+### Olası Sorular:
+
+1. **"Python deneyiminizi anlatır mısınız? Hangi projelerde kullandınız?"** — *Neden sorulabilir:* CV'de "Python (biraz)" yazıyor — belirsiz bir ifade. İşveren gerçekte ne kadar bildiğini anlamak ister.
+2. **"Django veya FastAPI ile daha önce bir proje yaptınız mı?"** — *Neden sorulabilir:* İlan bu iki framework'ü açıkça istiyor, CV'de hiç geçmiyor. Boşluk sorgulanacak.
+3. **"Git kullanıyor musunuz? Bir takım projesinde nasıl çalışırsınız?"** — *Neden sorulabilir:* İlan Git ve takım çalışması bekliyor, CV'de kanıt yok.
+4. **"Kendinizden bahseder misiniz? Neden backend geliştirmeye ilgi duyuyorsunuz?"** — *Neden sorulabilir:* CV'de hedef pozisyon veya kısa özet yok, motivasyon belirsiz.
+5. **"Bitirme projenizde karşılaştığınız en büyük teknik zorluk neydi?"** — *Neden sorulabilir:* Problem çözme yeteneğini ve teknik derinliği ölçmek için klasik bir soru.
+
+### Hazırlanma İpucu:
+2. soru seni en çok zorlayacak — Django/FastAPI hiç bilmiyorsan bunu kabul et ama "şu anda öğreniyorum, şu kadar yaptım" diyebilecek bir mini proje hazırla.
+
+---
+
 ## 📝 SON SÖZ (MENTORDAN AÇIK KONUŞMA)
 
-Ahmet, sana açık konuşayım: bu CV ile bu pozisyona başvurursan büyük ihtimalle CV elenir, mülakata bile çağrılmazsın. Bu sert geldi biliyorum.
+Ahmet, bu CV ile bu pozisyona başvurursan büyük ihtimalle ilk filtrede elenir. Hacettepe'den Bilgisayar Mühendisliği, 4 yıl boyunca C, Java, Python — bunlar gerçek bir temel. Sorun yetersizlik değil, o temeli CV'de gösterememek.
 
-Ama şuna inan: senin değerin "Deneyim: Yok" yazısının sandığı kadar düşük değil. Hacettepe'den bilgisayar mühendisliği bitirmek kolay iş değildi. 4 yıl boyunca C, Java, Python yazdın, veri yapıları öğrendin, algoritma çözdün. Tüm bunlar **deneyim**. Ama bunları nasıl anlatacağını bilmiyorsun.
-
-Bu raporu okuduktan sonra hemen 1 numaralı eyleme başla — gmail hesabını değiştir. Sonra GitHub'ı aç. Hafta sonu projelerini yükle ve CV'yi yeniden yaz. Bir hafta içinde bu CV'yi gönderdiğin yerlerden mülakat çağrısı alma ihtimalin %32'den %70'lere çıkacak.
-
-Hadi şimdi başla. CV'n bekliyor.
+Bugün şunu yap: Gmail hesabını aç, GitHub'a bitirme projenle birlikte 2 okul projesini yükle, CV'ye her iki linki ekle. Bu tek hamle CV'ni "hiçbir şey yok" kategorisinden çıkarır. Sonrası gelir.
