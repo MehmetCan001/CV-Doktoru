@@ -59,7 +59,7 @@ st.markdown("""
     .hero-badge {
         display: inline-block;
         background: rgba(255,255,255,0.12);
-        color: #a8d8ea;
+        color: #a8d8ea !important;
         font-size: 0.78rem;
         font-weight: 600;
         letter-spacing: 1.5px;
@@ -71,14 +71,14 @@ st.markdown("""
     .hero h1 {
         font-size: 3rem;
         font-weight: 900;
-        color: #ffffff;
+        color: #ffffff !important;
         line-height: 1.15;
         margin-bottom: 1rem;
     }
-    .hero h1 span { color: #4fc3f7; }
+    .hero h1 span { color: #4fc3f7 !important; }
     .hero p {
         font-size: 1.15rem;
-        color: #b0bec5;
+        color: #b0bec5 !important;
         max-width: 600px;
         margin: 0 auto 2rem auto;
         line-height: 1.7;
@@ -96,12 +96,12 @@ st.markdown("""
     .stat-number {
         font-size: 2rem;
         font-weight: 900;
-        color: #4fc3f7;
+        color: #4fc3f7 !important;
         display: block;
     }
     .stat-label {
         font-size: 0.82rem;
-        color: #78909c;
+        color: #78909c !important;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
