@@ -466,28 +466,28 @@ def _generate_pdf(markdown_text: str) -> bytes:
 # ════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="hero">
-    <div class="hero-badge">🇹🇷 Türkiye'ye Özel Yapay Zeka Analizi</div>
-    <h1>CV'nizi <span>Doğru İş İçin</span><br>Optimize Edin</h1>
-    <p>
+    <div class="hero-badge" style="color:#a8d8ea">🇹🇷 Türkiye'ye Özel Yapay Zeka Analizi</div>
+    <h1 style="color:#ffffff;font-size:3rem;font-weight:900;line-height:1.15;margin-bottom:1rem">CV'nizi <span style="color:#4fc3f7">Doğru İş İçin</span><br>Optimize Edin</h1>
+    <p style="color:#b0bec5">
         CV oluşturmak değil, <strong style="color:#e0f7fa">hedeflediğiniz pozisyon için doğru mesajı vermek</strong> önemlidir.
         Türk iş kültürünü bilen yapay zeka ile saniyeler içinde analiz edin.
     </p>
     <div class="stats-bar">
         <div class="stat-item">
-            <span class="stat-number">🆓</span>
-            <span class="stat-label">Ücretsiz</span>
+            <span class="stat-number" style="color:#4fc3f7">🆓</span>
+            <span class="stat-label" style="color:#78909c">Ücretsiz</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">🔒</span>
-            <span class="stat-label">Kayıt yok</span>
+            <span class="stat-number" style="color:#4fc3f7">🔒</span>
+            <span class="stat-label" style="color:#78909c">Kayıt yok</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">🇹🇷</span>
-            <span class="stat-label">Türkiye'ye özel</span>
+            <span class="stat-number" style="color:#4fc3f7">🇹🇷</span>
+            <span class="stat-label" style="color:#78909c">Türkiye'ye özel</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">🧠</span>
-            <span class="stat-label">Claude 4 destekli</span>
+            <span class="stat-number" style="color:#4fc3f7">🧠</span>
+            <span class="stat-label" style="color:#78909c">Claude 4 destekli</span>
         </div>
     </div>
 </div>
