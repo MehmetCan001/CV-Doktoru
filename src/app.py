@@ -6,6 +6,7 @@ Başlatmak için:
 """
 
 import os
+import re
 import sys
 import tempfile
 import time
@@ -21,6 +22,15 @@ from src.analyzer import CVDoctor
 from src.pdf_reader import extract_text_from_pdf, extract_text_from_docx
 
 load_dotenv()
+
+
+def _round_score(report: str) -> str:
+    """Rapordaki X/100 skorunu en yakın 5'e yuvarlar (LLM varyansını gizler)."""
+    def _replace(m):
+        rounded = round(int(m.group(1)) / 5) * 5
+        return f"**{rounded}/100**"
+    return re.sub(r"\*\*(\d+)/100\*\*", _replace, report)
+
 
 # Streamlit Cloud: secrets.toml → os.environ köprüsü (local'de .env yeterli)
 try:
@@ -646,15 +656,20 @@ if analyze_clicked:
         st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
         time.sleep(0.4)
         st.write("🧠 Yapay zeka motoru devreye alınıyor...")
+        st.write("⏳ Rapor oluşturuluyor, bu ~60 saniye sürebilir...")
         status.update(label="⏳ Rapor yazılıyor...", expanded=False)
 
-    try:
-        report = st.write_stream(doctor.analyze_stream(cv_text, job_text_input.strip()))
-        st.session_state["report"] = report
-        st.rerun()
-    except Exception as e:
-        st.error(f"Analiz sırasında hata oluştu: {e}")
-        st.stop()
+        try:
+            report = doctor.analyze(cv_text, job_text_input.strip())
+            report = _round_score(report)
+            st.session_state["report"] = report
+            status.update(label="✅ Analiz tamamlandı!", state="complete", expanded=False)
+        except Exception as e:
+            status.update(label="❌ Analiz başarısız", state="error")
+            st.error(f"Analiz sırasında hata oluştu: {e}")
+            st.stop()
+
+    st.rerun()
 
 # ════════════════════════════════════════════════════════════════════════════
 # RAPOR GÖSTERİMİ
