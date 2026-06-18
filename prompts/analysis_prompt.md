@@ -117,7 +117,7 @@ Kullanıcı bu raporu okuduktan sonra **bugün/yarın** CV'sinde yapması gereke
 1. **[Eylem 1]** — Tahmini süre: X dakika. Bunu yaparsa CV'si Y açıdan güçlenir.
 2. **[Eylem 2]** — ...
 3. **[Eylem 3]** — ...
-(En az 3, en fazla 5 eylem)
+(En az 3, en fazla 6 eylem. CV'de lokasyon tutarsızlığı tespit edildiyse — örn. CV'deki adres ile okul/staj şehri farklı, ya da ilan lokasyonuyla çelişiyor — bunu da mutlaka bir eylem maddesi olarak ekle.)
 
 ---
 
@@ -170,6 +170,8 @@ Kısa açıkla: neden bu başlık (recruiter hangi kelimelerle arayacak).
 Türk adayların büyük çoğunluğu bu bölümü boş bırakır. İşveren buraya bakıyor. CV'deki gerçek verilerden yararlanarak 3 cümlelik, kullanıma hazır bir taslak yaz.
 
 **Bu taslakta `[...]` köşeli parantez kullanma.** Bilgi eksik olsa bile CV'deki mevcut verilerden çıkar; teknoloji adı yoksa CV'de geçen en yakın beceriyi kullan. Kullanıma hazır cümleler yaz — "buraya X yaz" tarzı placeholder bırakma.
+
+**GitHub kuralı:** CV'de GitHub linki yoksa özette "GitHub'da mevcut", "GitHub'da yayımlıyorum" gibi gerçek olmayan iddialar kullanma. Bunun yerine "GitHub profilimde paylaşmayı planlıyorum" veya sadece proje adını say, GitHub'a atıf yapma.
 
 > "[Birinci cümle: kim olduğu + ne yaptığı — somut]
 > [İkinci cümle: öne çıkan başarı, proje veya beceri — mümkünse rakamla]

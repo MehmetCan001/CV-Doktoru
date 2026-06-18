@@ -474,20 +474,20 @@ st.markdown("""
     </p>
     <div class="stats-bar">
         <div class="stat-item">
-            <span class="stat-number">8.400+</span>
-            <span class="stat-label">Analiz yapıldı</span>
+            <span class="stat-number">🆓</span>
+            <span class="stat-label">Ücretsiz</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">%73</span>
-            <span class="stat-label">Mülakat oranı arttı</span>
+            <span class="stat-number">🔒</span>
+            <span class="stat-label">Kayıt yok</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">4.8 ★</span>
-            <span class="stat-label">Kullanıcı puanı</span>
+            <span class="stat-number">🇹🇷</span>
+            <span class="stat-label">Türkiye'ye özel</span>
         </div>
         <div class="stat-item">
-            <span class="stat-number">30 sn</span>
-            <span class="stat-label">Ortalama süre</span>
+            <span class="stat-number">🧠</span>
+            <span class="stat-label">Claude 4 destekli</span>
         </div>
     </div>
 </div>
@@ -636,6 +636,8 @@ if analyze_clicked:
         st.warning("⚠️ Lütfen iş ilanı metnini girin.")
         st.stop()
 
+    doctor = CVDoctor()
+
     with st.status("🔍 Analiz başlatılıyor...", expanded=True) as status:
         st.write("📄 CV metni işleniyor ve yapılandırılıyor...")
         time.sleep(0.4)
@@ -644,16 +646,15 @@ if analyze_clicked:
         st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
         time.sleep(0.4)
         st.write("🧠 Yapay zeka motoru devreye alınıyor...")
-        status.update(label="⏳ Rapor oluşturuluyor, lütfen bekleyin...")
-        try:
-            doctor = CVDoctor()
-            report = doctor.analyze(cv_text, job_text_input.strip())
-            st.session_state["report"] = report
-            status.update(label="✅ Analiz tamamlandı!", state="complete", expanded=False)
-        except Exception as e:
-            status.update(label="❌ Analiz başarısız", state="error")
-            st.error(f"Analiz sırasında hata oluştu: {e}")
-            st.stop()
+        status.update(label="⏳ Rapor yazılıyor...", expanded=False)
+
+    try:
+        report = st.write_stream(doctor.analyze_stream(cv_text, job_text_input.strip()))
+        st.session_state["report"] = report
+        st.rerun()
+    except Exception as e:
+        st.error(f"Analiz sırasında hata oluştu: {e}")
+        st.stop()
 
 # ════════════════════════════════════════════════════════════════════════════
 # RAPOR GÖSTERİMİ

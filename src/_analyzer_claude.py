@@ -15,16 +15,21 @@ class CVDoctor:
         self.few_shot_examples = load_few_shot_examples()
 
     def analyze(self, cv_text: str, job_ad: str) -> str:
+        return "".join(self.analyze_stream(cv_text, job_ad))
+
+    def analyze_stream(self, cv_text: str, job_ad: str):
+        """Text chunk'larını yield eden streaming analiz."""
         user_message = load_analysis_prompt(cv_text, job_ad)
         messages = [*self.few_shot_examples, {"role": "user", "content": user_message}]
-        response = self.client.messages.create(
+        with self.client.messages.stream(
             model=self.model_name,
             max_tokens=config.MAX_TOKENS,
             system=self.system_prompt,
             messages=messages,
             temperature=0,
-        )
-        return response.content[0].text
+        ) as stream:
+            for text in stream.text_stream:
+                yield text
 
     def quick_test(self) -> str:
         response = self.client.messages.create(

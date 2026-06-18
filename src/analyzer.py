@@ -26,5 +26,12 @@ class CVDoctor:
     def analyze(self, cv_text: str, job_ad: str) -> str:
         return self._impl.analyze(cv_text, job_ad)
 
+    def analyze_stream(self, cv_text: str, job_ad: str):
+        """Streaming destekleniyorsa chunk'ları yield eder, yoksa tek parça döner."""
+        if hasattr(self._impl, "analyze_stream"):
+            yield from self._impl.analyze_stream(cv_text, job_ad)
+        else:
+            yield self._impl.analyze(cv_text, job_ad)
+
     def quick_test(self) -> str:
         return self._impl.quick_test()
