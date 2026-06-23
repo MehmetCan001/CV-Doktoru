@@ -569,7 +569,7 @@ st.markdown("""
       CV'nizi <span class="accent">Doğru İş İçin</span><br>Optimize Edin
     </div>
     <div class="hero-subtitle">
-      CV oluşturmak değil, <strong style="color:#7DD3FC">hedeflediğiniz pozisyon için doğru mesajı</strong> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
+      CV oluşturmak değil, <strong style="color:#7DD3FC !important;-webkit-text-fill-color:#7DD3FC !important">hedeflediğiniz pozisyon için doğru mesajı</strong> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
     </div>
     <div class="hero-stats">
       <span class="hero-stat-pill">🆓&nbsp; Ücretsiz</span>

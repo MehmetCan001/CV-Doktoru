@@ -17,7 +17,7 @@ TESTS_DIR = PROJECT_ROOT / "tests"
 
 # Anthropic Claude API ayarları
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
-MAX_TOKENS = 8192
+MAX_TOKENS = 16384
 
 # Bilgi tabanı kullanılsın mı? (RAG benzeri sistem)
 USE_KNOWLEDGE_BASE = True
