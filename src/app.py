@@ -733,20 +733,33 @@ if analyze_clicked:
         time.sleep(0.4)
         st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
         time.sleep(0.4)
-        st.write("🧠 Yapay zeka motoru devreye alınıyor...")
-        st.write("⏳ Rapor oluşturuluyor, bu ~60 saniye sürebilir...")
+        st.write("🧠 Yapay zeka motoru devreye alındı — rapor yazılıyor...")
         status.update(label="⏳ Rapor yazılıyor...", expanded=False)
 
+    st.markdown("""
+    <div class="report-header-card">
+      <div class="report-icon-box">📋</div>
+      <div class="report-header-info">
+        <h2>Analiz Raporu</h2>
+        <p>İş ilanına özel kişisel değerlendirme</p>
+      </div>
+      <span class="report-ai-badge">YAPAY ZEKA ANALİZİ</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    try:
+        streamed_text = st.write_stream(
+            doctor.analyze_stream(cv_text, job_text_input.strip())
+        )
+        report = _round_score(streamed_text)
+    except Exception:
         try:
-            report = doctor.analyze(cv_text, job_text_input.strip())
-            report = _round_score(report)
-            st.session_state["report"] = report
-            status.update(label="✅ Analiz tamamlandı!", state="complete", expanded=False)
+            report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
         except Exception as e:
-            status.update(label="❌ Analiz başarısız", state="error")
             st.error(f"Analiz sırasında hata oluştu: {e}")
             st.stop()
 
+    st.session_state["report"] = report
     st.rerun()
 
 # ════════════════════════════════════════════════════════════════════════════
