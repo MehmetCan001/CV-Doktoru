@@ -20,6 +20,8 @@ Bu üçü çatıştığında **öncelik sırası**: Güvenlik > Doğruluk > Sür
 
 ## 2) ALTIN KURAL: "ÖNCE ANLA, SONRA DOKUN"
 
+> **Token tasarrufu zorunludur.** Tahminle hareket etme. Bir değişiklik yapmadan önce root cause'u tam anla. "Deneyelim bakalım" yaklaşımı yasak — her deneme gereksiz token, gereksiz commit, gereksiz deploy. İlk seferde doğruyu yaz.
+
 Her görevde aşağıdaki 5 fazı **sırayla** uygula. Bir fazı atlama, sıra dışına çıkma.
 
 ### Faz 1 — KEŞİF (Discovery)
@@ -117,6 +119,17 @@ Yaptığın her değişiklik için kendi kendine sor: "Bu yanlış çıkarsa **k
 - Mevcut proje hangi yaklaşımı kullanıyorsa (Tailwind, CSS Modules, styled-components, vanilla CSS) ona uy. **Karıştırma.**
 - `!important` neredeyse her zaman bir hata işaretidir. Spesifite savaşına girmek yerine kök sebebi düzelt.
 - Renkleri/spacing'i hard-code etme. Mevcut design token'ları (CSS değişkenleri, tema dosyası) kullan. Yoksa ekle.
+
+### 4.4 Streamlit CSS — Kritik Tuzaklar
+Bu projenin UI katmanı Streamlit. Aşağıdakiler **proje genelinde geçerli sabit kurallar**:
+
+1. **Semantic HTML tag'lerine inline style yazma.** Streamlit'in global CSS'i `h1–h6`, `strong`, `em`, `p`, `li` gibi semantic tag'lere `color !important` ve `-webkit-text-fill-color !important` uygular. Bu kurallar inline `style="color:..."` yazsan bile ezer. **Kural:** Özel renk/stil istiyorsan semantic tag değil `<span style="...">` kullan; gerekirse `font-weight:700` ile kalınlığı manuel ver.
+
+2. **CSS değişikliği yapmadan önce tam seçici zincirini izle.** Bir elementin neden yanlış göründüğünü anlamak için: (a) ilgili CSS kurallarını `app.py`'deki `<style>` bloğunda ara, (b) hangi seçicinin kazandığını belirle, (c) sonra ve sadece sonra düzeltmeyi yaz. "Ekleyeyim bakalım" yöntemi yasak.
+
+3. **`st.markdown()` içindeki HTML, `[data-testid="stMarkdownContainer"]` altına render edilir.** Bu container'daki her element Streamlit'in global stil kurallarına tabidir. Bunu bilerek yaz.
+
+4. **Edit tool'dan önce string'i doğrula.** Türkçe karakter veya özel sembol içeren satırları düzenlemeden önce `grep` ile tam satırı gör, sonra Edit'e geç. Encoding uyuşmazlığı Edit'i sessizce başarısız yapar.
 
 ### 4.4 Frontend güvenliği
 - **XSS**: `dangerouslySetInnerHTML`, `v-html`, `innerHTML` kullanmadan önce 3 kez düşün. Kullanıcıdan gelen HTML mutlaka sanitize edilmeli (DOMPurify vb.).
