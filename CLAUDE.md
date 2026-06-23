@@ -448,6 +448,19 @@ Her oturumun sonunda bu CLAUDE.md dosyasını güncelle:
 - Bölüm 14'te tamamlanan özelliği işaretle
 - Önemli bir karar alındıysa ilgili bölüme not düş
 
+### Sürekli Öğrenme ve CLAUDE.md Güncel Tutma — ZORUNLU
+Bu direktif kullanıcı tarafından 2026-06-23'te verilmiştir. **Kalıcı ve bağlayıcıdır.**
+
+1. **Hatadan anında ders çıkar.** Bir şeyi yanlış yaptıysan — CSS ezilmesi, encoding hatası, gereksiz tekrar — o hatayı anında CLAUDE.md'ye yaz. "Sonra yazarım" yok.
+
+2. **CLAUDE.md her oturumun aktif çıktısıdır.** Sadece oturum sonunda değil, önemli bir şey öğrendiğin anda güncelle.
+
+3. **Kendi kendine öğren.** Kullanıcı "bunu CLAUDE.md'ye ekle" demek zorunda kalmamalı. Tekrarlayan bir hata yapıyorsan, o hatanın kuralı zaten burada olmak zorunda — değilse eksikliktir.
+
+4. **Token tasarrufu = saygı.** Kullanıcının zamanı ve parası söz konusu. "Deneyelim" yok, "bakalım ne olur" yok. Root cause anlaşılmadan kod yazılmaz.
+
+5. **Yeteneklerini geliştir.** Her projede bu dosyayı okuyan Claude, bir önceki Claude'dan daha iyi olmalı. Bu dosya birikimli bilgi deposudur — kullanılmak için vardır.
+
 ### Model Geçiş Notu (Gemini → Claude)
 Geçiş yapılacağında değişecek tek dosya: `src/analyzer.py`
 - `google.genai` → `anthropic` SDK
