@@ -726,54 +726,22 @@ if analyze_clicked:
 
     doctor = CVDoctor()
 
-    with st.status("🔍 Analiz başlatılıyor...", expanded=True) as status:
+    with st.status("⏳ Rapor hazırlanıyor...", expanded=True) as status:
         st.write("📄 CV metni işleniyor ve yapılandırılıyor...")
         time.sleep(0.4)
         st.write("💼 İş ilanı inceleniyor, gereksinimler çıkarılıyor...")
         time.sleep(0.4)
         st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
         time.sleep(0.4)
-        st.write("🧠 Yapay zeka motoru devreye alındı — rapor yazılıyor...")
-        status.update(label="⏳ Rapor yazılıyor...", expanded=False)
+        st.write("🧠 Yapay zeka motoru çalışıyor — bu 30-60 saniye sürebilir...")
+        try:
+            report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
+            status.update(label="✅ Rapor hazır!", state="complete", expanded=False)
+        except Exception as e:
+            status.update(label="❌ Hata oluştu", state="error", expanded=True)
+            st.error(f"Analiz sırasında hata oluştu: {e}")
+            st.stop()
 
-    st.markdown("""
-    <div class="report-header-card">
-      <div class="report-icon-box">📋</div>
-      <div class="report-header-info">
-        <h2>Analiz Raporu</h2>
-        <p>İş ilanına özel kişisel değerlendirme</p>
-      </div>
-      <span class="report-ai-badge">YAPAY ZEKA ANALİZİ</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    report_placeholder = st.empty()
-    accumulated = ""
-    stream_ok = False
-    _last_ui_update = 0.0
-
-    try:
-        for chunk in doctor.analyze_stream(cv_text, job_text_input.strip()):
-            accumulated += chunk
-            now = time.time()
-            if now - _last_ui_update > 0.1:
-                report_placeholder.markdown(accumulated)
-                _last_ui_update = now
-        report_placeholder.markdown(accumulated)
-        stream_ok = "SON SÖZ" in accumulated and len(accumulated) > 2000
-    except Exception:
-        stream_ok = False
-
-    if not stream_ok:
-        report_placeholder.empty()
-        with st.spinner("🔄 Analiz tamamlanamadı, yeniden başlatılıyor..."):
-            try:
-                accumulated = doctor.analyze(cv_text, job_text_input.strip())
-            except Exception as e:
-                st.error(f"Analiz sırasında hata oluştu: {e}")
-                st.stop()
-
-    report = _round_score(accumulated)
     st.session_state["report"] = report
     st.rerun()
 
