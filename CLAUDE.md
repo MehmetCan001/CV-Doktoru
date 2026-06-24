@@ -316,6 +316,7 @@ Bu projede prompt kalitesiyle ilgili edinilen dersler — her oturumda buraya ye
 - **Köşeli parantez problemi**: Model, bilgi olmadığında `[...]` bırakır. System prompt'a YANLIŞ/DOĞRU örneği eklemek bu davranışı düzeltti. **Kural**: Model kuraldan değil, örnekten öğrenir — kritik davranışlar için mutlaka few-shot örnek yaz.
 - **Yapay iyimserlik kayması**: SON SÖZ bölümünde model "harika potansiyelin var" tarzı cümlelere kayar. Sadece yasaklamak yetmez, anti-pattern listesi + doğru ton örneği birlikte verilmeli.
 - **Truncation**: MAX_TOKENS 4096 yetmiyordu, 8192 de yetmedi, 16384 de yetmedi (Türkçe + detaylı format çıktıyı 10K-16K token'a çıkarıyor), 32768'e çıkardık (2026-06-24). **Kural**: Türkçe metinler İngilizce'ye göre ~1.5-2x daha fazla token tüketir; token tahmini yaparken bunu hesaba kat.
+- **Streamlit streaming güvenilmez (KESİN KURAL)**: `st.write_stream()` ve manuel streaming döngüsü, Streamlit'te uzun LLM çağrıları için yapısal olarak güvenilmez. Model token üretmeyi duraklatınca HTTP stream boşta kalır, bağlantı kopar, analiz yarıda kesilir. Patch eklemek çözüm değildir. **Kural**: Uzun LLM çağrılarında `doctor.analyze()` (blocking) + `st.status()` spinner kullan. Streaming asla kullanıcıya yönelik akışta kullanılmaz. (2026-06-24, 3 farklı kesinti noktasında doğrulandı)
 - **Few-shot örneklerin ağırlığı**: System prompt kuralından daha güçlü. Bir davranışı istiyorsan, o davranışın doğru halini örnekte göster.
 
 ### Analiz Formatı Evrimi
