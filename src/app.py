@@ -747,18 +747,33 @@ if analyze_clicked:
     </div>
     """, unsafe_allow_html=True)
 
-    try:
-        streamed_text = st.write_stream(
-            doctor.analyze_stream(cv_text, job_text_input.strip())
-        )
-        report = _round_score(streamed_text)
-    except Exception:
-        try:
-            report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
-        except Exception as e:
-            st.error(f"Analiz sırasında hata oluştu: {e}")
-            st.stop()
+    report_placeholder = st.empty()
+    accumulated = ""
+    stream_ok = False
+    _last_ui_update = 0.0
 
+    try:
+        for chunk in doctor.analyze_stream(cv_text, job_text_input.strip()):
+            accumulated += chunk
+            now = time.time()
+            if now - _last_ui_update > 0.1:
+                report_placeholder.markdown(accumulated)
+                _last_ui_update = now
+        report_placeholder.markdown(accumulated)
+        stream_ok = "SON SÖZ" in accumulated and len(accumulated) > 2000
+    except Exception:
+        stream_ok = False
+
+    if not stream_ok:
+        report_placeholder.empty()
+        with st.spinner("🔄 Analiz tamamlanamadı, yeniden başlatılıyor..."):
+            try:
+                accumulated = doctor.analyze(cv_text, job_text_input.strip())
+            except Exception as e:
+                st.error(f"Analiz sırasında hata oluştu: {e}")
+                st.stop()
+
+    report = _round_score(accumulated)
     st.session_state["report"] = report
     st.rerun()
 
