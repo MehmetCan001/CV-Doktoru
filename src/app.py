@@ -725,6 +725,8 @@ if analyze_clicked:
         st.stop()
 
     doctor = CVDoctor()
+    report = None
+    _analyze_error = None
 
     with st.status("⏳ Rapor hazırlanıyor...", expanded=True) as status:
         st.write("📄 CV metni işleniyor ve yapılandırılıyor...")
@@ -738,9 +740,12 @@ if analyze_clicked:
             report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
             status.update(label="✅ Rapor hazır!", state="complete", expanded=False)
         except Exception as e:
+            _analyze_error = e
             status.update(label="❌ Hata oluştu", state="error", expanded=True)
-            st.error(f"Analiz sırasında hata oluştu: {e}")
-            st.stop()
+
+    if _analyze_error is not None:
+        st.error(f"Analiz sırasında hata oluştu: {_analyze_error}")
+        st.stop()
 
     st.session_state["report"] = report
     st.rerun()
