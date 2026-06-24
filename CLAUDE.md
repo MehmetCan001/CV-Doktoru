@@ -295,7 +295,7 @@ CV Doktoru, Türkiye iş piyasasına özgü AI destekli CV analiz aracıdır. Ku
 - **AI Motoru**: `src/analyzer.py` — şu an Gemini, Claude'a geçilecek
 - **Dosya Okuma**: `src/pdf_reader.py` — PDF, DOCX, düz metin
 - **Prompt Sistemi**: `src/prompt_loader.py` — system prompt + few-shot + analysis prompt
-- **Konfigürasyon**: `src/config.py` — MAX_TOKENS=16384, model adı
+- **Konfigürasyon**: `src/config.py` — MAX_TOKENS=32768, model adı
 - **Prompt Dosyaları**: `prompts/` klasörü (system_prompt.md, analysis_prompt.md, examples/)
 - **Bilgi Tabanı**: `knowledge/turk_is_kulturu.md`
 
@@ -315,7 +315,7 @@ Bu projede prompt kalitesiyle ilgili edinilen dersler — her oturumda buraya ye
 ### Model Davranışı Kalıpları
 - **Köşeli parantez problemi**: Model, bilgi olmadığında `[...]` bırakır. System prompt'a YANLIŞ/DOĞRU örneği eklemek bu davranışı düzeltti. **Kural**: Model kuraldan değil, örnekten öğrenir — kritik davranışlar için mutlaka few-shot örnek yaz.
 - **Yapay iyimserlik kayması**: SON SÖZ bölümünde model "harika potansiyelin var" tarzı cümlelere kayar. Sadece yasaklamak yetmez, anti-pattern listesi + doğru ton örneği birlikte verilmeli.
-- **Truncation**: MAX_TOKENS 4096 yetmiyordu, 8192 de yetmedi, 16384'e çıkardık. Gemini 2.5 Flash için bu güvenli bir değer.
+- **Truncation**: MAX_TOKENS 4096 yetmiyordu, 8192 de yetmedi, 16384 de yetmedi (Türkçe + detaylı format çıktıyı 10K-16K token'a çıkarıyor), 32768'e çıkardık (2026-06-24). **Kural**: Türkçe metinler İngilizce'ye göre ~1.5-2x daha fazla token tüketir; token tahmini yaparken bunu hesaba kat.
 - **Few-shot örneklerin ağırlığı**: System prompt kuralından daha güçlü. Bir davranışı istiyorsan, o davranışın doğru halini örnekte göster.
 
 ### Analiz Formatı Evrimi
@@ -434,7 +434,7 @@ Bu mesajlar reklamda, landing page'de, sosyal medyada kullanılabilir. Rakip ana
 1. Mevcut `analysis_prompt.md` + `system_prompt.md` + `ornek_1` + `ornek_2` dosyalarını oku.
 2. Eklenen bölümün mevcut bölümlerle çelişip çelişmediğini kontrol et.
 3. Few-shot örneklerine bu bölümün nasıl görüneceğini ekle — kural yaz, örnek de yaz.
-4. `MAX_TOKENS` yetecek mi hesapla (toplam çıktı ~3000-4000 token artık).
+4. `MAX_TOKENS` yetecek mi hesapla (Türkçe çıktı gerçekte 10K-16K token; 32768 mevcut güvenli değer).
 
 ### Prompt Değişikliklerinde Test Protokolü
 1. Değişiklik sonrası gerçek CV + ilan ile test analizi yap.
