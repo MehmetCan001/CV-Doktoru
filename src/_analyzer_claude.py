@@ -30,7 +30,10 @@ class CVDoctor:
             messages=messages,
             temperature=0,
         )
-        return response.content[0].text
+        text = response.content[0].text
+        if response.stop_reason == "max_tokens":
+            text += "\n\n---\n\n> ⚠️ **Rapor token limitine ulaştığı için kesildi.** CV veya iş ilanı metnini kısaltmayı deneyin."
+        return text
 
     def analyze_stream(self, cv_text: str, job_ad: str):
         """Text chunk'larını yield eden streaming analiz."""
@@ -45,6 +48,8 @@ class CVDoctor:
         ) as stream:
             for text in stream.text_stream:
                 yield text
+            if stream.get_final_message().stop_reason == "max_tokens":
+                yield "\n\n---\n\n> ⚠️ **Rapor token limitine ulaştığı için kesildi.** CV veya iş ilanı metnini kısaltmayı deneyin."
 
     def quick_test(self) -> str:
         response = self.client.messages.create(
