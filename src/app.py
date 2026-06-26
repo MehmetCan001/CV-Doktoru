@@ -9,7 +9,6 @@ import os
 import re
 import sys
 import tempfile
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -736,34 +735,22 @@ if analyze_clicked:
 
     doctor = CVDoctor()
     report = None
-    _analyze_error = None
 
-    with st.status("⏳ Rapor hazırlanıyor...", expanded=True) as status:
-        st.write("📄 CV metni işleniyor ve yapılandırılıyor...")
-        time.sleep(0.4)
-        st.write("💼 İş ilanı inceleniyor, gereksinimler çıkarılıyor...")
-        time.sleep(0.4)
-        st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
-        time.sleep(0.4)
-        st.write("🧠 Yapay zeka motoru çalışıyor — bu **1-3 dakika** sürebilir, lütfen sayfayı kapatmayın...")
-        try:
-            report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
-            status.update(label="✅ Rapor hazır!", state="complete", expanded=False)
-        except Exception as e:
-            _analyze_error = e
-            status.update(label="❌ Hata oluştu", state="error", expanded=True)
-
-    if _analyze_error is not None:
-        err_type = type(_analyze_error).__name__
-        st.error(f"**Analiz hatası ({err_type}):** {_analyze_error}")
+    _notice = st.info(
+        "⏳ **Rapor hazırlanıyor...** "
+        "Yapay zeka motoru çalışıyor — bu **1-3 dakika** sürebilir. "
+        "Lütfen sayfayı kapatmayın veya butona tekrar basmayın."
+    )
+    try:
+        report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
+        _notice.success("✅ Rapor hazır!")
+    except Exception as e:
+        _notice.error(f"**Analiz hatası ({type(e).__name__}):** {e}")
         with st.expander("Teknik detaylar"):
-            st.exception(_analyze_error)
+            st.exception(e)
         st.stop()
 
     st.session_state["report"] = report
-    # st.rerun() KULLANILMIYOR — 4+ dakikalık API çağrısı sırasında WebSocket
-    # yenilenirse yeni oturum açılır ve session_state boş gelir; rapor kaybolur.
-    # Çözüm: aynı script çalışmasında aşağıdaki render bloğuna fall-through yap.
 
 # ════════════════════════════════════════════════════════════════════════════
 # RAPOR GÖSTERİMİ
