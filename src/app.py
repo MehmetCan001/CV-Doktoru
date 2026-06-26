@@ -724,6 +724,16 @@ if analyze_clicked:
         st.warning("⚠️ Lütfen iş ilanı metnini girin.")
         st.stop()
 
+    # API key kontrolü — yoksa status bloğuna girmeden fail-fast
+    _api_key_ok = bool(os.getenv("ANTHROPIC_API_KEY") or os.getenv("GEMINI_API_KEY"))
+    if not _api_key_ok:
+        st.error(
+            "⚠️ **API anahtarı bulunamadı.** "
+            "Streamlit Cloud → App settings → Secrets bölümüne "
+            "`ANTHROPIC_API_KEY` ekleyin ve uygulamayı yeniden başlatın."
+        )
+        st.stop()
+
     doctor = CVDoctor()
     report = None
     _analyze_error = None
@@ -735,7 +745,7 @@ if analyze_clicked:
         time.sleep(0.4)
         st.write("🇹🇷 Türk iş kültürü veritabanı yükleniyor...")
         time.sleep(0.4)
-        st.write("🧠 Yapay zeka motoru çalışıyor — bu 30-60 saniye sürebilir...")
+        st.write("🧠 Yapay zeka motoru çalışıyor — bu **1-3 dakika** sürebilir, lütfen sayfayı kapatmayın...")
         try:
             report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
             status.update(label="✅ Rapor hazır!", state="complete", expanded=False)
@@ -744,7 +754,10 @@ if analyze_clicked:
             status.update(label="❌ Hata oluştu", state="error", expanded=True)
 
     if _analyze_error is not None:
-        st.error(f"Analiz sırasında hata oluştu: {_analyze_error}")
+        err_type = type(_analyze_error).__name__
+        st.error(f"**Analiz hatası ({err_type}):** {_analyze_error}")
+        with st.expander("Teknik detaylar"):
+            st.exception(_analyze_error)
         st.stop()
 
     st.session_state["report"] = report
