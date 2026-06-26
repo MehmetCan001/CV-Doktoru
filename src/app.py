@@ -761,13 +761,16 @@ if analyze_clicked:
         st.stop()
 
     st.session_state["report"] = report
-    st.rerun()
+    # st.rerun() KULLANILMIYOR — 4+ dakikalık API çağrısı sırasında WebSocket
+    # yenilenirse yeni oturum açılır ve session_state boş gelir; rapor kaybolur.
+    # Çözüm: aynı script çalışmasında aşağıdaki render bloğuna fall-through yap.
 
 # ════════════════════════════════════════════════════════════════════════════
 # RAPOR GÖSTERİMİ
 # ════════════════════════════════════════════════════════════════════════════
-if st.session_state.get("report"):
-    report = st.session_state["report"]
+_report_to_show = st.session_state.get("report")
+if _report_to_show:
+    report = _report_to_show
 
     st.markdown("""
     <div class="report-header-card">
