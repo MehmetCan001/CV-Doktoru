@@ -19,9 +19,9 @@ from fpdf import FPDF
 
 from src.analyzer import CVDoctor
 from src.pdf_reader import extract_text_from_pdf, extract_text_from_docx
+from src.rate_limiter import check_and_increment, get_client_ip, remaining_today, DAILY_LIMIT
 
 load_dotenv()
-
 
 def _round_score(report: str) -> str:
     """Rapordaki X/100 skorunu en yakın 5'e yuvarlar (LLM varyansını gizler)."""
@@ -679,6 +679,17 @@ with btn_col:
         use_container_width=True,
     )
 
+# ── Kalan hak göstergesi ─────────────────────────────────────────────────────
+_ip_now = get_client_ip()
+_remaining_now = remaining_today(_ip_now)
+if _remaining_now < DAILY_LIMIT:
+    st.markdown(
+        f"<div style='text-align:center;color:#94A3B8;font-size:0.78rem;"
+        f"font-family:Inter,sans-serif;margin-top:0.5rem'>"
+        f"Bugün {_remaining_now} ücretsiz analiz hakkınız kaldı.</div>",
+        unsafe_allow_html=True,
+    )
+
 # ── Güven rozetleri ──────────────────────────────────────────────────────────
 st.markdown("""
 <div class="trust-bar">
@@ -693,6 +704,7 @@ st.markdown("""
 # ════════════════════════════════════════════════════════════════════════════
 # ANALİZ MANTIĞI
 # ════════════════════════════════════════════════════════════════════════════
+
 if analyze_clicked:
     cv_text = ""
 
@@ -723,7 +735,18 @@ if analyze_clicked:
         st.warning("⚠️ Lütfen iş ilanı metnini girin.")
         st.stop()
 
-    # API key kontrolü — yoksa status bloğuna girmeden fail-fast
+    # Rate limit kontrolü
+    _client_ip = get_client_ip()
+    _allowed, _remaining = check_and_increment(_client_ip)
+    if not _allowed:
+        st.error(
+            "⏳ **Bugünkü ücretsiz analiz hakkınızı kullandınız** "
+            f"(günlük {DAILY_LIMIT} analiz). "
+            "Yarın gece yarısı UTC'de yenilenir."
+        )
+        st.stop()
+
+    # API key kontrolü — yoksa fail-fast
     _api_key_ok = bool(os.getenv("ANTHROPIC_API_KEY") or os.getenv("GEMINI_API_KEY"))
     if not _api_key_ok:
         st.error(

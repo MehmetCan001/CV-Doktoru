@@ -7,7 +7,7 @@ from src import config
 from src.prompt_loader import load_system_prompt, load_analysis_prompt, load_few_shot_examples
 
 
-_TIMEOUT = 300  # saniye — büyük Türkçe promptlar 2-4 dk sürebilir
+_TIMEOUT = 600  # saniye — büyük Türkçe promptlar 2-4 dk sürebilir
 
 class CVDoctor:
     def __init__(self, api_key: str | None = None, model: str | None = None):
