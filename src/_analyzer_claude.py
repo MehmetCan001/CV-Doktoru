@@ -1,7 +1,7 @@
 """Anthropic Claude implementasyonu."""
 
 import os
-import concurrent.futures
+import threading
 import anthropic
 
 from src import config
@@ -29,19 +29,32 @@ class CVDoctor:
         system_prompt = self.system_prompt
         api_key = self.api_key
 
-        def _call():
-            client = anthropic.Anthropic(api_key=api_key, timeout=_TIMEOUT)
-            return client.messages.create(
-                model=model_name,
-                max_tokens=config.MAX_TOKENS,
-                system=system_prompt,
-                messages=messages,
-                temperature=0,
-            )
+        result: list = [None]
+        error: list = [None]
+        done = threading.Event()
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_call)
-            response = future.result(timeout=_TIMEOUT)
+        def _call():
+            try:
+                client = anthropic.Anthropic(api_key=api_key, timeout=_TIMEOUT)
+                result[0] = client.messages.create(
+                    model=model_name,
+                    max_tokens=config.MAX_TOKENS,
+                    system=system_prompt,
+                    messages=messages,
+                    temperature=0,
+                )
+            except Exception as exc:
+                error[0] = exc
+            finally:
+                done.set()
+
+        t = threading.Thread(target=_call, daemon=True)
+        t.start()
+        if not done.wait(timeout=_TIMEOUT):
+            raise TimeoutError(f"API yanıt vermedi ({_TIMEOUT}s).")
+        if error[0] is not None:
+            raise error[0]
+        response = result[0]
 
         text = response.content[0].text
         if response.stop_reason == "max_tokens":

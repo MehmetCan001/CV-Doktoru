@@ -892,21 +892,46 @@ if analyze_clicked:
 </div>
 """, unsafe_allow_html=True)
 
+    import time as _time
+    _t0 = _time.time()
+    print("CV Doktoru: analiz başladı", flush=True)
     try:
         report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
+        _elapsed = round(_time.time() - _t0)
+        print(f"CV Doktoru: analiz tamamlandı — {_elapsed}s, {len(report)} karakter", flush=True)
         _loading_slot.success("✅ Rapor hazır!")
     except Exception as e:
+        print(f"CV Doktoru: analiz HATASI — {type(e).__name__}: {e}", flush=True)
         _loading_slot.error(f"**Analiz hatası ({type(e).__name__}):** {e}")
         with st.expander("Teknik detaylar"):
             st.exception(e)
         st.stop()
+
+    # WebSocket kopsa bile raporu kurtarmak için dosyaya yaz
+    try:
+        _report_file = Path(__file__).parent.parent / "data" / "last_report.txt"
+        _report_file.parent.mkdir(exist_ok=True)
+        _report_file.write_text(report, encoding="utf-8")
+    except Exception:
+        pass
 
     st.session_state["report"] = report
 
 # ════════════════════════════════════════════════════════════════════════════
 # RAPOR GÖSTERİMİ
 # ════════════════════════════════════════════════════════════════════════════
+# session_state yoksa son 30 dk içindeki dosyadan kurtar
 _report_to_show = st.session_state.get("report")
+if not _report_to_show:
+    try:
+        import time as _time
+        _report_file = Path(__file__).parent.parent / "data" / "last_report.txt"
+        if _report_file.exists() and (_time.time() - _report_file.stat().st_mtime) < 1800:
+            _report_to_show = _report_file.read_text(encoding="utf-8")
+            print("CV Doktoru: rapor dosyadan kurtarıldı", flush=True)
+    except Exception:
+        pass
+
 if _report_to_show:
     report = _report_to_show
 
