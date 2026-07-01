@@ -464,6 +464,121 @@ section[data-testid="stMain"] [data-testid="stMarkdownContainer"] h3 {
     border-radius: 8px !important;
     font-weight: 600 !important;
 }
+
+/* ── Loading animasyonu ── */
+.cv-loading-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(56,189,248,0.18);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.cv-loading-icon {
+    font-size: 2.4rem;
+    display: block;
+    animation: cv-pulse 1.6s ease-in-out infinite;
+}
+@keyframes cv-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+.cv-loading-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin: 0.9rem 0 0.5rem;
+    font-family: 'Inter', sans-serif;
+}
+.cv-loading-dots { margin-bottom: 0.25rem; }
+.cv-loading-dots span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #38BDF8;
+    border-radius: 50%;
+    margin: 0 3px;
+    animation: cv-dot 1.4s ease-in-out infinite;
+}
+.cv-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.cv-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cv-dot {
+    0%, 80%, 100% { transform: scale(0.55); opacity: 0.35; }
+    40% { transform: scale(1); opacity: 1; }
+}
+.cv-loading-steps {
+    position: relative;
+    height: 1.8rem;
+    margin: 1.25rem 0;
+}
+.cv-step {
+    font-size: 0.84rem;
+    font-family: 'Inter', sans-serif;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    opacity: 0;
+}
+@keyframes cv-s1 {
+    0%  { opacity:0; color:#94A3B8; }
+    2%  { opacity:1; color:#7DD3FC; }
+    14% { opacity:1; color:#7DD3FC; }
+    17% { opacity:0; }
+    100%{ opacity:0; }
+}
+@keyframes cv-s2 {
+    0%,16%{ opacity:0; }
+    18%  { opacity:1; color:#7DD3FC; }
+    30%  { opacity:1; color:#7DD3FC; }
+    33%  { opacity:0; }
+    100% { opacity:0; }
+}
+@keyframes cv-s3 {
+    0%,32%{ opacity:0; }
+    34%  { opacity:1; color:#7DD3FC; }
+    50%  { opacity:1; color:#7DD3FC; }
+    53%  { opacity:0; }
+    100% { opacity:0; }
+}
+@keyframes cv-s4 {
+    0%,52%{ opacity:0; }
+    54%  { opacity:1; color:#7DD3FC; }
+    70%  { opacity:1; color:#7DD3FC; }
+    73%  { opacity:0; }
+    100% { opacity:0; }
+}
+@keyframes cv-s5 {
+    0%,72%{ opacity:0; }
+    74%  { opacity:1; color:#7DD3FC; }
+    100% { opacity:1; color:#7DD3FC; }
+}
+.cv-step-1 { animation: cv-s1 150s linear 1 forwards; }
+.cv-step-2 { animation: cv-s2 150s linear 1 forwards; }
+.cv-step-3 { animation: cv-s3 150s linear 1 forwards; }
+.cv-step-4 { animation: cv-s4 150s linear 1 forwards; }
+.cv-step-5 { animation: cv-s5 150s linear 1 forwards; }
+.cv-loading-bar-wrap {
+    background: rgba(255,255,255,0.07);
+    border-radius: 100px;
+    height: 4px;
+    overflow: hidden;
+    margin: 1.25rem 0 0.85rem;
+}
+.cv-loading-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+    border-radius: 100px;
+    animation: cv-progress 150s cubic-bezier(0.15,0.5,0.5,1) 1 forwards;
+}
+@keyframes cv-progress {
+    from { width: 3%; }
+    to   { width: 93%; }
+}
+.cv-loading-note {
+    font-size: 0.74rem;
+    color: #475569;
+    font-family: 'Inter', sans-serif;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -759,16 +874,29 @@ if analyze_clicked:
     doctor = CVDoctor()
     report = None
 
-    _notice = st.info(
-        "⏳ **Rapor hazırlanıyor...** "
-        "Yapay zeka motoru çalışıyor — bu **1-3 dakika** sürebilir. "
-        "Lütfen sayfayı kapatmayın veya butona tekrar basmayın."
-    )
+    _loading_slot = st.empty()
+    _loading_slot.markdown("""
+<div class="cv-loading-card">
+  <span class="cv-loading-icon">🩺</span>
+  <div class="cv-loading-title">Analiz yapılıyor</div>
+  <div class="cv-loading-dots"><span></span><span></span><span></span></div>
+  <div class="cv-loading-steps">
+    <div class="cv-step cv-step-1">📄 CV metni okunuyor ve ayrıştırılıyor</div>
+    <div class="cv-step cv-step-2">🔍 İş ilanıyla eşleştiriliyor</div>
+    <div class="cv-step cv-step-3">⚠️ Kırmızı bayraklar tespit ediliyor</div>
+    <div class="cv-step cv-step-4">💡 Güçlü noktalar ve öneriler hazırlanıyor</div>
+    <div class="cv-step cv-step-5">✍️ Rapor yazılıyor ve düzenleniyor</div>
+  </div>
+  <div class="cv-loading-bar-wrap"><div class="cv-loading-bar"></div></div>
+  <div class="cv-loading-note">Bu işlem 2-3 dakika sürebilir — lütfen sayfayı kapatmayın.</div>
+</div>
+""", unsafe_allow_html=True)
+
     try:
         report = _round_score(doctor.analyze(cv_text, job_text_input.strip()))
-        _notice.success("✅ Rapor hazır!")
+        _loading_slot.success("✅ Rapor hazır!")
     except Exception as e:
-        _notice.error(f"**Analiz hatası ({type(e).__name__}):** {e}")
+        _loading_slot.error(f"**Analiz hatası ({type(e).__name__}):** {e}")
         with st.expander("Teknik detaylar"):
             st.exception(e)
         st.stop()
