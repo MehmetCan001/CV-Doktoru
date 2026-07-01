@@ -1,6 +1,7 @@
 """Anthropic Claude implementasyonu."""
 
 import os
+import concurrent.futures
 import anthropic
 
 from src import config
@@ -11,25 +12,37 @@ _TIMEOUT = 600  # saniye — büyük Türkçe promptlar 2-4 dk sürebilir
 
 class CVDoctor:
     def __init__(self, api_key: str | None = None, model: str | None = None):
-        self.client = anthropic.Anthropic(
-            api_key=api_key or os.getenv("ANTHROPIC_API_KEY"),
-            timeout=_TIMEOUT,
-        )
+        self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model_name = model or config.CLAUDE_MODEL
         self.system_prompt = load_system_prompt()
         self.few_shot_examples = load_few_shot_examples()
 
+    def _build_client(self) -> anthropic.Anthropic:
+        """Her çağrı için izole client — Streamlit event loop çakışmasını önler."""
+        return anthropic.Anthropic(api_key=self.api_key, timeout=_TIMEOUT)
+
     def analyze(self, cv_text: str, job_ad: str) -> str:
-        """Blocking analiz — tüm raporu tek seferde döndürür."""
+        """Blocking analiz — ayrı thread'de çalışır, event loop çakışmasını önler."""
         user_message = load_analysis_prompt(cv_text, job_ad)
         messages = [*self.few_shot_examples, {"role": "user", "content": user_message}]
-        response = self.client.messages.create(
-            model=self.model_name,
-            max_tokens=config.MAX_TOKENS,
-            system=self.system_prompt,
-            messages=messages,
-            temperature=0,
-        )
+        model_name = self.model_name
+        system_prompt = self.system_prompt
+        api_key = self.api_key
+
+        def _call():
+            client = anthropic.Anthropic(api_key=api_key, timeout=_TIMEOUT)
+            return client.messages.create(
+                model=model_name,
+                max_tokens=config.MAX_TOKENS,
+                system=system_prompt,
+                messages=messages,
+                temperature=0,
+            )
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_call)
+            response = future.result(timeout=_TIMEOUT)
+
         text = response.content[0].text
         if response.stop_reason == "max_tokens":
             text += "\n\n---\n\n> ⚠️ **Rapor token limitine ulaştığı için kesildi.** CV veya iş ilanı metnini kısaltmayı deneyin."
