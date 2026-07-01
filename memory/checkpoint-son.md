@@ -1,67 +1,65 @@
-# CHECKPOINT — 2026-07-01 — v1.4
+# CHECKPOINT — 2026-07-01 — v1.5
 
 ## Proje Adı ve Amacı
 **CV Doktoru** — Türkiye iş piyasasına özgü AI destekli CV analiz aracı.
+**URL:** https://cvdoktoru.com ✅ CANLI
 
-## Tech Stack
-- **Frontend/UI**: Streamlit (`src/app.py`)
+## Tech Stack (Mevcut)
+- **Frontend/UI**: Streamlit (`src/app.py`) — TERK EDİLECEK
 - **AI Motoru**: Anthropic Claude (`src/_analyzer_claude.py`) — `claude-sonnet-4-6`
 - **Dosya Okuma**: `src/pdf_reader.py` — PDF, DOCX, düz metin
 - **Prompt Sistemi**: `src/prompt_loader.py`
-- **Config**: `src/config.py` — MAX_TOKENS=32768, _TIMEOUT=300s
-- **Prompt Dosyaları**: `prompts/` (system_prompt.md, analysis_prompt.md, examples/)
-- **Bilgi Tabanı**: `knowledge/turk_is_kulturu.md`
-
-## Tamamlanan Modüller
-- [x] Temel CV + iş ilanı analizi
-- [x] PDF/DOCX/metin dosyası okuma
-- [x] Streamlit UI — hero, form, rapor gösterimi, PDF/TXT indirme
-- [x] Prompt sistemi — system_prompt + few-shot + analysis_prompt
-- [x] Tüm rapor bölümleri (13 bölüm)
-- [x] Koşullu bölümler (ALTERNATİF HEDEFLER skor<30, MÜLAKAT HAZIRLIĞI skor≥40)
-- [x] Claude API geçişi — ANTHROPIC_API_KEY ✅
-- [x] Skor yuvarlama — `_round_score()` ile 5'e yuvarla
-- [x] Premium SaaS UI redesign
-- [x] MAX_TOKENS 32768
-- [x] Streaming tamamen kaldırıldı → blocking mode
-- [x] **Deploy: Hetzner CX23, Ubuntu 22.04** ✅ (2026-07-01)
-- [x] **Domain: https://cvdoktoru.com** ✅ (GoDaddy)
-- [x] **HTTPS: Let's Encrypt / Certbot** ✅
-- [x] **Nginx reverse proxy** ✅
-- [x] **Systemd servisi** ✅ (otomatik başlatma)
-
-## Mevcut Durum
-- **URL**: https://cvdoktoru.com ✅ CANLI
+- **Config**: `src/config.py` — MAX_TOKENS=32768, _TIMEOUT=600s
 - **Sunucu**: Hetzner CX23, Nuremberg — IP: 46.225.20.111
-- **Servis**: systemd `cv-doktoru.service` — otomatik restart aktif
-- **SSL**: Let's Encrypt (certbot otomatik yeniler)
-- **Analiz modu**: Blocking (`doctor.analyze()`) + `st.info()` placeholder + fall-through render
+- **Servis**: systemd `cv-doktoru.service`
+- **Reverse proxy**: Nginx + Let's Encrypt HTTPS
+- **Domain**: GoDaddy `cvdoktoru.com`
 
-## Alınan Mimari Kararlar
-1. **MAX_TOKENS = 32768** — Türkçe + detaylı format çıktıyı 10K-16K token'a çıkarıyor
-2. **_TIMEOUT = 300s** — büyük promptlar 2-4 dk sürebilir
-3. **Streaming YOK** — Streamlit'te yapısal olarak güvenilmez
-4. **st.status() YOK** — blocking API çağrısında UI güncellemesi çalışmıyor
-5. **st.rerun() YOK** — uzun API çağrısı sırasında WebSocket yenilenirse session_state boş gelir
-6. **st.info() placeholder** — `_notice = st.info(...)` → `_notice.success(...)` güvenilir tek yol
-7. **Fall-through rendering** — analiz biter bitmez aynı script akışında rapor render edilir
-8. **Streamlit Cloud terk edildi** — blocking 2-4 dk çağrı Cloud'un script timeout'unu aşıyor
-9. **Hetzner CX23 seçildi** — Railway/Render yerine VPS: uzun timeout sorunu çözüldü
+## Hedef Tech Stack (Yarın)
+- **Frontend**: Vanilla HTML/CSS/JS (`templates/index.html`)
+- **Backend**: FastAPI (`src/server.py`)
+- **Streaming**: Server-Sent Events (SSE) — token token anlık çıktı
+- **Python analiz kodu**: Değişmez
 
-## Güncelleme Prosedürü (deploy sonrası)
-Kodda değişiklik olduğunda sunucuda:
-```bash
-cd /opt/cv-doktoru && git pull && systemctl restart cv-doktoru
-```
+## Tamamlanan
+- [x] Temel CV + iş ilanı analizi (Claude API)
+- [x] Prompt sistemi (13 bölüm, koşullu bölümler)
+- [x] Hetzner VPS deploy
+- [x] HTTPS (Let's Encrypt)
+- [x] IP bazlı rate limiting (3/gün)
+- [x] Loading animasyonu (CSS)
+- [x] Prompt kısaltma (~%30 daha hızlı)
+- [x] threading.Thread ile event loop izolasyonu
+- [x] Dosya kalıcılığı (WebSocket kopsa raporu kurtar)
 
-## Sonraki Özellik Adayları
-- [ ] LinkedIn profil önerisi bölümü (CVCIM + ResumeWorked'dan öğrenildi, talep kanıtlı)
-- [ ] Yazım kalitesi boyutu (Grammarly'den ilham)
-- [ ] Maaş beklentisi ipucu (Youthall verisi referans)
-- [ ] Beta geri dönüşlerine göre prompt iyileştirme
-- [ ] Firewall kuralları (Hetzner Firewall — sadece 80/443/22 aç)
-- [ ] Hetzner otomatik backup aktifleştir
+## Streamlit Sorunları (Neden Terk Ediyoruz)
+1. WebSocket drop — uzun analiz sırasında bağlantı kopuyor
+2. Event loop çakışması — Anthropic SDK ile Streamlit asyncio çakışıyor
+3. Mobil dosya yükleme — seçim oluyor ama upload tamamlanmıyor
+4. UI kısıtı — tam CSS kontrolü yok
+5. Streaming yapısal olarak güvenilmez
 
-## Bilinen Sorunlar / Yapılmayanlar
-- Hetzner Firewall henüz kurulmadı (sunucu şu an tüm portlara açık)
-- Hetzner backup aktif değil
+## Yarınki Plan: Streamlit → FastAPI
+1. `src/server.py` — FastAPI uygulaması
+   - `GET /` → index.html
+   - `POST /analyze` → SSE stream (token token çıktı)
+   - `POST /upload` → CV dosyası parse
+2. `templates/index.html` — mevcut tasarımı port et
+3. `requirements.txt` — fastapi ekle (uvicorn zaten var)
+4. Systemd → `uvicorn src.server:app --port 8501`
+5. Nginx → değişiklik yok (aynı port)
+6. Test: masaüstü + mobil
+
+## Analiz Kodu (Dokunmayacak)
+- `src/analyzer.py` — CVDoctor wrapper
+- `src/_analyzer_claude.py` — threading.Thread + streaming
+- `src/prompt_loader.py` — prompt dosyaları yükle
+- `src/pdf_reader.py` — PDF/DOCX okuma
+- `src/rate_limiter.py` — IP rate limiting
+- `prompts/` — tüm prompt dosyaları
+- `knowledge/` — Türk iş kültürü bilgi tabanı
+
+## Bilinen Sorunlar
+- Streamlit: analiz tamamlanıyor ama WebSocket drop nedeniyle rapor ekrana gelmiyor
+- Mobil: dosya upload tamamlanmıyor (Streamlit sorunu, FastAPI ile çözülecek)
+- `data/last_report.txt` — geçici workaround, FastAPI'ye geçince kaldırılacak
