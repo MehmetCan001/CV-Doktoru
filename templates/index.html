@@ -528,19 +528,18 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
     analyzeBtn.disabled = true;
     showLoading();
 
-    fetch("/api/analyze", { method: "POST", body: formData })
+    fetch("/api/analyze/start", { method: "POST", body: formData })
       .then(function (r) {
         return r.json().then(function (data) { return { ok: r.ok, data: data }; });
       })
       .then(function (result) {
-        clearLoading();
-        analyzeBtn.disabled = false;
         if (!result.ok) {
+          clearLoading();
+          analyzeBtn.disabled = false;
           showAlert(result.data.error || "Analiz sırasında bir hata oluştu.", "error");
           return;
         }
-        renderReport(result.data.report);
-        refreshRemaining();
+        pollJobStatus(result.data.job_id);
       })
       .catch(function (err) {
         clearLoading();
@@ -548,6 +547,55 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
         showAlert("Ağ hatası: " + err.message, "error");
       });
   });
+
+  // ── Uzun bağlantı yerine kısa aralıklarla durum sorgulama ──
+  // Tek bir HTTP bağlantısını dakikalarca açık tutmak, bazı ev/kurumsal
+  // ağlarda (NAT/firewall boşta bağlantı zaman aşımı) ERR_CONNECTION_RESET'e
+  // yol açıyordu. Her poll isteği kısa sürdüğü için bu sorunu ortadan kaldırır.
+  var POLL_INTERVAL_MS = 3000;
+  var MAX_POLL_MS = 10 * 60 * 1000;
+
+  function pollJobStatus(jobId) {
+    var startedAt = Date.now();
+
+    function tick() {
+      if (Date.now() - startedAt > MAX_POLL_MS) {
+        clearLoading();
+        analyzeBtn.disabled = false;
+        showAlert("Analiz beklenenden uzun sürdü, lütfen tekrar deneyin.", "error");
+        return;
+      }
+
+      fetch("/api/analyze/status/" + jobId)
+        .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+        .then(function (result) {
+          if (!result.ok) {
+            clearLoading();
+            analyzeBtn.disabled = false;
+            showAlert(result.data.error || "Analiz durumu sorgulanamadı.", "error");
+            return;
+          }
+          if (result.data.status === "running") {
+            setTimeout(tick, POLL_INTERVAL_MS);
+            return;
+          }
+          clearLoading();
+          analyzeBtn.disabled = false;
+          if (result.data.status === "error") {
+            showAlert(result.data.error || "Analiz sırasında bir hata oluştu.", "error");
+            return;
+          }
+          renderReport(result.data.report);
+          refreshRemaining();
+        })
+        .catch(function () {
+          // Tek bir poll'un ağ hatası vermesi normaldir (kısa kesinti); tekrar dene.
+          setTimeout(tick, POLL_INTERVAL_MS);
+        });
+    }
+
+    tick();
+  }
 })();
 </script>
 

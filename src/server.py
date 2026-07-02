@@ -8,6 +8,9 @@ Başlatmak için:
 import os
 import re
 import tempfile
+import threading
+import time
+import uuid
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -31,6 +34,22 @@ load_dotenv()
 TEMPLATES_DIR = config.PROJECT_ROOT / "templates"
 
 app = FastAPI(title="CV Doktoru")
+
+# Analiz işleri arka planda yürütülür, tarayıcı sonucu poll ile sorgular.
+# Tek bir uzun HTTP bağlantısı NAT/firewall tarafından "boşta" sayılıp
+# kesilebiliyor (2026-07-02'de PC tarayıcısında ERR_CONNECTION_RESET ile
+# doğrulandı) — polling, hiçbir tekil bağlantının dakikalarca açık kalmasını
+# gerektirmediği için bu sorunu kökten çözer.
+_JOB_TTL_SECONDS = 30 * 60
+_jobs: dict[str, dict] = {}
+_jobs_lock = threading.Lock()
+
+
+def _prune_old_jobs() -> None:
+    cutoff = time.time() - _JOB_TTL_SECONDS
+    stale = [jid for jid, job in _jobs.items() if job["created"] < cutoff]
+    for jid in stale:
+        del _jobs[jid]
 
 
 def _round_score(report: str) -> str:
@@ -57,8 +76,31 @@ def api_remaining(request: Request):
     return {"remaining": remaining_today(ip), "limit": DAILY_LIMIT}
 
 
-@app.post("/api/analyze")
-async def api_analyze(
+def _run_analysis_job(job_id: str, cv_text: str, job_text: str) -> None:
+    doctor = CVDoctor()
+    try:
+        report = doctor.analyze(cv_text, job_text)
+        report = _round_score(report)
+    except Exception as e:
+        with _jobs_lock:
+            _jobs[job_id]["status"] = "error"
+            _jobs[job_id]["error"] = f"Analiz hatası ({type(e).__name__}): {e}"
+        return
+
+    try:
+        report_file = config.DATA_DIR / "last_report.txt"
+        report_file.parent.mkdir(exist_ok=True)
+        report_file.write_text(report, encoding="utf-8")
+    except Exception:
+        pass
+
+    with _jobs_lock:
+        _jobs[job_id]["status"] = "done"
+        _jobs[job_id]["report"] = report
+
+
+@app.post("/api/analyze/start")
+async def api_analyze_start(
     request: Request,
     job_text: str = Form(...),
     cv_text: str = Form(""),
@@ -114,23 +156,26 @@ async def api_analyze(
     if not (os.getenv("ANTHROPIC_API_KEY") or os.getenv("GEMINI_API_KEY")):
         return JSONResponse({"error": "API anahtarı sunucuda bulunamadı."}, status_code=500)
 
-    doctor = CVDoctor()
-    try:
-        report = await run_in_threadpool(doctor.analyze, text, job_text.strip())
-        report = _round_score(report)
-    except Exception as e:
-        return JSONResponse(
-            {"error": f"Analiz hatası ({type(e).__name__}): {e}"}, status_code=500
-        )
+    job_id = uuid.uuid4().hex
+    with _jobs_lock:
+        _prune_old_jobs()
+        _jobs[job_id] = {"status": "running", "report": None, "error": None, "created": time.time()}
 
-    try:
-        report_file = config.DATA_DIR / "last_report.txt"
-        report_file.parent.mkdir(exist_ok=True)
-        report_file.write_text(report, encoding="utf-8")
-    except Exception:
-        pass
+    thread = threading.Thread(
+        target=_run_analysis_job, args=(job_id, text, job_text.strip()), daemon=True
+    )
+    thread.start()
 
-    return {"report": report, "remaining": remaining}
+    return {"job_id": job_id, "remaining": remaining}
+
+
+@app.get("/api/analyze/status/{job_id}")
+def api_analyze_status(job_id: str):
+    with _jobs_lock:
+        job = _jobs.get(job_id)
+        if job is None:
+            return JSONResponse({"error": "İş bulunamadı veya süresi doldu."}, status_code=404)
+        return {"status": job["status"], "report": job["report"], "error": job["error"]}
 
 
 @app.post("/api/pdf")
