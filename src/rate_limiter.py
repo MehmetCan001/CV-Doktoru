@@ -24,16 +24,26 @@ def _save(data: dict) -> None:
     _LIMIT_FILE.write_text(json.dumps(data), encoding="utf-8")
 
 
+def get_client_ip_from_headers(headers, fallback: str = "unknown") -> str:
+    """Nginx X-Real-IP → X-Forwarded-For → fallback sırasıyla gerçek IP'yi al.
+
+    `headers` sözlük benzeri herhangi bir nesne olabilir (Streamlit'in
+    st.context.headers'ı veya FastAPI'nin request.headers'ı).
+    """
+    real_ip = headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip
+    forwarded = headers.get("X-Forwarded-For", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return fallback
+
+
 def get_client_ip() -> str:
-    """Nginx X-Real-IP → X-Forwarded-For → fallback sırasıyla gerçek IP'yi al."""
+    """Streamlit ortamında gerçek IP'yi al (geriye dönük uyumluluk için)."""
     try:
         import streamlit as st
-        headers = st.context.headers
-        ip = (
-            headers.get("X-Real-IP")
-            or headers.get("X-Forwarded-For", "").split(",")[0].strip()
-        )
-        return ip or "unknown"
+        return get_client_ip_from_headers(st.context.headers)
     except Exception:
         return "unknown"
 

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV Doktoru — İş İlanına Özel CV Analizi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: #F1F5F9;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0F172A;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+
+/* ── Hero ── */
+.hero-wrapper {
+    background: linear-gradient(160deg, #0F172A 0%, #1E293B 55%, #0F172A 100%);
+    padding: 4rem 2rem 3.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.hero-wrapper::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(56,189,248,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+.hero-wrapper::after {
+    content: '';
+    position: absolute; top: -40%; left: 50%;
+    transform: translateX(-50%);
+    width: 700px; height: 500px;
+    background: radial-gradient(ellipse, rgba(56,189,248,0.1) 0%, transparent 65%);
+    pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; text-align: center; max-width: 700px; margin: 0 auto; }
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(56,189,248,0.08);
+    border: 1px solid rgba(56,189,248,0.22);
+    color: #7DD3FC;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 0.4rem 1.1rem; border-radius: 100px; margin-bottom: 1.5rem;
+}
+.hero-title { font-size: 3rem; font-weight: 900; color: #F8FAFC; line-height: 1.1; margin-bottom: 1.25rem; letter-spacing: -0.03em; }
+.hero-title .accent { color: #38BDF8; }
+.hero-subtitle { font-size: 1.05rem; color: #94A3B8; max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.8; }
+.hero-subtitle .white { color: #FFFFFF; font-weight: 700; }
+.hero-stats { display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+.hero-stat-pill {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.4rem 0.9rem; border-radius: 100px; font-size: 0.8rem; font-weight: 600; color: #CBD5E1;
+}
+
+/* ── Section cards ── */
+.section-card {
+    background: #FFFFFF; border-radius: 16px; padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05);
+    border: 1px solid #E2E8F0; margin-bottom: 1.5rem;
+}
+.section-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    color: #94A3B8; margin-bottom: 1.75rem; text-align: center;
+}
+
+/* ── Steps ── */
+.steps-grid { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.step-item { flex: 1; min-width: 150px; max-width: 210px; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 0.75rem; }
+.step-icon-box {
+    width: 56px; height: 56px; background: linear-gradient(135deg, #0F172A, #1E3A5F);
+    border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 0.85rem; box-shadow: 0 4px 16px rgba(15,23,42,0.18);
+}
+.step-connector { flex: 0 0 36px; height: 2px; background: linear-gradient(90deg, #CBD5E1, #38BDF8, #CBD5E1); margin-top: 28px; border-radius: 2px; }
+.step-name { font-size: 0.88rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem; }
+.step-desc-text { font-size: 0.77rem; color: #94A3B8; line-height: 1.5; }
+
+/* ── Why card ── */
+.why-card { background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 1.25rem 1.75rem; margin-bottom: 1.5rem; }
+.why-card-title { font-size: 0.82rem; font-weight: 800; color: #15803D; margin-bottom: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+.why-items { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.why-item {
+    display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.83rem; font-weight: 600; color: #16A34A;
+    background: rgba(22,163,74,0.08); padding: 0.3rem 0.75rem 0.3rem 0.45rem; border-radius: 8px; border: 1px solid rgba(22,163,74,0.15);
+}
+.why-check {
+    width: 17px; height: 17px; background: #16A34A; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; color: white; flex-shrink: 0; font-weight: 900;
+}
+
+/* ── Form ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+@media (max-width: 800px) { .form-grid { grid-template-columns: 1fr; } }
+.form-section-label {
+    display: flex; align-items: center; gap: 0.6rem; font-size: 0.92rem; font-weight: 700; color: #0F172A;
+    margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #F1F5F9;
+}
+.form-label-icon { width: 32px; height: 32px; background: #F1F5F9; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.tab-btn {
+    flex: 1; padding: 0.55rem 0.75rem; border-radius: 8px; border: 1.5px solid #E2E8F0; background: #FAFAFA;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; color: #64748B; cursor: pointer;
+}
+.tab-btn.active { background: #0F172A; color: white; border-color: #0F172A; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+textarea, .file-drop {
+    width: 100%; border-radius: 10px; border: 1.5px solid #E2E8F0;
+    font-family: 'Inter', sans-serif; font-size: 0.89rem; background-color: #FAFAFA; color: #0F172A;
+    transition: border-color 0.2s, box-shadow 0.2s; padding: 0.85rem;
+}
+textarea { resize: vertical; }
+textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.12); background-color: #FFFFFF; outline: none; }
+#cv-textarea { height: 280px; }
+#job-textarea { height: 350px; }
+.file-drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+    height: 200px; border: 2px dashed #CBD5E1; cursor: pointer; text-align: center;
+}
+.file-drop:hover { border-color: #38BDF8; }
+.file-drop small { color: #94A3B8; }
+.file-status { margin-top: 0.6rem; font-size: 0.85rem; color: #16A34A; font-weight: 600; }
+
+.cta-wrap { text-align: center; margin: 1.5rem 0 0.5rem; }
+#analyze-btn {
+    background: linear-gradient(135deg, #0EA5E9 0%, #2563EB 100%); color: white;
+    font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 700;
+    padding: 0.9rem 2.5rem; border-radius: 12px; border: none;
+    box-shadow: 0 4px 16px rgba(14,165,233,0.38); cursor: pointer; transition: all 0.25s ease;
+}
+#analyze-btn:hover { box-shadow: 0 8px 24px rgba(14,165,233,0.52), 0 0 0 4px rgba(56,189,248,0.15); transform: translateY(-2px); }
+#analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.remaining-note { text-align: center; color: #94A3B8; font-size: 0.78rem; margin-top: 0.5rem; }
+
+.trust-bar { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; padding: 1.25rem 0 0.25rem; }
+.trust-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.79rem; color: #94A3B8; font-weight: 500; }
+
+.alert { border-radius: 12px; padding: 0.9rem 1.2rem; margin: 1rem 0; font-size: 0.9rem; }
+.alert-error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+.alert-warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+
+/* ── Loading ── */
+.cv-loading-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 16px;
+    padding: 2.5rem 2rem; text-align: center; margin: 1.5rem 0;
+    border: 1px solid rgba(56,189,248,0.18); box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.cv-loading-icon { font-size: 2.4rem; display: block; animation: cv-pulse 1.6s ease-in-out infinite; }
+@keyframes cv-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+.cv-loading-title { font-size: 1.05rem; font-weight: 700; color: #F8FAFC; margin: 0.9rem 0 0.5rem; }
+.cv-loading-dots span {
+    display: inline-block; width: 6px; height: 6px; background: #38BDF8; border-radius: 50%;
+    margin: 0 3px; animation: cv-dot 1.4s ease-in-out infinite;
+}
+.cv-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.cv-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cv-dot { 0%, 80%, 100% { transform: scale(0.55); opacity: 0.35; } 40% { transform: scale(1); opacity: 1; } }
+.cv-loading-steps { position: relative; height: 1.8rem; margin: 1.25rem 0; }
+.cv-step { font-size: 0.84rem; position: absolute; width: 100%; left: 0; opacity: 0; }
+@keyframes cv-s1 { 0% { opacity:0; color:#94A3B8; } 2% { opacity:1; color:#7DD3FC; } 14% { opacity:1; color:#7DD3FC; } 17% { opacity:0; } 100%{ opacity:0; } }
+@keyframes cv-s2 { 0%,16%{ opacity:0; } 18% { opacity:1; color:#7DD3FC; } 30% { opacity:1; color:#7DD3FC; } 33% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s3 { 0%,32%{ opacity:0; } 34% { opacity:1; color:#7DD3FC; } 50% { opacity:1; color:#7DD3FC; } 53% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s4 { 0%,52%{ opacity:0; } 54% { opacity:1; color:#7DD3FC; } 70% { opacity:1; color:#7DD3FC; } 73% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s5 { 0%,72%{ opacity:0; } 74% { opacity:1; color:#7DD3FC; } 100% { opacity:1; color:#7DD3FC; } }
+.cv-step-1 { animation: cv-s1 150s linear 1 forwards; }
+.cv-step-2 { animation: cv-s2 150s linear 1 forwards; }
+.cv-step-3 { animation: cv-s3 150s linear 1 forwards; }
+.cv-step-4 { animation: cv-s4 150s linear 1 forwards; }
+.cv-step-5 { animation: cv-s5 150s linear 1 forwards; }
+.cv-loading-bar-wrap { background: rgba(255,255,255,0.07); border-radius: 100px; height: 4px; overflow: hidden; margin: 1.25rem 0 0.85rem; }
+.cv-loading-bar { height: 100%; background: linear-gradient(90deg, #0EA5E9, #38BDF8); border-radius: 100px; animation: cv-progress 150s cubic-bezier(0.15,0.5,0.5,1) 1 forwards; }
+@keyframes cv-progress { from { width: 3%; } to { width: 93%; } }
+.cv-loading-note { font-size: 0.74rem; color: #475569; }
+
+/* ── Report ── */
+.report-header-card {
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 16px 16px 0 0;
+    padding: 1.6rem 2rem; display: flex; align-items: center; gap: 1rem;
+}
+.report-icon-box {
+    width: 46px; height: 46px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0;
+}
+.report-header-info { flex: 1; }
+.report-header-info h2 { font-size: 1.15rem; font-weight: 800; color: #F8FAFC; margin: 0 0 0.15rem; }
+.report-header-info p { font-size: 0.78rem; color: #64748B; margin: 0; }
+.report-ai-badge {
+    background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.22); color: #38BDF8;
+    font-size: 0.65rem; font-weight: 700; padding: 0.3rem 0.65rem; border-radius: 6px; letter-spacing: 1.2px; white-space: nowrap;
+}
+.report-body { background: #FFFFFF; border-radius: 0 0 16px 16px; padding: 2rem; border: 1px solid #E2E8F0; border-top: none; }
+.report-body h1, .report-body h2, .report-body h3, .report-body p, .report-body li, .report-body strong { color: #0F172A; }
+.report-body h2 { font-size: 1rem; font-weight: 800; border-bottom: 2px solid #F1F5F9; padding-bottom: 5px; margin-top: 1.75rem; }
+.report-body h3 { color: #1E40AF; font-size: 0.93rem; font-weight: 700; }
+.report-body hr { border: none; border-top: 1px solid #F1F5F9; margin: 1.5rem 0; }
+
+.download-row { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.download-btn {
+    border-radius: 10px; font-weight: 600; border: 1.5px solid #E2E8F0; background: white; color: #0F172A;
+    padding: 0.7rem 1.4rem; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.88rem;
+}
+.download-btn:hover { border-color: #38BDF8; box-shadow: 0 2px 10px rgba(14,165,233,0.15); }
+
+.footer-note { text-align: center; color: #94A3B8; font-size: 0.82rem; padding: 2rem 0 1rem; }
+</style>
+</head>
+<body>
+
+<div class="hero-wrapper">
+  <div class="hero-inner">
+    <div class="hero-badge">🇹🇷 &nbsp;Türkiye'ye Özel Yapay Zeka Analizi</div>
+    <div class="hero-title">CV'nizi <span class="accent">Doğru İş İçin</span><br>Optimize Edin</div>
+    <div class="hero-subtitle">
+      CV oluşturmak değil, <span class="white">hedeflediğiniz pozisyon için doğru mesajı</span> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
+    </div>
+    <div class="hero-stats">
+      <span class="hero-stat-pill">🆓&nbsp; Ücretsiz</span>
+      <span class="hero-stat-pill">🔒&nbsp; Kayıt yok</span>
+      <span class="hero-stat-pill">🇹🇷&nbsp; Türkiye'ye özel</span>
+      <span class="hero-stat-pill">🧠&nbsp; Claude 4 destekli</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section-card">
+    <div class="section-label">⚡ 3 Adımda Sonuç</div>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-icon-box">📄</div>
+        <div class="step-name">CV'nizi Yükleyin</div>
+        <div class="step-desc-text">PDF veya metin olarak yapıştırın</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-icon-box">💼</div>
+        <div class="step-name">İlanı Girin</div>
+        <div class="step-desc-text">Başvurmak istediğiniz pozisyonun ilanını yapıştırın</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-icon-box">📋</div>
+        <div class="step-name">Raporunuzu Alın</div>
+        <div class="step-desc-text">Kişisel analiz + somut öneriler</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="why-card">
+    <div class="why-card-title">🎯 Neden CV Doktoru Farklı?</div>
+    <div class="why-items">
+      <span class="why-item"><span class="why-check">✓</span>İş ilanına özel eşleştirme</span>
+      <span class="why-item"><span class="why-check">✓</span>Türk iş kültürü nüansları</span>
+      <span class="why-item"><span class="why-check">✓</span>Somut düzeltme önerileri</span>
+      <span class="why-item"><span class="why-check">✓</span>ATS anahtar kelime analizi</span>
+      <span class="why-item"><span class="why-check">✓</span>Ücretsiz &amp; sınırsız</span>
+    </div>
+  </div>
+
+  <form id="analyze-form">
+    <div class="form-grid">
+      <div>
+        <div class="form-section-label"><span class="form-label-icon">📄</span> CV'niz</div>
+        <div class="tabs">
+          <button type="button" class="tab-btn active" data-tab="upload">📎 PDF/DOCX Yükle</button>
+          <button type="button" class="tab-btn" data-tab="paste">✏️ Metin Yapıştır</button>
+        </div>
+        <div class="tab-pane active" data-pane="upload">
+          <label class="file-drop" id="file-drop-label" for="cv-file">
+            <span style="font-size:1.6rem">📎</span>
+            <span>Dosya seçmek için tıklayın</span>
+            <small>PDF veya Word (.docx), maks. 10 MB</small>
+          </label>
+          <input type="file" id="cv-file" name="cv_file" accept=".pdf,.docx" style="display:none">
+          <div class="file-status" id="file-status"></div>
+        </div>
+        <div class="tab-pane" data-pane="paste">
+          <textarea id="cv-textarea" name="cv_text" placeholder="CV içeriğinizi buraya yapıştırın...&#10;&#10;Ad Soyad&#10;İletişim bilgileri&#10;Deneyim..."></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="form-section-label"><span class="form-label-icon">💼</span> Hedef İş İlanı</div>
+        <textarea id="job-textarea" name="job_text" placeholder="Başvurmak istediğiniz iş ilanını buraya yapıştırın...&#10;&#10;Örnek:&#10;Pozisyon: Yazılım Geliştirici&#10;Şirket: Örnek A.Ş.&#10;&#10;Gereksinimler:&#10;- 3+ yıl Python deneyimi&#10;- ..."></textarea>
+      </div>
+    </div>
+
+    <div id="alert-slot"></div>
+
+    <div class="cta-wrap">
+      <button type="submit" id="analyze-btn">🔍  Analizi Başlat  —  Ücretsiz</button>
+    </div>
+    <div class="remaining-note" id="remaining-note"></div>
+  </form>
+
+  <div class="trust-bar">
+    <div class="trust-item">🔒 SSL ile Güvenli</div>
+    <div class="trust-item">🗑️ Verileriniz saklanmaz</div>
+    <div class="trust-item">⚡ Anında sonuç</div>
+    <div class="trust-item">🎓 Claude 4 destekli</div>
+    <div class="trust-item">🇹🇷 Türkçe optimizasyon</div>
+  </div>
+
+  <div id="loading-slot"></div>
+  <div id="report-slot"></div>
+
+  <div class="footer-note">CV Doktoru — Türkiye'nin iş ilanına özel CV analiz aracı</div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Tabs ──
+  document.querySelectorAll(".tab-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.remove("active"); });
+      document.querySelectorAll(".tab-pane").forEach(function (p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelector('.tab-pane[data-pane="' + btn.dataset.tab + '"]').classList.add("active");
+    });
+  });
+
+  // ── File input ──
+  var fileInput = document.getElementById("cv-file");
+  var fileStatus = document.getElementById("file-status");
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files.length > 0) {
+      fileStatus.textContent = "✅ Yüklendi: " + fileInput.files[0].name;
+    } else {
+      fileStatus.textContent = "";
+    }
+  });
+
+  // ── Kalan hak göstergesi ──
+  function refreshRemaining() {
+    fetch("/api/remaining")
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var note = document.getElementById("remaining-note");
+        if (data.remaining < data.limit) {
+          note.textContent = "Bugün " + data.remaining + " ücretsiz analiz hakkınız kaldı.";
+        } else {
+          note.textContent = "";
+        }
+      })
+      .catch(function () {});
+  }
+  refreshRemaining();
+
+  // ── Minimal, güvenli markdown → HTML ──
+  // Önce TÜM metni HTML-escape eder, ardından sınırlı markdown kalıplarını uygular.
+  // Bu sıralama XSS'i engeller: kullanıcı/LLM çıktısında ham HTML/script olsa bile
+  // önce escape edildiği için tarayıcı tarafından hiçbir zaman kod olarak yorumlanmaz.
+  function escapeHtml(s) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function renderMarkdown(raw) {
+    var escaped = escapeHtml(raw);
+    var lines = escaped.split("\n");
+    var html = [];
+    var inList = false;
+
+    function closeList() {
+      if (inList) { html.push("</ul>"); inList = false; }
+    }
+
+    lines.forEach(function (line) {
+      var trimmed = line.trim();
+
+      if (trimmed === "" ) { closeList(); return; }
+      if (trimmed === "---") { closeList(); html.push("<hr>"); return; }
+
+      var h3 = trimmed.match(/^### (.+)/);
+      var h2 = trimmed.match(/^## (.+)/);
+      var h1 = trimmed.match(/^# (.+)/);
+      var li = trimmed.match(/^[-*] (.+)/);
+
+      if (h3) { closeList(); html.push("<h3>" + inlineFormat(h3[1]) + "</h3>"); return; }
+      if (h2) { closeList(); html.push("<h2>" + inlineFormat(h2[1]) + "</h2>"); return; }
+      if (h1) { closeList(); html.push("<h1>" + inlineFormat(h1[1]) + "</h1>"); return; }
+      if (li) {
+        if (!inList) { html.push("<ul>"); inList = true; }
+        html.push("<li>" + inlineFormat(li[1]) + "</li>");
+        return;
+      }
+
+      closeList();
+      html.push("<p>" + inlineFormat(trimmed) + "</p>");
+    });
+
+    closeList();
+    return html.join("\n");
+  }
+
+  function inlineFormat(text) {
+    // Bold: **text**
+    text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    // Inline code: `text`
+    text = text.replace(/`(.+?)`/g, "<code>$1</code>");
+    return text;
+  }
+
+  // ── Analiz ──
+  var form = document.getElementById("analyze-form");
+  var analyzeBtn = document.getElementById("analyze-btn");
+  var alertSlot = document.getElementById("alert-slot");
+  var loadingSlot = document.getElementById("loading-slot");
+  var reportSlot = document.getElementById("report-slot");
+  var lastReportText = "";
+
+  function showAlert(message, kind) {
+    alertSlot.innerHTML = '<div class="alert alert-' + kind + '">' + escapeHtml(message) + "</div>";
+  }
+  function clearAlert() { alertSlot.innerHTML = ""; }
+
+  function showLoading() {
+    loadingSlot.innerHTML =
+      '<div class="cv-loading-card">' +
+      '<span class="cv-loading-icon">🩺</span>' +
+      '<div class="cv-loading-title">Analiz yapılıyor</div>' +
+      '<div class="cv-loading-dots"><span></span><span></span><span></span></div>' +
+      '<div class="cv-loading-steps">' +
+      '<div class="cv-step cv-step-1">📄 CV metni okunuyor ve ayrıştırılıyor</div>' +
+      '<div class="cv-step cv-step-2">🔍 İş ilanıyla eşleştiriliyor</div>' +
+      '<div class="cv-step cv-step-3">⚠️ Kırmızı bayraklar tespit ediliyor</div>' +
+      '<div class="cv-step cv-step-4">💡 Güçlü noktalar ve öneriler hazırlanıyor</div>' +
+      '<div class="cv-step cv-step-5">✍️ Rapor yazılıyor ve düzenleniyor</div>' +
+      "</div>" +
+      '<div class="cv-loading-bar-wrap"><div class="cv-loading-bar"></div></div>' +
+      '<div class="cv-loading-note">Bu işlem 2-3 dakika sürebilir — lütfen sayfayı kapatmayın.</div>' +
+      "</div>";
+  }
+  function clearLoading() { loadingSlot.innerHTML = ""; }
+
+  function renderReport(reportText) {
+    lastReportText = reportText;
+    reportSlot.innerHTML =
+      '<div class="report-header-card">' +
+      '<div class="report-icon-box">📋</div>' +
+      '<div class="report-header-info"><h2>Analiz Raporu</h2><p>İş ilanına özel kişisel değerlendirme</p></div>' +
+      '<span class="report-ai-badge">YAPAY ZEKA ANALİZİ</span>' +
+      "</div>" +
+      '<div class="report-body">' + renderMarkdown(reportText) + "</div>" +
+      '<div class="download-row">' +
+      '<button type="button" class="download-btn" id="dl-txt-btn">📄 Metin olarak indir (.txt)</button>' +
+      '<button type="button" class="download-btn" id="dl-pdf-btn">📕 PDF olarak indir</button>' +
+      "</div>";
+
+    document.getElementById("dl-txt-btn").addEventListener("click", function () {
+      var blob = new Blob([lastReportText], { type: "text/plain;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "cv_analiz_raporu.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("dl-pdf-btn").addEventListener("click", function () {
+      var body = new URLSearchParams();
+      body.set("report", lastReportText);
+      fetch("/api/pdf", { method: "POST", body: body })
+        .then(function (r) {
+          if (!r.ok) { return r.json().then(function (d) { throw new Error(d.error || "PDF oluşturulamadı"); }); }
+          return r.blob();
+        })
+        .then(function (blob) {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = "cv_analiz_raporu.pdf";
+          a.click();
+          URL.revokeObjectURL(url);
+        })
+        .catch(function (err) { showAlert(err.message, "warning"); });
+    });
+
+    reportSlot.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearAlert();
+    reportSlot.innerHTML = "";
+
+    var activeTab = document.querySelector(".tab-btn.active").dataset.tab;
+    var cvText = document.getElementById("cv-textarea").value.trim();
+    var hasFile = activeTab === "upload" && fileInput.files.length > 0;
+    var jobText = document.getElementById("job-textarea").value.trim();
+
+    if (activeTab === "upload" && !hasFile) {
+      showAlert("⚠️ Lütfen bir CV dosyası yükleyin.", "warning");
+      return;
+    }
+    if (activeTab === "paste" && !cvText) {
+      showAlert("⚠️ Lütfen CV metnini yapıştırın.", "warning");
+      return;
+    }
+    if (!jobText) {
+      showAlert("⚠️ Lütfen iş ilanı metnini girin.", "warning");
+      return;
+    }
+
+    var formData = new FormData();
+    formData.set("job_text", jobText);
+    if (activeTab === "upload") {
+      formData.set("cv_file", fileInput.files[0]);
+    } else {
+      formData.set("cv_text", cvText);
+    }
+
+    analyzeBtn.disabled = true;
+    showLoading();
+
+    fetch("/api/analyze", { method: "POST", body: formData })
+      .then(function (r) {
+        return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+      })
+      .then(function (result) {
+        clearLoading();
+        analyzeBtn.disabled = false;
+        if (!result.ok) {
+          showAlert(result.data.error || "Analiz sırasında bir hata oluştu.", "error");
+          return;
+        }
+        renderReport(result.data.report);
+        refreshRemaining();
+      })
+      .catch(function (err) {
+        clearLoading();
+        analyzeBtn.disabled = false;
+        showAlert("Ağ hatası: " + err.message, "error");
+      });
+  });
+})();
+</script>
+
+</body>
+</html>

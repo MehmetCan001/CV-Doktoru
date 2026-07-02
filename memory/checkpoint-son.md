@@ -1,65 +1,62 @@
-# CHECKPOINT — 2026-07-01 — v1.5
+# CHECKPOINT — 2026-07-02 — v1.6
 
 ## Proje Adı ve Amacı
 **CV Doktoru** — Türkiye iş piyasasına özgü AI destekli CV analiz aracı.
-**URL:** https://cvdoktoru.com ✅ CANLI
+**URL:** https://cvdoktoru.com ✅ CANLI (şu an hâlâ Streamlit sürümü)
 
-## Tech Stack (Mevcut)
-- **Frontend/UI**: Streamlit (`src/app.py`) — TERK EDİLECEK
+## Tech Stack (Mevcut — Canlıda)
+- **Frontend/UI**: Streamlit (`src/app.py`) — YEREL FASTAPI SÜRÜMÜ HAZIR, DEPLOY EDİLMEDİ
 - **AI Motoru**: Anthropic Claude (`src/_analyzer_claude.py`) — `claude-sonnet-4-6`
-- **Dosya Okuma**: `src/pdf_reader.py` — PDF, DOCX, düz metin
-- **Prompt Sistemi**: `src/prompt_loader.py`
-- **Config**: `src/config.py` — MAX_TOKENS=32768, _TIMEOUT=600s
 - **Sunucu**: Hetzner CX23, Nuremberg — IP: 46.225.20.111
-- **Servis**: systemd `cv-doktoru.service`
+- **Servis**: systemd `cv-doktoru.service` (hâlâ Streamlit'i çalıştırıyor)
 - **Reverse proxy**: Nginx + Let's Encrypt HTTPS
 - **Domain**: GoDaddy `cvdoktoru.com`
 
-## Hedef Tech Stack (Yarın)
-- **Frontend**: Vanilla HTML/CSS/JS (`templates/index.html`)
-- **Backend**: FastAPI (`src/server.py`)
-- **Streaming**: Server-Sent Events (SSE) — token token anlık çıktı
-- **Python analiz kodu**: Değişmez
+## FastAPI Geçişi — DURUM: Yerelde tamamlandı, deploy bekliyor
+Bu oturumda (2026-07-02) yapıldı:
+- [x] `src/server.py` — FastAPI app. Endpoint'ler:
+  - `GET /` → `templates/index.html`
+  - `GET /api/remaining` → kalan günlük hak
+  - `POST /api/analyze` → multipart form (cv_file veya cv_text + job_text), blocking analiz (SSE/streaming KULLANILMADI — bilinçli karar, aşağıya bak)
+  - `POST /api/pdf` → rapor metninden PDF üretir
+- [x] `templates/index.html` — Streamlit tasarımının vanilla HTML/CSS/JS portu (hero, adımlar, form, loading animasyonu, rapor gösterimi, indirme butonları)
+- [x] `src/pdf_export.py` — PDF üretimi `app.py`'den ayrıştırıldı, hem Streamlit hem FastAPI kullanıyor (kod tekrarı yok)
+- [x] `src/rate_limiter.py` — `get_client_ip_from_headers()` eklendi (generic, hem Streamlit hem FastAPI request.headers ile çalışır); eski `get_client_ip()` Streamlit için korundu
+- [x] `requirements.txt` — fastapi, uvicorn[standard], python-multipart eklendi
+- [x] Lokalde uçtan uca test edildi: gerçek Claude API çağrısı ile analiz (200 OK, 2 dk sürdü), PDF export (6 sayfa, geçerli PDF), rate limiter (3→2 azaldı), Streamlit app.py hâlâ syntax-valid ve yeni pdf_export'u kullanıyor
 
-## Tamamlanan
-- [x] Temel CV + iş ilanı analizi (Claude API)
-- [x] Prompt sistemi (13 bölüm, koşullu bölümler)
-- [x] Hetzner VPS deploy
-- [x] HTTPS (Let's Encrypt)
-- [x] IP bazlı rate limiting (3/gün)
-- [x] Loading animasyonu (CSS)
-- [x] Prompt kısaltma (~%30 daha hızlı)
-- [x] threading.Thread ile event loop izolasyonu
-- [x] Dosya kalıcılığı (WebSocket kopsa raporu kurtar)
+### Bilinçli karar: Gerçek SSE token-streaming YOK
+Checkpoint v1.5'te "SSE ile token token akış" hedeflenmişti. Kullanıcıyla görüşüldü:
+`_analyzer_claude.py`'deki `analyze_stream()` metodu bozuktu (`self.client` hiç tanımlanmamış,
+çağrılsa `AttributeError` verirdi). Gerçek streaming hem bu metodun düzeltilmesini hem yeni bir
+SSE yüzeyini gerektiriyordu — ekstra risk. Bunun yerine **blocking + sahte ilerleme çubuğu**
+(mevcut Streamlit UX'inin birebir aynısı) seçildi. `doctor.analyze()` FastAPI'de
+`run_in_threadpool` ile çalıştırılıyor. İleride gerçek streaming istenirse önce
+`analyze_stream()` düzeltilmeli.
 
-## Streamlit Sorunları (Neden Terk Ediyoruz)
-1. WebSocket drop — uzun analiz sırasında bağlantı kopuyor
-2. Event loop çakışması — Anthropic SDK ile Streamlit asyncio çakışıyor
-3. Mobil dosya yükleme — seçim oluyor ama upload tamamlanmıyor
-4. UI kısıtı — tam CSS kontrolü yok
-5. Streaming yapısal olarak güvenilmez
+### XSS önlemi — rapor gösterimi
+Rapor metni LLM çıktısı olduğu için (kullanıcı girdisi + prompt injection riski var),
+`templates/index.html` içinde üçüncü parti markdown kütüphanesi (marked.js vb.) YERİNE
+bağımlılıksız, önce tüm metni escape edip sonra sınırlı regex kalıpları uygulayan bir
+JS fonksiyonu yazıldı (`renderMarkdown`). Böylece raw HTML/script LLM çıktısına sızsa bile
+tarayıcı tarafından hiçbir zaman kod olarak yorumlanmaz. Ayrıca SRI hash tahmini / CDN
+tedarik zinciri riski de ortadan kalktı.
 
-## Yarınki Plan: Streamlit → FastAPI
-1. `src/server.py` — FastAPI uygulaması
-   - `GET /` → index.html
-   - `POST /analyze` → SSE stream (token token çıktı)
-   - `POST /upload` → CV dosyası parse
-2. `templates/index.html` — mevcut tasarımı port et
-3. `requirements.txt` — fastapi ekle (uvicorn zaten var)
-4. Systemd → `uvicorn src.server:app --port 8501`
-5. Nginx → değişiklik yok (aynı port)
-6. Test: masaüstü + mobil
+## Deploy Edilmeyenler (Sıradaki Adım — Hetzner VPS erişimi gerekli)
+1. VPS'e yeni dosyaları aktar (`src/server.py`, `src/pdf_export.py`, `templates/`, güncellenen `src/rate_limiter.py`, `requirements.txt`)
+2. `pip install -r requirements.txt` (fastapi/uvicorn/python-multipart)
+3. systemd `cv-doktoru.service` → `ExecStart` satırını `uvicorn src.server:app --host 127.0.0.1 --port 8501` olarak değiştir (Streamlit komutu yerine)
+4. Nginx config'te değişiklik gerekmiyor (aynı port'a proxy yapıyor)
+5. `systemctl daemon-reload && systemctl restart cv-doktoru`
+6. Masaüstü + mobil canlı test (özellikle mobil dosya yükleme — Streamlit'te sorunluydu)
+7. Sorun yoksa: `src/app.py`, Streamlit bağımlılığı ve eski `.streamlit/` config'i kaldır
 
-## Analiz Kodu (Dokunmayacak)
-- `src/analyzer.py` — CVDoctor wrapper
-- `src/_analyzer_claude.py` — threading.Thread + streaming
-- `src/prompt_loader.py` — prompt dosyaları yükle
-- `src/pdf_reader.py` — PDF/DOCX okuma
-- `src/rate_limiter.py` — IP rate limiting
-- `prompts/` — tüm prompt dosyaları
-- `knowledge/` — Türk iş kültürü bilgi tabanı
+## Analiz Kodu (Dokunulmadı — Plan Buydu, Uygulandı)
+- `src/analyzer.py`, `src/_analyzer_claude.py`, `src/prompt_loader.py`, `src/pdf_reader.py`
+- `src/rate_limiter.py` — sadece IP çıkarma fonksiyonu genelleştirildi, iş mantığı (check_and_increment, remaining_today) değişmedi
+- `prompts/`, `knowledge/` — dokunulmadı
 
-## Bilinen Sorunlar
-- Streamlit: analiz tamamlanıyor ama WebSocket drop nedeniyle rapor ekrana gelmiyor
-- Mobil: dosya upload tamamlanmıyor (Streamlit sorunu, FastAPI ile çözülecek)
-- `data/last_report.txt` — geçici workaround, FastAPI'ye geçince kaldırılacak
+## Bilinen Sorunlar / Riskler
+- FastAPI sürümü henüz production'da DEĞİL — sadece yerel makinede doğrulandı
+- Mobil dosya yükleme yeni HTML/JS ile henüz gerçek bir mobil cihazda test edilmedi
+- `data/last_report.txt` mekanizması FastAPI sürümünde de korundu (kurtarma amaçlı), ama artık session_state sorunu olmadığı için gereksiz — istenirse kaldırılabilir

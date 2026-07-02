@@ -389,13 +389,15 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 - [x] ATS uyumluluk notu
 - [x] Mülakat simülasyonu (skor ≥ 40)
 - [x] Loading adım mesajları (UX — Streamlit st.status)
+- [x] Claude API'ye geçiş (Gemini → Anthropic)
+- [x] Domain: cvdoktoru.com (canlı)
+- [x] Streamlit → FastAPI geçişi (kod tarafı) — `src/server.py`, `templates/index.html`, `src/pdf_export.py`. Yerelde uçtan uca test edildi (2026-07-02). **Hetzner VPS'e deploy edilmedi** — sıradaki adım. Detay: `memory/checkpoint-son.md`
 
 ### Sıradaki (Öncelik Sırasıyla)
+- [ ] FastAPI sürümünü Hetzner VPS'e deploy et (systemd ExecStart güncelle, mobil dahil canlı test)
 - [ ] LinkedIn profil önerisi bölümü (CVCIM + ResumeWorded'dan öğrenildi, talep kanıtlı)
 - [ ] Maaş beklentisi ipucu (Youthall verisi referans alınabilir)
 - [ ] Yazım kalitesi boyutu (Grammarly'den ilham — pasif cümle, klişe ifade tespiti)
-- [ ] Claude API'ye geçiş (Gemini → Anthropic)
-- [ ] Domain: cvdoktoru.com.tr
 
 ### Orta Vadeli
 - [ ] GitHub analizi (yazılımcılar için — Anabasis'te vardı)
