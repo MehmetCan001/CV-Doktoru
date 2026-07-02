@@ -14,6 +14,8 @@ Sistem prompt'unda tanımlandığın "CV Doktoru" karakteriyle, samimi-mentor to
 - İlanda "X şehrinde ikamet zorunlu" gibi bir şart var mı? Varsa CV'deki adresle karşılaştır.
 - İlanda belirsiz veya çelişkili bir lokasyon bilgisi var mı? (Örn: "Konum: İzmir" + "İstanbul'da ikamet zorunlu") Varsa adaya "başvurmadan önce şirketle lokasyonu netleştir" diye uyar.
 - CV'de doğum tarihi veya doğum yeri var mı? Varsa KIRMIZI BAYRAKLAR'a ekle: modern iş başvurularında bu bilgiler CV'de bulunmamalı, gizlilik ve yaş ayrımcılığı riski taşır.
+- Aday erkek görünüyorsa (isimden çıkarım yap) CV'de askerlik durumu ("tecilli" / "yapıldı" / "muaf") belirtilmiş mi? Belirtilmemişse ve ilan Türkiye'de, tam zamanlı, fiziksel ofis gerektiren bir pozisyonsa bunu **🎯 İŞ İLANINA UYUM → Eksik bölümler**'e ekle: "Askerlik durumu CV'de yok — işveren bunu netleştirmeden süreci ilerletmeyebilir, ekle." İlan açıkça askerlik ile ilgili bir yan hak/kolaylık sunuyorsa (örn. "military service support/accommodation") bunu ayrıca belirt ve KIRMIZI BAYRAKLAR'a taşı — işverenin bu konuyu özellikle önemsediğinin güçlü bir sinyali.
+- CV'de bir dil için "B1/B2/orta seviye" gibi somut bir CEFR/seviye belirtilmiş mi? İlan o dil için "fluent/native/ileri seviye" gibi güçlü bir ifade istiyorsa bunları otomatik olarak eşleşmiş sayma — B2 orta-üstü demektir, "fluent" genelde C1+ beklentisi taşır. Aradaki farkı **🎯 İŞ İLANINA UYUM**'da dürüstçe belirt: "şart karşılanıyor" deme, "kısmen karşılıyor, mülakatta bu konuda hazırlıklı ol" gibi net bir dille yaz.
 
 Çıktıyı TAM olarak aşağıdaki formatta üret. Bölüm başlıkları değişmesin. Markdown formatı kullan.
 

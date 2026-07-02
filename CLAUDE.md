@@ -321,6 +321,8 @@ Bu projede prompt kalitesiyle ilgili edinilen dersler — her oturumda buraya ye
 - **`st.rerun()` + uzun API çağrısı = session_state kaybolur (KESİN KURAL)**: Uzun süren (2-4 dk) bir LLM çağrısının ardından `st.rerun()` çağrılırsa, Streamlit Cloud WebSocket'i yenileyebilir; yeni oturumda `session_state` boş gelir ve rapor hiç görünmez. Kural: `st.rerun()` kullanma. Raporu, analiz tamamlanır tamamlanmaz aynı script çalışmasında (fall-through) render et. `session_state` sadece kullanıcının sayfayı yeniden ziyaret etmesi için tut. (2026-06-26)
 - **Few-shot örneklerin ağırlığı**: System prompt kuralından daha güçlü. Bir davranışı istiyorsan, o davranışın doğru halini örnekte göster.
 - **Uzun bağlantı kırılganlığı Streamlit'e özgü değil (KESİN KURAL)**: FastAPI'ye geçilince `/api/analyze` isteği 2-4 dakika tek bir HTTP bağlantısını veri akışı olmadan açık tutuyordu. PC'nin ev ağında NAT/firewall bunu "boşta bağlantı" sayıp `ERR_CONNECTION_RESET` ile kesti (mobil şebekede sorun çıkmadı). **Kural**: LLM çağrısı dakikalar sürüyorsa, tarayıcı ↔ sunucu arasında tek bir bağlantının bu süre boyunca hayatta kalacağına asla güvenme — WebSocket'te de düz HTTP'de de aynı risk var. Doğru desen: `POST /start` (hemen job_id döner, iş arka planda thread'de çalışır) + `GET /status/{id}` ile birkaç saniyede bir polling. Alternatif: SSE + düzenli heartbeat ping. (2026-07-02, canlıda DevTools ile doğrulandı, çözüldü: `src/server.py` `_jobs` mekanizması)
+- **Sistem promptundaki "pasif kural" uygulanmıyor, "aktif ön kontrol" uygulanıyor**: `system_prompt.md`'de "askerlik durumu net olmalı" gibi bir kural olması yetmiyor — model bunu tutarlı uygulamıyor. `analysis_prompt.md`'deki açık "ön kontroller" listesi (lokasyon çelişkisi, doğum tarihi gibi) VE en az bir few-shot örnekte gösterilmiş olması gerekiyor. Gerçek örnek: askerlik durumu kuralı system_prompt'ta aylardır vardı ama hiçbir ön kontrol maddesi ya da few-shot örneği yoktu, gerçek bir CV analizinde (erkek aday, ilan "military service support" sunuyor) tamamen atlandı. Düzeltme: `analysis_prompt.md`'ye açık ön kontrol maddesi + `ornek_1_yazilim.md`'ye demonstrasyon eklendi, sonraki testte doğru çalıştı. **Kural**: "sistem promptunda bir yerde yazıyor" yeterli değil — kritik her davranış hem aktif ön kontrol listesinde hem de en az bir few-shot örnekte somut olarak gösterilmeli. (2026-07-02)
+- **CEFR seviyesi ile işverenin "fluent/native" gibi ifadelerini otomatik eşleştirme**: Model, CV'de "B2" yazan bir adayı ilanın "fluent English" şartını karşılıyor gibi yorumlama eğilimindeydi (B2 = orta-üstü, "fluent" genelde C1+ beklentisi). Bunu **🎯 İŞ İLANINA UYUM** ön kontrollerine dürüstlük kuralı olarak ekledik: seviye farkını gizleme, "kısmen karşılıyor, mülakatta hazırlıklı ol" gibi net dille yaz. (2026-07-02)
 
 ### Analiz Formatı Evrimi
 Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
@@ -392,13 +394,16 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 - [x] Loading adım mesajları (UX — Streamlit st.status)
 - [x] Claude API'ye geçiş (Gemini → Anthropic)
 - [x] Domain: cvdoktoru.com (canlı)
-- [x] Streamlit → FastAPI geçişi (kod tarafı) — `src/server.py`, `templates/index.html`, `src/pdf_export.py`. Yerelde uçtan uca test edildi (2026-07-02). **Hetzner VPS'e deploy edilmedi** — sıradaki adım. Detay: `memory/checkpoint-son.md`
+- [x] Streamlit → FastAPI geçişi — canlıya alındı 2026-07-02 (polling mimarisiyle, bkz. `memory/checkpoint-son.md`)
+- [x] LinkedIn profil önerisi bölümü (CVCIM + ResumeWorded'dan öğrenildi) — `analysis_prompt.md` içinde zaten mevcut, bu maddenin "sıradaki"de kalması belge güncelliği hatasıydı, 2026-07-02'de fark edildi ve düzeltildi
+- [x] Maaş beklentisi ipucu (Youthall referansıyla) — `analysis_prompt.md` içinde zaten mevcut, aynı belge güncelliği hatası
+- [x] Yazım kalitesi boyutu (pasif cümle, klişe ifade tespiti) — `analysis_prompt.md` içinde zaten mevcut, aynı belge güncelliği hatası
+- [x] Askerlik durumu ön kontrolü — 2026-07-02'de eklendi (gerçek bir analizde eksik çıktığı görüldü, `analysis_prompt.md` + `ornek_1_yazilim.md`'ye eklendi, test edildi)
+- [x] CEFR/dil seviyesi dürüstlük kuralı ("B2" ile "fluent" otomatik eşleştirilmesin) — 2026-07-02'de eklendi
 
 ### Sıradaki (Öncelik Sırasıyla)
-- [ ] FastAPI sürümünü Hetzner VPS'e deploy et (systemd ExecStart güncelle, mobil dahil canlı test)
-- [ ] LinkedIn profil önerisi bölümü (CVCIM + ResumeWorded'dan öğrenildi, talep kanıtlı)
-- [ ] Maaş beklentisi ipucu (Youthall verisi referans alınabilir)
-- [ ] Yazım kalitesi boyutu (Grammarly'den ilham — pasif cümle, klişe ifade tespiti)
+- [ ] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et (dosya yükleme akışı ayrıca doğrulanmadı)
+- [ ] **Belge güncelliği alışkanlığı**: Bir özellik `analysis_prompt.md`'ye eklendiğinde AYNI ANDA bu roadmap'te işaretlensin — 2026-07-02'de 3 madde aylardır tamamlanmış olduğu halde "sıradaki" görünüyordu, kullanıcı raporu incelerken fark edildi
 
 ### Orta Vadeli
 - [ ] GitHub analizi (yazılımcılar için — Anabasis'te vardı)

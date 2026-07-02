@@ -201,6 +201,7 @@ Hacettepe Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyum
 - **Projeler bölümü** (junior CV'sinin omurgası olmalı)
 - **Profesyonel özet** (mevcut "öğrenmeye açık" cümlesi yerine)
 - **İngilizce seviyesi belirsiz** ("orta" yerine "B2" veya somut bir gösterge)
+- **Askerlik durumu** — CV'de hiç yok. Türkiye'de tam zamanlı bir pozisyona başvururken bu bilgi (tecilli/yapıldı/muaf) beklenir; işveren netleşmeden süreci ilerletmekte tereddüt edebilir. Ekle.
 
 ---
 
