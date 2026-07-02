@@ -52,8 +52,37 @@ FastAPI sürümü **canlıya alındı**. `cvdoktoru.com` artık `src/server.py`'
 - Doğrulama: `https://cvdoktoru.com/` (200), `/api/remaining` (200), gerçek `/api/analyze` isteği HTTPS üzerinden uçtan uca test edildi (200, tam rapor)
 - Nginx/journalctl logları temiz, hata yok
 
+## KRİTİK FIX — 2026-07-02 17:19 UTC — Polling mimarisine geçiş
+Deploy sonrası canlıda gerçek kullanıcı testi yapıldı: mobil sorunsuz çalıştı ama **PC
+tarayıcısında `net::ERR_CONNECTION_RESET`** hatası alındı (DevTools Console ile doğrulandı).
+Sunucu tarafı log analizi: PC'nin isteği aslında sunucuda 200 OK ile tamamlanmıştı (bir
+önceki denemede), ama ikinci denemede istek **nginx'e hiç ulaşmadı** — bağlantı client
+tarafında/ağ yolunda kesildi.
+
+**Kök sebep:** `/api/analyze` isteği 2-4 dakika boyunca tek bir HTTP bağlantısını hiç veri
+akışı olmadan açık tutuyordu. Bazı ev/kurumsal ağların NAT/firewall'ı bu "boşta" bağlantıyı
+ölü sayıp RST ile kesiyor. Mobil şebekede bu sorun yaşanmadı (muhtemelen farklı NAT zaman
+aşımı). **Bu, Streamlit'i terk etmemize sebep olan "uzun bağlantı kırılganlığı" sorununun
+aynısı — sadece taşıma katmanı (WebSocket → düz HTTP) değişmişti, temel risk değişmemişti.**
+
+**Çözüm — iş kuyruğu + polling:**
+- `POST /api/analyze/start` — artık < 1sn içinde `job_id` döner, analiz arka planda
+  `threading.Thread` ile yürütülür. Sonuç bellekte `_jobs` sözlüğünde tutulur (30 dk TTL,
+  her yeni job'da eskiler temizlenir — tek process olduğu için Redis vb. gerekmedi).
+- `GET /api/analyze/status/{job_id}` — tarayıcı 3 saniyede bir sorgular, her istek çok
+  kısa sürdüğü için hiçbir NAT/firewall'ın kesecek "boşta bağlantı"sı olmuyor.
+- `templates/index.html` — `pollJobStatus()` fonksiyonu eklendi, max 10 dk polling sınırı var.
+- Hem lokalde hem canlıda (`cvdoktoru.com` üzerinden gerçek HTTPS isteğiyle) uçtan uca
+  doğrulandı — çalışıyor.
+
+**KURAL (CLAUDE.md'ye de eklenmeli — bir sonraki oturumda hatırlat):** Bu projede LLM
+çağrıları 2-4 dakika sürüyor. Tarayıcı ↔ sunucu arasında **tek bir bağlantının bu süre
+boyunca veri akışı olmadan açık kalmasına asla güvenme** — WebSocket'te de, düz HTTP'de de
+aynı NAT/firewall/idle-timeout riski var. Doğru desen: iş başlat (hızlı yanıt) + kısa
+aralıklarla durum sorgula (polling) ya da düzenli heartbeat ile canlı tut (SSE + ping).
+
 ## Yapılmayanlar / Sıradaki
-- [ ] Mobil cihazdan gerçek dosya yükleme testi (Streamlit'te sorunluydu, düzeldiğini varsayıyoruz ama gerçek telefonla doğrulanmadı)
+- [ ] Mobil cihazdan gerçek dosya yükleme testi (henüz ayrıca doğrulanmadı, ama polling akışı mobilde de aynı şekilde çalışır)
 - [ ] Sorunsuz birkaç gün geçince: `src/app.py`, `.streamlit/` klasörü ve `streamlit` bağımlılığını kaldır (şu an ölü kod, ama güvenlik ağı olarak bırakıldı)
 - [ ] `.streamlit/config.toml`'daki sunucu-lokal elle yapılmış değişiklik (`port=8501`, `enableXsrfProtection=false`) artık kullanılmıyor, temizlik sırasında kaldırılabilir
 
