@@ -8,6 +8,8 @@ data/*.pdf
 data/*.txt
 data/*.docx
 data/rate_limits.json
+data/analytics_events.jsonl
+data/leads.json
 .DS_Store
 Thumbs.db
 .claude/

@@ -18,7 +18,7 @@ from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from starlette.concurrency import run_in_threadpool
 
-from src import config
+from src import analytics, config
 from src.analyzer import CVDoctor
 from src.pdf_export import generate_pdf_report
 from src.pdf_reader import extract_text_from_docx, extract_text_from_pdf
@@ -65,15 +65,69 @@ def _client_ip(request: Request) -> str:
     return get_client_ip_from_headers(request.headers, fallback)
 
 
+SITE_URL = os.getenv("SITE_URL", "https://cvdoktoru.com").rstrip("/")
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     return (TEMPLATES_DIR / "index.html").read_text(encoding="utf-8")
+
+
+@app.get("/robots.txt", response_class=Response)
+def robots_txt():
+    body = f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n"
+    return Response(content=body, media_type="text/plain")
+
+
+@app.get("/sitemap.xml", response_class=Response)
+def sitemap_xml():
+    today = time.strftime("%Y-%m-%d")
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        "  <url>\n"
+        f"    <loc>{SITE_URL}/</loc>\n"
+        f"    <lastmod>{today}</lastmod>\n"
+        "    <changefreq>weekly</changefreq>\n"
+        "    <priority>1.0</priority>\n"
+        "  </url>\n"
+        "</urlset>\n"
+    )
+    return Response(content=body, media_type="application/xml")
 
 
 @app.get("/api/remaining")
 def api_remaining(request: Request):
     ip = _client_ip(request)
     return {"remaining": remaining_today(ip), "limit": DAILY_LIMIT}
+
+
+@app.post("/api/track/visit")
+def api_track_visit(request: Request):
+    analytics.log_event("page_view", _client_ip(request))
+    return {"ok": True}
+
+
+@app.post("/api/track/premium-click")
+def api_track_premium_click(request: Request):
+    analytics.log_event("premium_click", _client_ip(request))
+    return {"ok": True}
+
+
+@app.post("/api/leads")
+def api_leads(email: str = Form(...)):
+    ok = analytics.record_lead(email)
+    if not ok:
+        return JSONResponse({"error": "Geçerli bir e-posta adresi girin."}, status_code=400)
+    return {"ok": True}
+
+
+@app.get("/api/analytics/summary")
+def api_analytics_summary(request: Request, key: str = "", days: int = 14):
+    admin_key = os.getenv("ANALYTICS_ADMIN_KEY")
+    if not admin_key or key != admin_key:
+        return JSONResponse({"error": "Yetkisiz."}, status_code=403)
+    return analytics.summary(days=days)
 
 
 def _run_analysis_job(job_id: str, cv_text: str, job_text: str) -> None:
