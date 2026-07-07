@@ -107,6 +107,9 @@ def summary(days: int = 14) -> dict:
 
     unique_visitors = len(page_view_hashes)
     unique_clickers = len(premium_click_hashes)
+    click_rate_pct = round(100 * unique_clickers / unique_visitors, 1) if unique_visitors else 0.0
+
+    verdict, verdict_detail = _decision_matrix(unique_visitors, click_rate_pct)
 
     return {
         "days": days,
@@ -114,6 +117,39 @@ def summary(days: int = 14) -> dict:
         "premium_click_visitors": unique_clickers,
         "leads_captured": lead_count,
         "total_leads_all_time": len(leads),
-        "click_rate_pct": round(100 * unique_clickers / unique_visitors, 1) if unique_visitors else 0.0,
+        "click_rate_pct": click_rate_pct,
         "lead_conversion_pct": round(100 * lead_count / unique_visitors, 1) if unique_visitors else 0.0,
+        "verdict": verdict,
+        "verdict_detail": verdict_detail,
     }
+
+
+# Karar matrisi: CTA tıklama oranına (tıklayan tekil ziyaretçi / toplam tekil ziyaretçi)
+# göre otomatik değerlendirme. Eşikler yüzdeye dayalı — trafik hacmi haftadan haftaya
+# değişse de aynı mantık geçerli kalır.
+_MIN_SAMPLE_SIZE = 30  # bu sayının altında rakamlar gürültülü, karar verilmez
+
+
+def _decision_matrix(unique_visitors: int, click_rate_pct: float) -> tuple[str, str]:
+    if unique_visitors < _MIN_SAMPLE_SIZE:
+        return (
+            "YETERSİZ_VERİ",
+            f"Henüz {unique_visitors} tekil ziyaretçi var, en az {_MIN_SAMPLE_SIZE} gerekli — "
+            "rakamlar bu hacimde güvenilir değil, beklemeye devam edin.",
+        )
+    if click_rate_pct < 1:
+        return (
+            "KILL",
+            "Tıklama oranı %1'in altında — pazar sinyali zayıf. Pivot yapın veya projeyi "
+            "sıfır kod israfıyla bırakın.",
+        )
+    if click_rate_pct <= 5:
+        return (
+            "OPTIMIZE",
+            "Tıklama oranı %1-5 arasında — metni, hero kancasını veya fiyatı değiştirip "
+            "3-4 gün daha test edin.",
+        )
+    return (
+        "GREEN_LIGHT",
+        "Tıklama oranı %5'in üzerinde — pazar talebi doğrulandı. MVP mimarisine geçilebilir.",
+    )
