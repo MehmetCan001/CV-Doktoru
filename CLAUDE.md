@@ -400,10 +400,15 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 - [x] Yazım kalitesi boyutu (pasif cümle, klişe ifade tespiti) — `analysis_prompt.md` içinde zaten mevcut, aynı belge güncelliği hatası
 - [x] Askerlik durumu ön kontrolü — 2026-07-02'de eklendi (gerçek bir analizde eksik çıktığı görüldü, `analysis_prompt.md` + `ornek_1_yazilim.md`'ye eklendi, test edildi)
 - [x] CEFR/dil seviyesi dürüstlük kuralı ("B2" ile "fluent" otomatik eşleştirilmesin) — 2026-07-02'de eklendi
+- [x] SEO temel altyapısı — 2026-07-07'de eklendi: meta description/OG/Twitter/JSON-LD, `robots.txt`, `sitemap.xml`, Google Search Console doğrulaması tamamlandı, sitemap "Başarılı" durumda. Detay: `memory/checkpoint-son.md`
+- [x] Fake-door talep testi altyapısı — 2026-07-07'de eklendi: "Derin Analiz Paketi — 189 ₺" kartı + çerezsiz sunucu-taraflı sayaç (`src/analytics.py`) + otomatik KILL/OPTIMIZE/GREEN_LIGHT karar matrisi (`/api/analytics/summary`). 1-2 haftalık gözlem penceresi 2026-07-07'de başladı, sonuç ~2026-07-14/21 civarı değerlendirilecek.
 
 ### Sıradaki (Öncelik Sırasıyla)
+- [ ] **Fake-door sonucu değerlendirme** (~2026-07-14 – 2026-07-21): `unique_visitors >= 30` olunca `/api/analytics/summary` verdict'ine bak, go/no-go kararı ver
+- [ ] Search Console → URL Inspection → ana sayfa için "Request Indexing" henüz yapılmadı
 - [ ] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et (dosya yükleme akışı ayrıca doğrulanmadı)
 - [ ] **Belge güncelliği alışkanlığı**: Bir özellik `analysis_prompt.md`'ye eklendiğinde AYNI ANDA bu roadmap'te işaretlensin — 2026-07-02'de 3 madde aylardır tamamlanmış olduğu halde "sıradaki" görünüyordu, kullanıcı raporu incelerken fark edildi
+- [ ] **Fake-door kopyası her zaman gerçekten inşa edilebilir bir şeyi test etmeli**: 2026-07-07'de ilk taslakta "İK uzmanı görüşmesi" vaat edildi ama kullanıcının böyle bir planı yoktu — yanıltıcı test olurdu. "Derin Analiz Paketi" (tamamen AI-tabanlı) olarak düzeltildi. Gelecekte benzer teklif yazarken önce "bunu gerçekten inşa eder misin?" diye sor.
 
 ### Orta Vadeli
 - [ ] GitHub analizi (yazılımcılar için — Anabasis'te vardı)
