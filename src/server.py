@@ -16,6 +16,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 
 from src import analytics, config
@@ -32,8 +33,10 @@ from src.rate_limiter import (
 load_dotenv()
 
 TEMPLATES_DIR = config.PROJECT_ROOT / "templates"
+STATIC_DIR = config.PROJECT_ROOT / "static"
 
 app = FastAPI(title="CV Doktoru")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Analiz işleri arka planda yürütülür, tarayıcı sonucu poll ile sorgular.
 # Tek bir uzun HTTP bağlantısı NAT/firewall tarafından "boşta" sayılıp
