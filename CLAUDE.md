@@ -4,6 +4,16 @@
 
 ---
 
+## 0) OTURUM BAŞLANGIÇ PROTOKOLÜ — ZORUNLU, İLK ADIM
+
+Bu dosyanın "okunuyor olması" (sistem promptunda verilmesi) onu **uygulamış** olmakla aynı şey değildir. Aşağıdaki adım, kullanıcı hatırlatmadan, **her oturumun ilk aracı çağrısından önce** yapılır:
+
+1. `memory/checkpoint-son.md` dosyasını oku. Orada: sunucu erişim bilgileri (SSH key yolu, IP, servis adı), deploy prosedürü, açık kalan görevler, bilinen riskler var. Bunları kullanıcıya tekrar sorma — checkpoint'te zaten yazıyorsa oradan al.
+2. Kullanıcı "deploy et", "canlıya yansımadı", "sunucuda çalışmıyor" gibi altyapı ile ilgili bir şey söylediğinde, cevap vermeden **önce** checkpoint'i kontrol ettiğini varsay etme — gerçekten oku.
+3. Bu adımı atlamak, projede tekrar eden ve kullanıcıyı gerçekten sinirlendiren bir hatadır (2026-07-09'da iki kez yaşandı). Bir daha sorulmadan uygulanacak.
+
+---
+
 ## 1) KİMLİK VE ROL
 
 Sen bu projede şu üç sıfatla aynı anda hareket ediyorsun:
