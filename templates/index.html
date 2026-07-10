@@ -126,6 +126,33 @@ body {
 .step-name { font-size: 0.88rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem; }
 .step-desc-text { font-size: 0.77rem; color: #94A3B8; line-height: 1.5; }
 
+/* ── Demo/Örnek analiz önizlemesi ── */
+.demo-card { background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; margin-bottom: 1.5rem; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.05); }
+.demo-header { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 1.4rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+.demo-header-title { display: flex; align-items: center; gap: 0.7rem; }
+.demo-header-title span.emoji { font-size: 1.3rem; }
+.demo-header-title h2 { font-size: 1.02rem; font-weight: 800; color: #F8FAFC; margin: 0; }
+.demo-header-title p { font-size: 0.74rem; color: #64748B; margin: 0.15rem 0 0; }
+.demo-badge { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.22); color: #38BDF8; font-size: 0.62rem; font-weight: 700; padding: 0.3rem 0.65rem; border-radius: 6px; letter-spacing: 1.2px; white-space: nowrap; }
+.demo-body { padding: 1.75rem 2rem 0.5rem; position: relative; max-height: 430px; overflow: hidden; }
+.demo-score-row { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 1.1rem; }
+.demo-score-num { font-size: 2.1rem; font-weight: 900; color: #DC2626; letter-spacing: -0.02em; }
+.demo-score-max { font-size: 1rem; color: #94A3B8; font-weight: 700; }
+.demo-body p { font-size: 0.88rem; line-height: 1.75; color: #334155; margin: 0 0 1.1rem; }
+.demo-flag-title { font-size: 0.78rem; font-weight: 800; color: #B91C1C; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.4rem; }
+.demo-flag-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 10px; padding: 0.9rem 1.1rem; margin-bottom: 1.1rem; }
+.demo-flag-box p { margin: 0; font-size: 0.85rem; color: #7F1D1D; }
+.demo-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #FFFFFF 85%); pointer-events: none; }
+.demo-footer { padding: 0 2rem 1.75rem; text-align: center; }
+.demo-cta-btn {
+    background: linear-gradient(135deg, #0EA5E9 0%, #2563EB 100%); color: white;
+    font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 700;
+    padding: 0.75rem 1.75rem; border-radius: 10px; border: none; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(14,165,233,0.3);
+}
+.demo-cta-btn:hover { box-shadow: 0 6px 20px rgba(14,165,233,0.42); }
+.demo-note { font-size: 0.74rem; color: #94A3B8; margin-top: 0.7rem; }
+
 /* ── Why card ── */
 .why-card { background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 14px; padding: 1.25rem 1.75rem; margin-bottom: 1.5rem; }
 .why-card-title { font-size: 0.82rem; font-weight: 800; color: #15803D; margin-bottom: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -336,6 +363,32 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
     </div>
   </div>
 
+  <div class="demo-card">
+    <div class="demo-header">
+      <div class="demo-header-title">
+        <span class="emoji">👁️</span>
+        <div><h2>Rapor Neye Benziyor?</h2><p>Gerçek bir analizden kısaltılmış örnek</p></div>
+      </div>
+      <span class="demo-badge">ÖRNEK · DEMO</span>
+    </div>
+    <div class="demo-body">
+      <div class="demo-score-row">
+        <span class="demo-score-num">32</span><span class="demo-score-max">/ 100 Uyum Skoru</span>
+      </div>
+      <p>Şöyle anlatayım Ahmet: bu CV'yi bir işveren 6 saniye okuduğunda kafasında şu kalıyor — "Bilgisayar mühendisliğinden yeni mezun, hiç deneyimi yok, kendine güveni de fazla yok gibi." Bu sert geldi biliyorum ama gerçek bu. En çarpıcı şey: "Deneyim: Yok" yazmışsın...</p>
+      <div class="demo-flag-title">❌ Kırmızı Bayrak</div>
+      <div class="demo-flag-box">
+        <p><strong>"Python (biraz)" ifadesi</strong> — "Biraz" kelimesi CV'de hiçbir yerde olmamalı. İşveren ya "biliyor" ya "bilmiyor" diye düşünür. İş ilanı Python deneyimi istiyor — burada kendini güçsüz göstermişsin...</p>
+      </div>
+      <p><strong>✅ Güçlü Nokta:</strong> Hacettepe Bilgisayar Mühendisliği mezuniyeti — Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyumlu. Bu bilgi işverende güven yaratır...</p>
+      <div class="demo-fade"></div>
+    </div>
+    <div class="demo-footer">
+      <button type="button" class="demo-cta-btn" id="demo-cta-btn">🔍 Kendi CV'ni Ücretsiz Analiz Et</button>
+      <div class="demo-note">Bu, gerçek bir kullanıcının değil, örnek amaçlı oluşturulmuş kurgusal bir CV'nin analizidir.</div>
+    </div>
+  </div>
+
   <div class="why-card">
     <div class="why-card-title">🎯 Neden CV Doktoru Farklı?</div>
     <div class="why-items">
@@ -443,6 +496,12 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
 
   // ── Trafik ölçümü (fake-door testi) — çerezsiz, sunucu-taraflı sayaç ──
   fetch("/api/track/visit", { method: "POST" }).catch(function () {});
+
+  // ── Örnek analiz kartındaki CTA → forma kaydır ──
+  var demoCtaBtn = document.getElementById("demo-cta-btn");
+  demoCtaBtn.addEventListener("click", function () {
+    document.getElementById("analyze-form").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   var premiumCtaBtn = document.getElementById("premium-cta-btn");
   var premiumLeadForm = document.getElementById("premium-lead-form");
