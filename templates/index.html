@@ -166,6 +166,22 @@ body {
     display: inline-flex; align-items: center; justify-content: center; font-size: 0.6rem; color: white; flex-shrink: 0; font-weight: 900;
 }
 
+/* ── FAQ ── */
+.faq-item { border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+.faq-item:last-child { margin-bottom: 0; }
+.faq-item summary {
+    padding: 1rem 1.25rem; font-size: 0.92rem; font-weight: 700; color: #0F172A;
+    cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+    content: '+'; font-size: 1.3rem; font-weight: 400; color: #94A3B8; flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item summary:focus-visible { outline: 2px solid #38BDF8; outline-offset: -2px; }
+.faq-item p { margin: 0; padding: 0 1.25rem 1.1rem; font-size: 0.87rem; color: #475569; line-height: 1.7; }
+
 /* ── Premium teaser (fake-door talep testi) ── */
 .premium-card {
     background: linear-gradient(135deg, #1E1B4B 0%, #312E81 60%, #1E1B4B 100%);
@@ -398,6 +414,30 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
       <span class="why-item"><span class="why-check">✓</span>ATS anahtar kelime analizi</span>
       <span class="why-item"><span class="why-check">✓</span>Ücretsiz &amp; sınırsız</span>
     </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-label">❓ Sıkça Sorulan Sorular</div>
+    <details class="faq-item">
+      <summary>Verilerim saklanıyor mu? CV'm başka bir yere gidiyor mu?</summary>
+      <p>Hayır. Yüklediğiniz CV ve iş ilanı metni yalnızca analiz sırasında yapay zeka motoruna gönderilir; sunucumuzda kalıcı olarak saklanmaz, üçüncü taraflarla paylaşılmaz. Kayıt veya hesap oluşturma da yoktur.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Gerçekten ücretsiz mi, kredi kartı isteniyor mu?</summary>
+      <p>Evet, temel analiz tamamen ücretsizdir ve kredi kartı bilgisi istenmez. Kötüye kullanımı önlemek için her IP adresi için günlük 3 ücretsiz analiz sınırı vardır.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Analiz ne kadar sürüyor?</summary>
+      <p>Ortalama 2-3 dakika. CV'niz ve iş ilanı yapay zeka tarafından okunup karşılaştırılıyor, bu süre boyunca sayfayı kapatmamanız yeterli.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Hangi dosya formatlarını yükleyebilirim?</summary>
+      <p>PDF ve Word (.docx) dosyalarını doğrudan yükleyebilir, ya da CV metninizi kopyala-yapıştır ile girebilirsiniz. Dosya boyutu sınırı 10 MB'dir.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Analiz bir insan tarafından mı yapılıyor?</summary>
+      <p>Hayır, tamamen yapay zeka (Claude) tarafından yapılır. Bu sayede saniyeler içinde, 7/24 ve ücretsiz sonuç alabiliyorsunuz — ama tıpkı bir insan mentor gibi, iş ilanına özel ve Türk iş kültürünü gözeten bir dille yazılır.</p>
+    </details>
   </div>
 
   <div class="premium-card">
