@@ -84,6 +84,30 @@ body {
     pointer-events: none;
 }
 .hero-inner { position: relative; z-index: 1; text-align: center; max-width: 700px; margin: 0 auto; }
+.hero-visual { display: none; }
+@media (min-width: 900px) {
+    .hero-inner {
+        display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 3rem; align-items: center;
+        text-align: left; max-width: 1080px;
+    }
+    .hero-subtitle { margin: 0 0 2.5rem; }
+    .hero-stats { justify-content: flex-start; }
+    .hero-visual { display: block; }
+}
+.hero-visual-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(56,189,248,0.18);
+    border-radius: 20px; padding: 1.75rem 1.75rem 1.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35); transform: rotate(-2deg);
+}
+.hero-visual-score { display: flex; align-items: baseline; gap: 0.4rem; }
+.hero-visual-num { font-size: 2.6rem; font-weight: 900; color: #38BDF8; letter-spacing: -0.02em; }
+.hero-visual-max { font-size: 1rem; color: #64748B; font-weight: 700; }
+.hero-visual-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #7DD3FC; margin: 0.15rem 0 1.25rem; }
+.hero-visual-checks { display: flex; flex-direction: column; gap: 0.7rem; }
+.hero-visual-check {
+    font-size: 0.82rem; color: #CBD5E1; background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 0.55rem 0.8rem;
+}
 .hero-badge {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: rgba(56,189,248,0.08);
@@ -340,16 +364,29 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
 
 <div class="hero-wrapper">
   <div class="hero-inner">
-    <div class="hero-badge">🇹🇷 &nbsp;Türkiye'ye Özel Yapay Zeka Analizi</div>
-    <div class="hero-title">CV'nizi <span class="accent">Doğru İş İçin</span><br>Optimize Edin</div>
-    <div class="hero-subtitle">
-      CV oluşturmak değil, <span class="white">hedeflediğiniz pozisyon için doğru mesajı</span> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
+    <div class="hero-text">
+      <div class="hero-badge">🇹🇷 &nbsp;Türkiye'ye Özel Yapay Zeka Analizi</div>
+      <div class="hero-title">CV'nizi <span class="accent">Doğru İş İçin</span><br>Optimize Edin</div>
+      <div class="hero-subtitle">
+        CV oluşturmak değil, <span class="white">hedeflediğiniz pozisyon için doğru mesajı</span> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
+      </div>
+      <div class="hero-stats">
+        <span class="hero-stat-pill">🆓&nbsp; Ücretsiz</span>
+        <span class="hero-stat-pill">🔒&nbsp; Kayıt yok</span>
+        <span class="hero-stat-pill">🇹🇷&nbsp; Türkiye'ye özel</span>
+        <span class="hero-stat-pill">🧠&nbsp; Claude 4 destekli</span>
+      </div>
     </div>
-    <div class="hero-stats">
-      <span class="hero-stat-pill">🆓&nbsp; Ücretsiz</span>
-      <span class="hero-stat-pill">🔒&nbsp; Kayıt yok</span>
-      <span class="hero-stat-pill">🇹🇷&nbsp; Türkiye'ye özel</span>
-      <span class="hero-stat-pill">🧠&nbsp; Claude 4 destekli</span>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-visual-card">
+        <div class="hero-visual-score"><span class="hero-visual-num">87</span><span class="hero-visual-max">/ 100</span></div>
+        <div class="hero-visual-label">Uyum Skoru</div>
+        <div class="hero-visual-checks">
+          <div class="hero-visual-check">✅ İş ilanına uygun anahtar kelimeler</div>
+          <div class="hero-visual-check">✅ Türk iş kültürüne uygun format</div>
+          <div class="hero-visual-check">⚠️ 2 kırmızı bayrak tespit edildi</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -379,32 +416,6 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
     </div>
   </div>
 
-  <div class="demo-card">
-    <div class="demo-header">
-      <div class="demo-header-title">
-        <span class="emoji">👁️</span>
-        <div><h2>Rapor Neye Benziyor?</h2><p>Gerçek bir analizden kısaltılmış örnek</p></div>
-      </div>
-      <span class="demo-badge">ÖRNEK · DEMO</span>
-    </div>
-    <div class="demo-body">
-      <div class="demo-score-row">
-        <span class="demo-score-num">32</span><span class="demo-score-max">/ 100 Uyum Skoru</span>
-      </div>
-      <p>Şöyle anlatayım Ahmet: bu CV'yi bir işveren 6 saniye okuduğunda kafasında şu kalıyor — "Bilgisayar mühendisliğinden yeni mezun, hiç deneyimi yok, kendine güveni de fazla yok gibi." Bu sert geldi biliyorum ama gerçek bu. En çarpıcı şey: "Deneyim: Yok" yazmışsın...</p>
-      <div class="demo-flag-title">❌ Kırmızı Bayrak</div>
-      <div class="demo-flag-box">
-        <p><strong>"Python (biraz)" ifadesi</strong> — "Biraz" kelimesi CV'de hiçbir yerde olmamalı. İşveren ya "biliyor" ya "bilmiyor" diye düşünür. İş ilanı Python deneyimi istiyor — burada kendini güçsüz göstermişsin...</p>
-      </div>
-      <p><strong>✅ Güçlü Nokta:</strong> Hacettepe Bilgisayar Mühendisliği mezuniyeti — Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyumlu. Bu bilgi işverende güven yaratır...</p>
-      <div class="demo-fade"></div>
-    </div>
-    <div class="demo-footer">
-      <button type="button" class="demo-cta-btn" id="demo-cta-btn">🔍 Kendi CV'ni Ücretsiz Analiz Et</button>
-      <div class="demo-note">Bu, gerçek bir kullanıcının değil, örnek amaçlı oluşturulmuş kurgusal bir CV'nin analizidir.</div>
-    </div>
-  </div>
-
   <div class="why-card">
     <div class="why-card-title">🎯 Neden CV Doktoru Farklı?</div>
     <div class="why-items">
@@ -414,30 +425,6 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
       <span class="why-item"><span class="why-check">✓</span>ATS anahtar kelime analizi</span>
       <span class="why-item"><span class="why-check">✓</span>Ücretsiz &amp; sınırsız</span>
     </div>
-  </div>
-
-  <div class="section-card">
-    <div class="section-label">❓ Sıkça Sorulan Sorular</div>
-    <details class="faq-item">
-      <summary>Verilerim saklanıyor mu? CV'm başka bir yere gidiyor mu?</summary>
-      <p>Hayır. Yüklediğiniz CV ve iş ilanı metni yalnızca analiz sırasında yapay zeka motoruna gönderilir; sunucumuzda kalıcı olarak saklanmaz, üçüncü taraflarla paylaşılmaz. Kayıt veya hesap oluşturma da yoktur.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Gerçekten ücretsiz mi, kredi kartı isteniyor mu?</summary>
-      <p>Evet, temel analiz tamamen ücretsizdir ve kredi kartı bilgisi istenmez. Kötüye kullanımı önlemek için her IP adresi için günlük 3 ücretsiz analiz sınırı vardır.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Analiz ne kadar sürüyor?</summary>
-      <p>Ortalama 2-3 dakika. CV'niz ve iş ilanı yapay zeka tarafından okunup karşılaştırılıyor, bu süre boyunca sayfayı kapatmamanız yeterli.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Hangi dosya formatlarını yükleyebilirim?</summary>
-      <p>PDF ve Word (.docx) dosyalarını doğrudan yükleyebilir, ya da CV metninizi kopyala-yapıştır ile girebilirsiniz. Dosya boyutu sınırı 10 MB'dir.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Analiz bir insan tarafından mı yapılıyor?</summary>
-      <p>Hayır, tamamen yapay zeka (Claude) tarafından yapılır. Bu sayede saniyeler içinde, 7/24 ve ücretsiz sonuç alabiliyorsunuz — ama tıpkı bir insan mentor gibi, iş ilanına özel ve Türk iş kültürünü gözeten bir dille yazılır.</p>
-    </details>
   </div>
 
   <div class="premium-card">
@@ -505,6 +492,56 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
 
   <div id="loading-slot"></div>
   <div id="report-slot"></div>
+
+  <div class="demo-card">
+    <div class="demo-header">
+      <div class="demo-header-title">
+        <span class="emoji">👁️</span>
+        <div><h2>Rapor Neye Benziyor?</h2><p>Gerçek bir analizden kısaltılmış örnek</p></div>
+      </div>
+      <span class="demo-badge">ÖRNEK · DEMO</span>
+    </div>
+    <div class="demo-body">
+      <div class="demo-score-row">
+        <span class="demo-score-num">32</span><span class="demo-score-max">/ 100 Uyum Skoru</span>
+      </div>
+      <p>Şöyle anlatayım Ahmet: bu CV'yi bir işveren 6 saniye okuduğunda kafasında şu kalıyor — "Bilgisayar mühendisliğinden yeni mezun, hiç deneyimi yok, kendine güveni de fazla yok gibi." Bu sert geldi biliyorum ama gerçek bu. En çarpıcı şey: "Deneyim: Yok" yazmışsın...</p>
+      <div class="demo-flag-title">❌ Kırmızı Bayrak</div>
+      <div class="demo-flag-box">
+        <p><strong>"Python (biraz)" ifadesi</strong> — "Biraz" kelimesi CV'de hiçbir yerde olmamalı. İşveren ya "biliyor" ya "bilmiyor" diye düşünür. İş ilanı Python deneyimi istiyor — burada kendini güçsüz göstermişsin...</p>
+      </div>
+      <p><strong>✅ Güçlü Nokta:</strong> Hacettepe Bilgisayar Mühendisliği mezuniyeti — Türkiye'de saygın bir üniversite, bölüm de iş ilanıyla tam uyumlu. Bu bilgi işverende güven yaratır...</p>
+      <div class="demo-fade"></div>
+    </div>
+    <div class="demo-footer">
+      <button type="button" class="demo-cta-btn" id="demo-cta-btn">🔍 Kendi CV'ni Ücretsiz Analiz Et</button>
+      <div class="demo-note">Bu, gerçek bir kullanıcının değil, örnek amaçlı oluşturulmuş kurgusal bir CV'nin analizidir.</div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-label">❓ Sıkça Sorulan Sorular</div>
+    <details class="faq-item">
+      <summary>Verilerim saklanıyor mu? CV'm başka bir yere gidiyor mu?</summary>
+      <p>Hayır. Yüklediğiniz CV ve iş ilanı metni yalnızca analiz sırasında yapay zeka motoruna gönderilir; sunucumuzda kalıcı olarak saklanmaz, üçüncü taraflarla paylaşılmaz. Kayıt veya hesap oluşturma da yoktur.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Gerçekten ücretsiz mi, kredi kartı isteniyor mu?</summary>
+      <p>Evet, temel analiz tamamen ücretsizdir ve kredi kartı bilgisi istenmez. Kötüye kullanımı önlemek için her IP adresi için günlük 3 ücretsiz analiz sınırı vardır.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Analiz ne kadar sürüyor?</summary>
+      <p>Ortalama 2-3 dakika. CV'niz ve iş ilanı yapay zeka tarafından okunup karşılaştırılıyor, bu süre boyunca sayfayı kapatmamanız yeterli.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Hangi dosya formatlarını yükleyebilirim?</summary>
+      <p>PDF ve Word (.docx) dosyalarını doğrudan yükleyebilir, ya da CV metninizi kopyala-yapıştır ile girebilirsiniz. Dosya boyutu sınırı 10 MB'dir.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Analiz bir insan tarafından mı yapılıyor?</summary>
+      <p>Hayır, tamamen yapay zeka (Claude) tarafından yapılır. Bu sayede saniyeler içinde, 7/24 ve ücretsiz sonuç alabiliyorsunuz — ama tıpkı bir insan mentor gibi, iş ilanına özel ve Türk iş kültürünü gözeten bir dille yazılır.</p>
+    </details>
+  </div>
 
   <div class="footer-note">CV Doktoru — Türkiye'nin iş ilanına özel CV analiz aracı</div>
 </div>
