@@ -1,45 +1,46 @@
-# CHECKPOINT — 2026-07-10 — v1.9
+# CHECKPOINT — 2026-07-20 — v1.11
 
 ## Proje Adı ve Amacı
 **CV Doktoru** — Türkiye iş piyasasına özgü AI destekli CV analiz aracı.
 **URL:** https://cvdoktoru.com ✅ CANLI
 
+## Deploy Prosedürü (tekrar hatırlatma)
+```
+git add <dosyalar> && git commit -m "..." && git push origin main
+ssh -i ~/.ssh/cv_doktoru root@46.225.20.111
+cd /opt/cv-doktoru && git pull && systemctl restart cv-doktoru
+```
+Doğrulama: `curl -s https://cvdoktoru.com/ -o /tmp/live.html -w "%{http_code}\n"` + `grep` ile beklenen içeriği ara.
+
 ## Bu Oturumda Yapılanlar
 
-### 1) OG/Twitter paylaşım görseli
-- `static/og-image.png` (1200×630) eklendi — `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` kaynağından piksel-tabanlı bbox tespitiyle (numpy threshold, arka plan gürültüsü temizlendi) wordmark lockup kırpılıp ölçeklendi.
-- `templates/index.html`: `og:image`/`twitter:image` artık bu dosyaya işaret ediyor, `og:image:width/height` eklendi.
-- Deploy edildi, canlıda `curl` ile doğrulandı.
+### Deneyim süresi ↔ CV içi tarih tutarlılığı ön kontrolü — ✅ TEST EDİLDİ, DÜZELTİLDİ, DEPLOY EDİLDİ
+Önceki oturumdan (2026-07-14) devralınan açık iş: `prompts/analysis_prompt.md`'ye eklenen yeni ön kontrol maddesi diskte duruyordu ama gerçek bir CV ile test edilmemişti.
 
-### 2) Sayfa tasarım/fonksiyon geliştirme — 5 adımlık plan onaylandı, sırayla uygulanıyor
-Kullanıcı: "her ikisi de" (tasarım + fonksiyon basit duruyor) dedi, 5 maddelik öncelik listesi sunuldu ve onaylandı. Kural: **her seferinde sadece 1 adım**, kullanıcı "devam" diyince sıradakine geçilecek.
+**Test yöntemi:** `ANTHROPIC_API_KEY` `.env`'de mevcut olduğu için gerçek Claude API çağrısıyla 2 test senaryosu koşturuldu (script: scratchpad'te, kalıcı değil).
 
-**Sıra:**
-1. ✅ **Örnek Analiz önizleme kartı** — tamamlandı, deploy edildi (commit `340f020`). `prompts/examples/ornek_1_yazilim.md`'deki kurgusal "Ahmet Yılmaz" örneğinden kısaltılmış demo: skor rozeti, 1 kırmızı bayrak, 1 güçlü nokta, alta soluklaşan fade + forma kaydıran CTA. Açıkça "ÖRNEK · DEMO" etiketli + "kurgusal CV" notu var (sahte testimonial değil).
-2. ✅ **FAQ/güven bölümü** — tamamlandı, deploy edildi (commit `577825a`). Native `<details>/<summary>` akordiyon (JS'siz, klavye-erişilebilir), 5 soru: veri saklama, ücretsizlik+günlük 3 analiz limiti (`src/rate_limiter.py DAILY_LIMIT=3`'ten teyitli), süre (2-3 dk), dosya formatları (PDF/DOCX/metin, 10 MB), insan mı AI mı. "Neden Farklı" ile "Derin Analiz Paketi" kartları arasına yerleşti.
-3. ⏳ **SIRADAKİ: Masaüstünde iki sütunlu/asimetrik hero düzeni** — henüz başlanmadı.
-4. ⏳ Mikro-etkileşim/scroll animasyonları + mobilde sticky CTA bar — henüz başlanmadı.
-5. ⏳ Sahte testimonial **eklenmeyecek** (gerçek kullanıcı verisi yok, karar zaten alındı — bu madde "yapılacak" değil, bilinçli "yapılmayacak" kararı).
+- **Senaryo A (gerçek çelişki):** "5 yıl deneyim" özet cümlesi + tek iş "2023-2024" (tam tarih var). **İlk denemede doğru çalıştı** — KIRMIZI BAYRAK doğru formatta eklendi, ilk izlenim/mülakat sorularına/son söze kadar tutarlı yansıdı.
+- **Senaryo B (doğrulanamayan iddia):** "6 yıl deneyim" + tek iş listelenmiş ama tarihi hiç yazılmamış. **İlk 2 denemede kural ihlal edildi**: model bunu "iç tutarsızlık, güven kaybına yol açar" diye KIRMIZI BAYRAK'a ekledi — kuralın "doğrulanamayan bağımsız iddiayı sorgulama" sınırını çiğnedi.
 
-**Yerel test yöntemi (bu oturumda kuruldu, tekrar kullanılabilir):**
-```
-cd cv-doktoru
-"./venv/Scripts/python.exe" -m uvicorn src.server:app --host 127.0.0.1 --port 85XX
-"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --no-sandbox --screenshot="<yol>.png" --window-size=1280,3000 "http://127.0.0.1:85XX/"
-```
-Not: proje kökünde iki farklı venv var — `venv/` (fastapi kurulu, ÇALIŞAN budur) ve `source/` (fastapi YOK, kullanma). Test bitince `netstat -ano | grep <port>` ile PID bulup `powershell -Command "Stop-Process -Id <pid> -Force"` ile kapat.
+**Kök sebep:** İlk yazılan istisna metni sadece "tarih/iş geçmişi hiç verilmemiş" durumunu kapsıyordu, "iş var ama tarihsiz" ara durumunu ayrı ele almıyordu.
 
-### 3) Fake-door analytics sorgusu — IP filtreleme yok
-Kullanıcı `/api/analytics/summary` sonucunu paylaştı (18/30 tekil ziyaretçi, YETERSİZ_VERİ — normal, pencere henüz dolmadı). Soru: kendi IP'si sayıma dahil mi?
-- **Cevap: Evet, dahil.** `src/analytics.py`'de hiçbir IP hariç tutma mantığı yok. Sayaç `gün:ip_hash` anahtarıyla tekilleştiriyor — aynı gün tekrar ziyaret tek sayılır, ama **farklı günlerde** ziyaret her seferinde ayrı "tekil ziyaretçi" sayılır. Kullanıcının deploy sonrası doğrulama ziyaretleri muhtemelen 18'in içinde, gerçek dış trafiği şişiriyor.
-- **Açık öneri (henüz uygulanmadı, kullanıcı onaylamadı):** Ortam değişkeninde kendi IP hash'ini tanımlayıp `summary()`'de eleyen basit bir filtre eklenebilir. İstenirse yarın yapılabilir.
+**Düzeltme (2 adım):**
+1. İstisna listesine "iş pozisyonu var ama tarihi yok → sorgulama, sadece Eksik bölümler'e tarih notu düş" maddesi eklendi. Tek başına yetmedi.
+2. Kuralın metnine doğrudan bir **YANLIŞ/DOĞRU örnek çifti** gömüldü (ayrı few-shot dosyası değil, kuralın kendi cümlesinin içinde). Üçüncü denemede model artık tarihsiz pozisyonu nötr dille ("tarih eksik, iddia doğrulanamıyor") işaretliyor, suçlayıcı "tutarsızlık/güven kaybı" dili kullanmıyor.
+
+**Genel ders (CLAUDE.md Bölüm 12'ye işlendi):** Bir kurala istisna eklerken istisnanın tüm ara durumlarını ayrı ayrı yaz — "hiç yok" ile "var ama eksik" farklıdır. Pasif kural tek başına yetmiyor; YANLIŞ/DOĞRU örnek çiftini kuralın kendi metnine gömmek ayrı bir few-shot dosyasından daha ucuz ve aynı derecede etkili.
+
+**Durum:** `prompts/analysis_prompt.md` + `CLAUDE.md` değişiklikleri commit'lendi ve sunucuya deploy edildi (bu checkpoint'in yazıldığı anda deploy adımı henüz tamamlanmamış olabilir — deploy adımının gerçekten çalıştığını `git log` / canlı `curl` ile doğrula).
 
 ## Açık Kalan Sorular / Sıradaki Adımlar
-- [ ] **Öncelik:** 5 adımlık tasarım planının 3. maddesi (masaüstü iki sütunlu hero) — kullanıcı "devam" dediğinde başla.
-- [ ] Kendi IP'yi analytics sayımından hariç tutma filtresi (kullanıcı sordu ama henüz "yap" demedi — önce sor).
-- [ ] Fake-door testi sonucu (`unique_visitors >= 30` olunca `/api/analytics/summary` verdict) hâlâ değerlendirilmedi — 2026-07-07'de başladı, hacim düşük (3 günde 18), ~2026-07-14/21 civarı tekrar bakılacaktı ama bu tempoyla daha uzun sürebilir.
-- [ ] Search Console → URL Inspection → "Request Indexing" hâlâ yapılmadı (önceki checkpoint'ten devralındı, hâlâ açık).
+- [ ] **Fake-door sonucu değerlendirme** (~2026-07-14 – 2026-07-21): `unique_visitors >= 30` olunca `/api/analytics/summary` verdict'ine bak, go/no-go kararı ver.
+- [ ] 5 adımlık tasarım planının 4. maddesi — mikro-etkileşim/scroll animasyonları + mobilde sticky CTA bar — henüz başlanmadı.
+- [ ] Kendi IP'yi analytics sayımından hariç tutma filtresi (kullanıcı henüz "yap" demedi).
+- [ ] Search Console → URL Inspection → "Request Indexing" hâlâ yapılmadı.
+- [ ] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et (dosya yükleme akışı ayrıca doğrulanmadı).
 
 ## Bilinen Riskler / Dosya Notları
-- Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor (`static/og-image.png` ve `static/logo.png` bunlardan türetildi). Silinmediler, kullanıcının kendi dosyaları — dokunma.
-- İki venv karışıklığı (`venv/` vs `source/`) — yukarıda not edildi, ileride tekrar kafa karıştırabilir.
+- Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
+- İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.
+- Yerel test yöntemi: `"./venv/Scripts/python.exe" -m uvicorn src.server:app --host 127.0.0.1 --port 85XX` + headless Chrome. Mobil genişlik testi için CDP `Emulation.setDeviceMetricsOverride` kullan (`--window-size` tek başına yeterli değil).
+- Prompt değişikliklerini gerçek API çağrısıyla test etmek için: `.env`'de `ANTHROPIC_API_KEY` mevcut, `"./venv/Scripts/python.exe"` ile `src.analyzer.CVDoctor().analyze(cv_text, job_ad)` doğrudan çağrılabilir (Windows konsolunda emoji içeren sonucu `print()` etme — `cp1254` codec `UnicodeEncodeError` verir, dosyaya UTF-8 ile yaz).
