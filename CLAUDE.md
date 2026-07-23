@@ -4,6 +4,31 @@
 
 ---
 
+# Proje Tasarım ve Mühendislik Standartları
+
+> **Not (2026-07-23):** Bu bölüm bir önceki oturumda yanlışlıkla React/TypeScript/Tailwind/shadcn öngören genel bir şablon metniyle dolduruldu — bu, projenin gerçek yığınıyla (aşağıda) doğrudan çelişiyordu. İçerik, gerçek teknoloji yığınına ve bu oturumda onaylanıp uygulanan tasarım yönüne göre düzeltildi.
+
+## 1. UI/UX Tasarım Felsefesi (Şablon Hissini Kırmak)
+- **Tasarım kalitesi:** Jenerik "AI SaaS şablonu" hissi veren kalıplardan kaçın — koyu lacivert hero + gradient blob + her bölümü ayrı ayrı border/gölgeli kutuya alma, 2025-2026'da aşırı kullanılmış ve "şablon" olarak tanınan bir görsel dil (bkz. `memory/checkpoint-son.md`, 2026-07-23 redesign notu).
+- **Kanıtlanmış yön (easy.tools/supliful.com/cvcim.com karşılaştırmasından, bu oturumda uygulandı):**
+  - Açık/nötr arkaplan + büyük, düz, kalın tipografi; koyu tema veya parıltılı gradient hero değil.
+  - Kutulama (border+gölge) sadece gerçekten "özel" 1-2 unsurda (form, ücretli teklif, örnek rapor demosu) kullanılır — her bölümü kutuya almak şablon hissi yaratır.
+  - Bölümler arası boşluk cömert olmalı (referans sitelerin 2-3 katı); sıkışık, art arda dizilmiş kart yığını yerine nefes alan bir düzen.
+  - Gerçek ürün ekran görüntüsü/veri > stilize edilmiş sahte mockup/dekoratif ikon kutuları.
+- **Görsel/Placeholder:** Boş gri kutu bırakma. ama sahte stok fotoğraf/Unsplash görseli de kullanma — CLAUDE.md'nin dürüstlük ilkesi gereği (bkz. madde 6 ve 11), yalnızca gerçek ürün ekran görüntüleri veya dürüstçe etiketlenmiş örnek/demo içerik kullanılır.
+
+## 2. Gerçek Teknoloji Yığını (bkz. Bölüm 11 "Teknik Yığın")
+- **Backend:** FastAPI (Python) — `src/server.py`, `src/app.py`, `src/analyzer.py` vb.
+- **Frontend:** Jinja2 template (`templates/index.html`) içine gömülü **vanilla CSS + vanilla JS** (IIFE pattern). **React, TypeScript, Tailwind, shadcn/ui, framer-motion YOK ve proje bu yönde bir migration planlamıyor.** `package.json`/`tailwind.config`/`tsconfig.json` yok, Node build zinciri yok.
+- **Animasyonlar:** Framer Motion değil, düz CSS `transition`/`@keyframes` (örn. SSS accordion'unda kullanılan `grid-template-rows: 0fr → 1fr` geçişi, bkz. `templates/index.html` `.faq-a-wrap`).
+- **Kod tamlığı:** `// TODO: implement this` gibi yarım bırakılmış kod blokları yok — her değişiklik eksiksiz ve çalışır halde teslim edilir (bkz. Bölüm 3.2).
+- **Dil/ton:** Arayüz metinleri Türkçe; empatik, net, dönüşüm odaklı, jargonu açıklayarak kullanan bir tonda (örn. ATS'yi tanımlamadan kullanmamak) — bkz. Bölüm 11 "Konumlandırma" ve Bölüm 12 "Prompt Mühendisliği Öğrenmeleri".
+
+## 3. Çalışma Stratejisi
+- `templates/index.html` içindeki bölümler mantıksal olarak ayrılmış CSS sınıflarıyla (`.hero-wrapper`, `.section-flat`, `.faq-wrap` vb.) organize edilir — ayrı component dosyaları/klasörleri (`src/components/`) yoktur, çünkü component framework'ü yoktur.
+- Mobil-öncelikli, tam responsive olmalı. **Mobil testte native `--window-size` ile alınan headless Chrome ekran görüntülerine güvenilmez** — Chrome'un mobil font-boosting/viewport davranışı yanlış pozitif taşma görüntüsü verebilir (2026-07-23'te tam olarak bu yaşandı ve düzeltildi). Doğru mobil doğrulama için CDP `Emulation.setDeviceMetricsOverride({mobile:true})` kullanılmalı.
+- State yönetimi yoktur (React/TS state modeli geçerli değildir); sayfa durumu düz JS değişkenleri ve DOM sınıflarıyla (`.active`, `.open` vb.) yönetilir.
+
 ## 0) OTURUM BAŞLANGIÇ PROTOKOLÜ — ZORUNLU, İLK ADIM
 
 Bu dosyanın "okunuyor olması" (sistem promptunda verilmesi) onu **uygulamış** olmakla aynı şey değildir. Aşağıdaki adım, kullanıcı hatırlatmadan, **her oturumun ilk aracı çağrısından önce** yapılır:

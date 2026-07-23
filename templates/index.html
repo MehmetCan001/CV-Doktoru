@@ -208,20 +208,32 @@ body {
 }
 
 /* ── FAQ ── */
-.faq-item { border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+.faq-search-wrap { position: relative; max-width: 420px; margin: 0 auto 2rem; }
+.faq-search-icon { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); font-size: 0.85rem; opacity: 0.6; pointer-events: none; }
+.faq-search-input {
+    width: 100%; padding: 0.65rem 1rem 0.65rem 2.4rem; border-radius: 10px; border: 1.5px solid #E2E8F0;
+    font-family: 'Inter', sans-serif; font-size: 0.88rem; background-color: #FFFFFF; color: #0F172A;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.faq-search-input:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.12); outline: none; }
+.faq-item { border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; text-align: left; }
 .faq-item:last-child { margin-bottom: 0; }
-.faq-item summary {
-    padding: 1rem 1.25rem; font-size: 0.92rem; font-weight: 700; color: #0F172A;
-    cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+.faq-item.faq-hidden { display: none; }
+.faq-q {
+    width: 100%; padding: 1rem 1.25rem; font-size: 0.92rem; font-weight: 700; color: #0F172A;
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: none; border: none; font-family: 'Inter', sans-serif; text-align: left;
 }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::after {
-    content: '+'; font-size: 1.3rem; font-weight: 400; color: #94A3B8; flex-shrink: 0;
-    transition: transform 0.2s ease;
-}
-.faq-item[open] summary::after { transform: rotate(45deg); }
-.faq-item summary:focus-visible { outline: 2px solid #38BDF8; outline-offset: -2px; }
-.faq-item p { margin: 0; padding: 0 1.25rem 1.1rem; font-size: 0.87rem; color: #475569; line-height: 1.7; }
+.faq-icon { font-size: 1.3rem; font-weight: 400; color: #94A3B8; flex-shrink: 0; transition: transform 0.2s ease; }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-q:focus-visible { outline: 2px solid #38BDF8; outline-offset: -2px; }
+.faq-a-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+.faq-item.open .faq-a-wrap { grid-template-rows: 1fr; }
+.faq-a-inner { overflow: hidden; }
+.faq-a-inner p { margin: 0; padding: 0 1.25rem 1.1rem; font-size: 0.87rem; color: #475569; line-height: 1.7; }
+.faq-empty { display: none; text-align: center; color: #94A3B8; font-size: 0.88rem; padding: 1.5rem 0; }
+.faq-empty.show { display: block; }
+.faq-support-note { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: #94A3B8; }
 
 /* ── Premium teaser (fake-door talep testi) ── */
 .premium-card {
@@ -558,26 +570,135 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
 
   <div class="faq-wrap" id="faq">
     <div class="section-label">❓ Sıkça Sorulan Sorular</div>
-    <details class="faq-item">
-      <summary>Verilerim saklanıyor mu? CV'm başka bir yere gidiyor mu?</summary>
-      <p>Hayır. Yüklediğiniz CV ve iş ilanı metni yalnızca analiz sırasında yapay zeka motoruna gönderilir; sunucumuzda kalıcı olarak saklanmaz, üçüncü taraflarla paylaşılmaz. Kayıt veya hesap oluşturma da yoktur.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Gerçekten ücretsiz mi, kredi kartı isteniyor mu?</summary>
-      <p>Evet, temel analiz tamamen ücretsizdir ve kredi kartı bilgisi istenmez. Kötüye kullanımı önlemek için her IP adresi için günlük 3 ücretsiz analiz sınırı vardır.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Analiz ne kadar sürüyor?</summary>
-      <p>Ortalama 2-3 dakika. CV'niz ve iş ilanı yapay zeka tarafından okunup karşılaştırılıyor, bu süre boyunca sayfayı kapatmamanız yeterli.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Hangi dosya formatlarını yükleyebilirim?</summary>
-      <p>PDF ve Word (.docx) dosyalarını doğrudan yükleyebilir, ya da CV metninizi kopyala-yapıştır ile girebilirsiniz. Dosya boyutu sınırı 10 MB'dir.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Analiz bir insan tarafından mı yapılıyor?</summary>
-      <p>Hayır, tamamen yapay zeka (Claude) tarafından yapılır. Bu sayede saniyeler içinde, 7/24 ve ücretsiz sonuç alabiliyorsunuz — ama tıpkı bir insan mentor gibi, iş ilanına özel ve Türk iş kültürünü gözeten bir dille yazılır.</p>
-    </details>
+
+    <div class="faq-search-wrap">
+      <span class="faq-search-icon">🔍</span>
+      <input type="search" id="faq-search-input" class="faq-search-input" placeholder="Sorularda ara... (ör. ATS, ücret, dil)" aria-label="SSS içinde ara">
+    </div>
+
+    <div class="faq-item" data-q="verileriniz saklanıyor mu? kişisel bilgileriniz üçüncü taraflarla paylaşılıyor mu?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Verileriniz saklanıyor mu? Kişisel bilgileriniz üçüncü taraflarla paylaşılıyor mu?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Hayır. Yüklediğiniz CV ve iş ilanı metni yalnızca analiz sırasında yapay zeka motoruna gönderilir; sunucumuzda kalıcı olarak saklanmaz, üçüncü taraflarla paylaşılmaz veya pazarlama amacıyla kullanılmaz. Kayıt veya hesap oluşturma da yoktur.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="ats nedir, cv'm gerçekten bir robot tarafından mı okunuyor?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>ATS nedir, CV'm gerçekten bir robot tarafından mı okunuyor?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>ATS (Aday Takip Sistemi), birçok şirketin başvuruları elemek için kullandığı bir yazılımdır — CV'niz bir İK uzmanına ulaşmadan önce bu sistem tarafından taranıp anahtar kelime, format ve deneyim uyumuna göre otomatik puanlanır. Yani ilk "okuyucu" çoğu zaman bir insan değil, bu yazılımdır. CV Doktoru raporunuzda, CV'nizin böyle bir sistemden nasıl geçeceğini de değerlendirir.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="analiz sadece yazım hatalarını mı kontrol ediyor, yoksa daha fazlasını mı?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Analiz sadece yazım hatalarını mı kontrol ediyor, yoksa daha fazlasını mı?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Çok daha fazlasını. Rapor; iş ilanıyla anahtar kelime uyumunu, ATS format uyumluluğunu, deneyim/tarih tutarlılığını, güçlü noktalarınızı ve bunları nasıl öne çıkarabileceğinizi, kırmızı bayrak oluşturabilecek ifadeleri ve Türk iş kültürüne özgü detayları (staj, askerlik durumu gibi) birlikte değerlendirir. Yazım ve dil kalitesi bunlardan yalnızca biridir.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="ücretlendirme nasıl işliyor, sonradan çıkan bir ücret var mı?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Ücretlendirme nasıl işliyor, sonradan çıkan bir ücret var mı?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Temel analiz tamamen ücretsizdir ve kredi kartı bilgisi istenmez — sürpriz bir ücretle karşılaşmazsınız. Kötüye kullanımı önlemek için her IP adresi için günlük 3 ücretsiz analiz sınırı vardır. İsteyenler için, ücretsiz analize ek özellikler sunan tek seferlik ücretli "Derin Analiz Paketi" ayrıca ve fiyatıyla birlikte açıkça sunulur; ücretsiz analizi kullanmak için bu pakete ihtiyacınız yoktur.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="analiz ne kadar sürüyor?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Analiz ne kadar sürüyor?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Ortalama 2-3 dakika. CV'niz ve iş ilanı yapay zeka tarafından okunup karşılaştırılıyor, bu süre boyunca sayfayı kapatmamanız yeterli.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="cv'mi düzelttikten sonra tekrar analiz ettirebilir miyim?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>CV'mi düzelttikten sonra tekrar analiz ettirebilir miyim?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Evet. Önerileri uyguladıktan sonra güncellenmiş CV'nizi dilediğiniz kadar tekrar yükleyip analiz ettirebilirsiniz — günlük ücretsiz analiz limitiniz dahilinde ek bir ücret veya kayıt gerekmez.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="bu analizi yapay zeka mı yapıyor, yoksa bir ik uzmanı mı?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Bu analizi yapay zeka mı yapıyor, yoksa bir İK uzmanı mı?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Tamamen yapay zeka (Claude) tarafından yapılır, aralarda bir insan incelemesi yoktur. Bu sayede saniyeler içinde, 7/24 ve ücretsiz sonuç alabiliyorsunuz — ama tıpkı bir insan mentor gibi, iş ilanına özel ve Türk iş kültürünü gözeten bir dille yazılır.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="ingilizce veya başka dilde yazılmış cv'leri analiz edebiliyor musunuz?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>İngilizce veya başka dilde yazılmış CV'leri analiz edebiliyor musunuz?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Evet, İngilizce yazılmış CV ve iş ilanlarını da analiz edebiliriz; sistem içeriği okuyup anlıyor, dilden bağımsız çalışır. Ancak rapor şu an yalnızca Türkçe olarak sunuluyor, çünkü odağımız Türk iş piyasasına özel bir değerlendirme yapmak.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="cv'm canva gibi görsel ağırlıklı bir şablonla hazırlandıysa sorun olur mu?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>CV'm Canva gibi görsel ağırlıklı bir şablonla hazırlandıysa sorun olur mu?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Olabilir, ve bunu bilmeniz önemli: çok sütunlu, ikonlu, grafik ağırlıklı şablonlar birçok ATS sisteminde metin olarak doğru okunamıyor — bu da bilgilerinizin sisteme hiç ulaşmaması anlamına gelebilir. Raporumuz, CV'nizin bu açıdan bir risk taşıyıp taşımadığını değerlendirip size somut olarak bildirir.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="bu analizi yaptırırsam mülakata çağrılacağımı garanti ediyor musunuz?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Bu analizi yaptırırsam mülakata çağrılacağımı garanti ediyor musunuz?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Hayır, böyle bir garanti vermiyoruz — bunu vaat eden bir hizmete de güvenmemenizi öneririz. İşe alım kararını nihayetinde işveren verir ve bunu etkileyen çok sayıda faktör vardır. CV Doktoru'nun vaadi şudur: CV'nizin hem ATS hem de insan okuyucu karşısında daha güçlü bir izlenim bırakması için somut, uygulanabilir değişiklikler göstermek.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="hangi dosya formatlarını yükleyebilirim?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Hangi dosya formatlarını yükleyebilirim?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>PDF ve Word (.docx) dosyalarını doğrudan yükleyebilir, ya da CV metninizi kopyala-yapıştır ile girebilirsiniz. Dosya boyutu sınırı 10 MB'dir.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item" data-q="verilerimi silme talebinde bulunabilir miyim?">
+      <button type="button" class="faq-q" aria-expanded="false">
+        <span>Verilerimi silme talebinde bulunabilir miyim?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a-wrap"><div class="faq-a-inner">
+        <p>Aslında talep etmenize gerek yok: CV'niz ve iş ilanı metni analiz biter bitmez sunucumuzda hiç saklanmıyor, silinecek bir kayıt zaten oluşmuyor. Bu, veri güvenliği açısından mümkün olan en güvenli yöntemlerden biridir.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-empty" id="faq-empty">Aramanızla eşleşen bir soru bulunamadı. Farklı bir kelimeyle tekrar deneyin.</div>
+
+    <div class="faq-support-note">Aradığınız cevabı bulamadınız mı? Yakında buradan destek ekibimize de ulaşabileceksiniz.</div>
   </div>
 
   <div class="footer-note">CV Doktoru — Türkiye'nin iş ilanına özel CV analiz aracı</div>
@@ -596,6 +717,32 @@ textarea:focus { border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56,189,248,0.
       document.querySelector('.tab-pane[data-pane="' + btn.dataset.tab + '"]').classList.add("active");
     });
   });
+
+  // ── SSS: accordion + arama ──
+  var faqItems = Array.prototype.slice.call(document.querySelectorAll(".faq-item"));
+  faqItems.forEach(function (item) {
+    var btn = item.querySelector(".faq-q");
+    btn.addEventListener("click", function () {
+      var isOpen = item.classList.toggle("open");
+      btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  });
+
+  var faqSearchInput = document.getElementById("faq-search-input");
+  var faqEmpty = document.getElementById("faq-empty");
+  if (faqSearchInput) {
+    faqSearchInput.addEventListener("input", function () {
+      var query = faqSearchInput.value.trim().toLocaleLowerCase("tr-TR");
+      var visibleCount = 0;
+      faqItems.forEach(function (item) {
+        var haystack = item.dataset.q || "";
+        var matches = query === "" || haystack.indexOf(query) !== -1;
+        item.classList.toggle("faq-hidden", !matches);
+        if (matches) { visibleCount++; }
+      });
+      faqEmpty.classList.toggle("show", visibleCount === 0);
+    });
+  }
 
   // ── File input ──
   var fileInput = document.getElementById("cv-file");
