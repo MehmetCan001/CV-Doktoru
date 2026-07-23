@@ -81,10 +81,28 @@ Yerelde `uvicorn` ile çalıştırılıp headless Chrome screenshot ile hem 1440
 
 Commit + deploy edildi (bkz. commit hash için `git log`).
 
+## Bu Oturumda Yapılanlar (devam) — Kapsamlı Yapısal Redesign
+
+Kullanıcı rozet şeridini "öncekilerden hiçbir farkı yok, estetik değil" diye eleştirdi ve 3 ilham sitesiyle (easy.tools, supliful.com, cvcim.com) somut bir karşılaştırma istedi. 4 sayfa da (bizimki dahil) headless Chrome ile ekran görüntüsü alınıp yan yana incelendi. Somut fark: bizim sayfa koyu lacivert hero + art arda dizilmiş border/gölgeli "kutu" bölümlerden oluşuyordu (şablon hissi veren asıl neden), referans sitelerde ise açık arkaplan + çok büyük düz tipografi + neredeyse hiç kutulama yok + çok daha fazla boşluk + gerçek bir nav bar vardı.
+
+Kullanıcı onayıyla 4 yapısal değişiklik uygulandı (`templates/index.html`):
+1. **Üst nav bar eklendi** — logo (mevcut `static/logo.png`) + "CV Doktoru" wordmark + "Nasıl Çalışır/Örnek Analiz/SSS" çapa linkleri + "Ücretsiz Analiz" CTA'sı, sticky+blur.
+2. **Hero koyu lacivert temadan açık temaya geçti** — `linear-gradient(180deg, #F0F9FF, #F8FAFC)`, tipografi koyulaştırıldı (#0F172A), gradient blob/nokta deseni dekorasyonları kaldırıldı, hero-visual-card'daki -2deg rotate ve koyu kart arkaplanı kaldırıldı (artık düz, beyaz, "gerçek ürün" hissi veren bir kart).
+3. **Kutulama azaltıldı** — rozet şeridi, "3 Adımda Sonuç" ve SSS bölümleri artık `.section-flat`/`.faq-wrap` ile kutu/border/gölge olmadan sayfa arkaplanında duruyor. Kutu (border+gölge) sadece gerçekten "özel" 3 unsurda kaldı: form (fonksiyonel giriş alanı), "Derin Analiz Paketi" teklif kartı, "Rapor Neye Benziyor" demo kartı — referans sitelerdeki kalıpla aynı mantık.
+4. **Boşluk arttırıldı** — yeni `.section-flat`/`.section-spaced` sınıflarıyla bölümler arası dikey boşluk ~2 katına çıkarıldı (1.5rem → 3-4.5rem).
+
+Ayrıca form altındaki eski `.trust-bar` (düz metin pill şeridi) kaldırıldı çünkü artık hero altındaki yeni rozet şeridiyle tamamen tekrar ediyordu — ölü/tekrarlı CSS de temizlendi.
+
+**Önemli metodoloji düzeltmesi (mobil test):** Önceki oturumlarda "mobilde (390px) hero başlık/rozet metinleri sağdan taşıp kesiliyor" diye kaydedilen bug, bu oturumda **CDP `Emulation.setDeviceMetricsOverride` ile gerçek mobil emülasyonla yeniden test edildi ve gerçek bir hata olmadığı, sadece `chrome --window-size=390,...` ekran görüntüsü yönteminin bir artefaktı olduğu doğrulandı** — düzgün mobil emülasyonla hiçbir taşma yok, tüm metinler doğru sarılıyor. **Kural:** Bundan sonra mobil doğrulama için mutlaka CDP `Page.enable` + `Emulation.setDeviceMetricsOverride({mobile:true})` + `Page.captureScreenshot` akışı kullanılacak (script: `scratchpad/cdp_mobile_shot.py` tarzı, kalıcı değil ama yöntem tekrarlanabilir). Düz `--window-size` ile alınan mobil ekran görüntülerine güvenilmeyecek. Bu nedenle önceki checkpoint'lerdeki "mobil taşma bug'ı, düzeltilmedi" notu **yanlış pozitifti, artık geçersiz.**
+
+Yerelde (port 8533) hem masaüstü (1440px, tam sayfa) hem doğru CDP mobil emülasyonuyla (390px, tam sayfa) doğrulandı, ekran görüntüleri kullanıcıya gösterildi. **Henüz commit/deploy edilmedi — kullanıcı onayı bekleniyor.**
+
 ## Açık Kalan Sorular / Sıradaki Adımlar
 - [x] **Öncelik:** Rozet şeridi seçildi ve eklendi (yukarıya bakın). Kalan 2 unsur (hero foto, sosyal kanıt şeridi) henüz uygulanmadı.
 - [ ] "Bunu ben yaptım" founder fotoğraf bölümü — kullanıcı fotoğraf sağladığında ekle.
 - [ ] Sosyal kanıt şeridi — CLAUDE.md dürüstlük ilkesi gereği gerçek sayı/isimli yorum olmadan uygulanamaz, trafik/lead verisi büyüyünce tekrar değerlendir.
+- [ ] Kapsamlı redesign (nav bar, açık hero, az kutulama, çok boşluk) yerelde doğrulandı ama **commit/deploy edilmedi** — kullanıcı onayı bekleniyor, onaylanırsa hemen commit+push+deploy yapılmalı.
+- [x] Mobil taşma bug'ı — **yanlış pozitifmiş**, CDP ile doğru mobil emülasyonla test edilince hata yok. Bundan sonra mobil test CDP ile yapılacak (yukarıya bakın).
 - [ ] Mobilde (390px) hero başlık/rozet metinlerinin taşıp kesilmesi sorunu — kullanıcı "sonra bakarız" dedi, düzeltilmedi.
 - [ ] Fake-door testi bir sonraki 3-4 günlük döngüde tekrar ölçülecek mi yoksa tasarım değişikliğinden sonra mı — henüz kararlaştırılmadı.
 - [ ] 5 adımlık tasarım planının 4. maddesi — mikro-etkileşim/scroll animasyonları + mobilde sticky CTA bar — henüz başlanmadı.
