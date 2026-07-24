@@ -153,6 +153,17 @@ Commit `b0b263c`, push edildi, sunucuya deploy edildi (`git pull` + `systemctl r
 ## Açık Kalan Sorular / Sıradaki Adımlar
 - [x] "Sıcak, samimi, fotoğraf/animasyon/GIF dolu, profesyonel" tasarım hedefi somutlaştırıldı ve uygulandı (yukarıya bakın, commit `b0b263c`).
 - [ ] **Yeni öncelik:** Bu köklü redesign sonrası fake-door ölçüm penceresini sıfırla — kullanıcıyla ne zaman/nasıl değerlendirileceğini netleştir (önceki iki ölçüm artık eski tasarımlara ait, geçersiz karşılaştırma).
+
+## Fake-Door 3. Ölçüm Geldi (2026-07-24 sonu) — Değerlendirilmedi, Yarın İlk İş
+
+Redesign deploy edildikten hemen sonra kullanıcı şu veriyi paylaştı: `days:14, unique_visitors:39, premium_click_visitors:2, leads_captured:1, total_leads_all_time:1, click_rate_pct:5.1, lead_conversion_pct:2.6, verdict:GREEN_LIGHT, verdict_detail:"Tıklama oranı %5'in üzerinde — pazar talebi doğrulandı. MVP mimarisine geçilebilir."`
+
+**Kullanıcı ayrıca "sayı düşüyor" dedi** (unique_visitors: 55 → 51 → 39, düşüş trendi) — bu **henüz değerlendirilmedi**, oturum "yarın devam edelim" ile bitti.
+
+**Yarın ilk iş, dikkat edilmesi gerekenler:**
+1. Bu 14 günlük pencere büyük ölçüde bugünkü redesign'dan ÖNCEKİ tasarımı kapsıyor (redesign en son deploy edildi) — GREEN_LIGHT verdict'i yeni tasarımın etkisini yansıtmıyor, otomatik karar matrisi bunu bilemez, körü körüne "MVP'ye geç" denmemeli.
+2. **Ziyaretçi sayısındaki düşüş trendi** (55→51→39) ayrı ve muhtemelen daha acil bir sinyal — click_rate/lead_conversion yükseliyor gibi görünse de bu küçük n (39 ziyaretçi, 2 tıklama, 1 lead) üzerinde yüzdesel dalgalanma da olabilir. Düşüşün kök nedenini araştırmadan (organik trafik mi azaldı, SEO/Search Console durumu ne, mevsimsel mi) yorum yapmamalı.
+3. Search Console → "Request Indexing" hâlâ yapılmamıştı (bkz. eski açık madde) — trafik düşüşüyle ilişkili olabilir, kontrol edilmeli.
 - [ ] Google Ads kararı ertelendi — yeni tasarımla 7-10 günlük temiz bir ölçüm penceresi bekleniyor, sonra tekrar değerlendirilecek.
 - [ ] Fiyat değişikliği ertelendi — yeterli veri yok.
 - [x] **Öncelik:** Rozet şeridi seçildi ve eklendi (yukarıya bakın). Kalan 2 unsur (hero foto, sosyal kanıt şeridi) henüz uygulanmadı.
