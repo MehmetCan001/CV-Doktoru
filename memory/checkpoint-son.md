@@ -1,4 +1,4 @@
-# CHECKPOINT — 2026-07-20 — v1.11
+# CHECKPOINT — 2026-07-24 — v1.12
 
 ## Proje Adı ve Amacı
 **CV Doktoru** — Türkiye iş piyasasına özgü AI destekli CV analiz aracı.
@@ -107,9 +107,54 @@ Kullanıcı React/TypeScript/Tailwind ile hazır bir FAQ bileşeni istedi, ama p
 - Üstte arama çubuğu eklendi (`#faq-search-input`) — JS ile soru başlıklarını (`data-q` attribute, Türkçe locale-aware `toLocaleLowerCase('tr-TR')`) anlık filtreliyor, sonuç yoksa "Aramanızla eşleşen bir soru bulunamadı" mesajı çıkıyor.
 - Altta destek CTA'sı eklendi — kullanıcı henüz gerçek bir destek e-postası/kanalı vermediği için **link olmadan, nötr bir not** olarak bırakıldı ("Yakında buradan destek ekibimize de ulaşabileceksiniz."); ileride gerçek bir destek kanalı belirlenirse mailto: linkine çevrilmeli.
 
-**Test yöntemi:** CDP (`Emulation.setDeviceMetricsOverride`) ile gerçek tarayıcıda otomatik JS tıklama (`Runtime.evaluate` + `.click()`) ve arama input event'i tetiklenerek doğrulandı — accordion açılıyor, arama filtresi doğru soruyu buluyor, "bulunamadı" durumu doğru tetikleniyor. Yerelde (port 8534) ekran görüntüleriyle onaylandı. **Henüz commit/deploy edilmedi.**
+**Test yöntemi:** CDP (`Emulation.setDeviceMetricsOverride`) ile gerçek tarayıcıda otomatik JS tıklama (`Runtime.evaluate` + `.click()`) ve arama input event'i tetiklenerek doğrulandı — accordion açılıyor, arama filtresi doğru soruyu buluyor, "bulunamadı" durumu doğru tetikleniyor. Yerelde (port 8534) ekran görüntüleriyle onaylandı.
+
+**Ek bulgu — CLAUDE.md çelişkisi düzeltildi:** Commit öncesi `git status` kontrolünde, `CLAUDE.md`'nin de değiştiği görüldü — kullanıcı (muhtemelen IDE'de dosya açıkken, React/Tailwind FAQ isteğiyle aynı kaynaktan) React/TypeScript/Tailwind/shadcn/framer-motion'ı zorunlu kılan 45 satırlık bir bölüm yapıştırmış; bu, projenin gerçek yığınıyla (FastAPI+Jinja2+vanilla) doğrudan çelişiyordu. Kullanıcıya soruldu, "projemizin özelliklerine uygun şekilde düzenle" dedi. Bölüm silinmedi, içeriği gerçek yığına ve bu oturumda kurulan tasarım yönüne (açık tema, az kutulama, çok boşluk, CDP mobil test kuralı) göre yeniden yazıldı.
+
+Commit `08626d3`, push edildi, sunucuya deploy edildi, canlıda `curl` ile doğrulandı (HTTP 200, `faq-search-input` mevcut, 12 `faq-item`).
+
+## Bu Oturumda Yapılanlar (devam) — Fake-Door Sonucu (2. Ölçüm) ve Strateji Kararı
+
+İkinci fake-door ölçümü geldi: `days:14, unique_visitors:51, premium_click_visitors:2, leads_captured:1, click_rate_pct:3.9, lead_conversion_pct:2.0, verdict:OPTIMIZE`.
+
+Kullanıcı "Google Ads verelim mi, fiyatı mı değiştirelim?" diye sordu. Değerlendirme: n=51 hâlâ çok küçük, üstelik bu pencere büyük ölçüde redesign'dan (nav bar, açık hero, genişletilmiş SSS) ÖNCEKİ tasarımı kapsıyor — veri yeni tasarımın etkisini yansıtmıyor. **Tavsiye edilip kullanıcı tarafından onaylandı:** Google Ads'e para harcamadan önce yeni tasarımla temiz bir 7-10 günlük ölçüm penceresi daha bekle, organik trafiğe devam et. Fiyat değişikliği için de yeterli sinyal yok (1 lead, 0 gerçek ödeme) — fiyatın mı görünürlüğün mü darboğaz olduğu belirsiz, şimdi değiştirmek tahmin olur.
+
+**Kullanıcı tasarım yönünde net bir geri bildirim verdi (önemli, gelecek oturumlar için):** Mevcut redesign (nav bar + açık hero + az kutulama + çok boşluk) istediği yerden **çok uzak**. İstediği: **fotoğraf, animasyon, GIF ile dolu dolu, estetik, sıcak, güvenilir, samimi VE profesyonel** bir görünüm. Bu, önceki oturumlarda uyguladığımız "minimalist, düz, az dekorasyon, Stripe/Linear tarzı flat" yönünün ötesinde/farklısında bir talep — kullanıcı daha **zengin, duygusal, görsel açıdan dolu** bir sonuç istiyor, sadece yapısal sadeleştirme (nav bar, boşluk artırma) yeterli değil. **Yarın devam edilecek, henüz hiçbir yeni tasarım kararı alınmadı/uygulanmadı.** Yarın ilk iş: bu "sıcak/samimi/görsel dolu" hedefini somut olarak ne anlama geldiğini (hangi referanslar, hangi görsel unsurlar, founder fotoğrafı/gerçek insan görüntüsü var mı) netleştirmek.
+
+## Bu Oturumda Yapılanlar (2026-07-24) — Sıcak/Samimi Tam Yeniden Tasarım (v1.12)
+
+Önceki oturumun açık sorusu ("sıcak, samimi, fotoğraf/animasyon dolu, profesyonel" hedefi somutlaştırılmalı) bu oturumda çözüldü ve uygulandı.
+
+**Karar süreci:** Kullanıcıya 3 somut yön önerildi (A: solo-founder odaklı, B: sıcak renk+illüstrasyon odaklı, C: hibrit/mevcut yapıyı koru). Kullanıcı hibrit öneriyi reddetti, "mevcut yapıyı korumanı istemiyorum, sıfırdan baştan aşağı yeniden tasarla" dedi — hem görsel dil hem yerleşim/bölüm sırası baştan kurgulandı.
+
+**Founder fotoğrafı:** Kullanıcı `static/20250928_124229.jpg` (5.3 MB, EXIF orientation 6 ile yan yatık kaydedilmiş telefon fotoğrafı) yükledi. `PIL.ImageOps.exif_transpose` ile doğru yöne çevrildi, yüz+omuz odaklı kare kırpıldı (900x900 önizleme onaylandı), `static/founder-photo.jpg` olarak 800x800/90KB'a optimize edildi. **Ders:** Kullanıcıdan telefon fotoğrafı istenirken EXIF orientation kontrolü rutin bir adım olmalı — ham pikseller genelde yan/ters görünür, `exif_transpose` olmadan kırpma yanlış alanı keser.
+
+**Tasarım:** `templates/index.html` tamamen yeniden yazıldı (Write ile, önceki 1059 satırlık dosyanın üzerine):
+- Palet: lacivert/mavi yerine krem (`#FBF5EB`) + terracotta (`#DD5C22`) + sıcak kahve (`#271F16`) — CSS custom property (`:root` değişkenleri) ile.
+- Tipografi: Başlıklar için `Fraunces` (serif, sıcak/karakterli), gövde metni için `Inter` — iki fontlu kontrast.
+- Hero: Founder fotoğrafı (46px yuvarlak avatar) + "Merhaba, ben Mehmet..." samimi cümle + otomatik üretilen ürün akış GIF'i (aşağıya bakın).
+- Yeni "founder-note" bölümü: büyük fotoğraf (96px) + alıntı tarzı kişisel not, hero altına eklendi.
+- Tüm koyu-lacivert gradient'ler (demo-header, premium-card, cv-loading-card, report-header-card) sıcak kahverengi gradient'e (`--dark`/`--dark-2`) çevrildi.
+- Scroll-reveal mikro-animasyonları: `IntersectionObserver` + `.reveal`/`.reveal-stagger` CSS sınıfları, `prefers-reduced-motion` desteğiyle.
+- **Kritik:** Tüm JS-bağımlı ID/class'lar (`analyze-form`, `cv-file`, `faq-item`/`data-q`, `tab-btn`/`tab-pane`, `premium-*`, `report-*`, `cv-loading-*`, `alert-*`, `download-btn`) birebir korundu — sadece CSS/HTML iskeleti değişti, JS mantığına dokunulmadı (sadece reveal-observer script'i eklendi).
+
+**Ürün akış GIF'i (`static/urun-akisi.gif`, ~500KB):** Yerel `uvicorn` sunucusu ayağa kaldırılıp CDP (Chrome DevTools Protocol, websocket-client ile doğrudan) üzerinden otomatik olarak üretildi — gerçek sayfa, gerçek DOM, gerçek CSS/JS ile form dolduruluyor (örnek/kurgusal CV+ilan metni, mevcut "ÖRNEK · DEMO" kartındakiyle tutarlı dürüstlük ilkesinde), Analizi Başlat'a tıklanıyor, loading kartı ve rapor gösteriliyor. **Backend gerçek Claude API'ye bağlanmadı** (2-3 dakika sürer ve API kredisi harcar) — bunun yerine `Page.addScriptToEvaluateOnNewDocument` ile sayfaya enjekte edilen bir `window.fetch` shim'i, `/api/analyze/start` ve `/api/analyze/status/*` çağrılarını yakalayıp gerçekçi bir zamanlama ile (poll aralığına uygun ~6sn sonra) sabit örnek bir rapor metni döndürdü. Gerçek ürün kodu (renderMarkdown, renderReport, loading animasyonu) hiç değiştirilmeden, sadece ağ katmanı simüle edilerek çalıştırıldı — GIF'in altyazısı bunu "gerçek arayüzden akış — örnek CV ve ilan metniyle" diye dürüstçe belirtiyor, "canlı gerçek zamanlı analiz" iddiası yok.
+
+**Test yöntemi:** CDP ile hem 1440px masaüstü hem 390px mobil (doğru `Emulation.setDeviceMetricsOverride`) tam sayfa ekran görüntüsü alındı; ayrıca otomatik JS tıklama/olay tetikleme ile SSS accordion açma, SSS arama (eşleşen + eşleşmeyen durum), sekme geçişi (PDF/Metin), premium lead formu açılışı ve scroll-reveal animasyonlarının hepsinin `in-view` durumuna geçtiği doğrulandı.
+
+**Bulunan ve düzeltilen bug (bu oturum içinde, deploy öncesi):** İlk yazımda `.reveal-stagger` konteyneri (3 Adımda Sonuç ikonları) IntersectionObserver tarafından hiç gözlemlenmiyordu çünkü observer sadece `.reveal` sınıfını sorguluyordu — adım ikonları kalıcı olarak görünmez kalıyordu. `.reveal, .reveal-stagger` şeklinde düzeltildi. **Ders:** Farklı CSS sınıfı kullanan ama aynı gözlemciye ihtiyaç duyan elementler eklenirken observer'ın sorgu seçicisi güncellenmemesi sessiz bir görünmezlik hatasına yol açar — yeni bir `reveal-*` varyantı eklerken observer selector'ünü de güncellemek gerekir.
+
+**Temizlik notu:** Ekran görüntüsü/GIF üretim scriptleri proje kökünde yanlışlıkla `scratchpad_local/` klasörü oluşturdu (doğru scratchpad yolunun dışında) — commit öncesi fark edilip silindi. Kullanıcının yüklediği ham `static/20250928_124229.jpg` (5.3MB, işlenmemiş orijinal) bilinçli olarak commit'e dahil edilmedi (sadece işlenmiş `founder-photo.jpg` eklendi) — repoda gereksiz büyük dosya birikmesin diye.
+
+Commit `b0b263c`, push edildi, sunucuya deploy edildi (`git pull` + `systemctl restart cv-doktoru`), canlıda doğrulandı: ana sayfa HTTP 200, `/static/founder-photo.jpg` HTTP 200, `/static/urun-akisi.gif` HTTP 200, `founder-note`/`reveal-stagger` içerikleri sayfada mevcut.
+
+**Henüz yapılmayan/açık:** Bu redesign sonrası fake-door ölçüm penceresi sıfırdan başlamalı (önceki pencere hem eski tasarımı hem de ara redesign'ı kapsıyordu, artık geçersiz bir karşılaştırma temeli). Kullanıcıya henüz yeni bir ölçüm takvimi önerilmedi.
 
 ## Açık Kalan Sorular / Sıradaki Adımlar
+- [x] "Sıcak, samimi, fotoğraf/animasyon/GIF dolu, profesyonel" tasarım hedefi somutlaştırıldı ve uygulandı (yukarıya bakın, commit `b0b263c`).
+- [ ] **Yeni öncelik:** Bu köklü redesign sonrası fake-door ölçüm penceresini sıfırla — kullanıcıyla ne zaman/nasıl değerlendirileceğini netleştir (önceki iki ölçüm artık eski tasarımlara ait, geçersiz karşılaştırma).
+- [ ] Google Ads kararı ertelendi — yeni tasarımla 7-10 günlük temiz bir ölçüm penceresi bekleniyor, sonra tekrar değerlendirilecek.
+- [ ] Fiyat değişikliği ertelendi — yeterli veri yok.
 - [x] **Öncelik:** Rozet şeridi seçildi ve eklendi (yukarıya bakın). Kalan 2 unsur (hero foto, sosyal kanıt şeridi) henüz uygulanmadı.
 - [ ] "Bunu ben yaptım" founder fotoğraf bölümü — kullanıcı fotoğraf sağladığında ekle.
 - [ ] Sosyal kanıt şeridi — CLAUDE.md dürüstlük ilkesi gereği gerçek sayı/isimli yorum olmadan uygulanamaz, trafik/lead verisi büyüyünce tekrar değerlendir.
