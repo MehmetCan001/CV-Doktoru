@@ -23,15 +23,60 @@ _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 VALID_EVENTS = {"page_view", "premium_click"}
 
+# Bot/otomasyon tespiti (2026-07-29): nginx loglarında sayaca karışan HeadlessChrome,
+# Googlebot render'ı ve Dataprovider.com görüldü. Anahtar kelime listesi bilinen
+# otomasyon imzalarını kapsar; "python-requests", "curl" gibi HTTP kütüphaneleri de dahil.
+_BOT_UA_RE = re.compile(
+    r"bot|spider|crawl|headless|scraper|preview|python|curl|wget|httpx|aiohttp"
+    r"|phantom|selenium|playwright|puppeteer|dataprovider|lighthouse|pingdom|uptime",
+    re.IGNORECASE,
+)
+
+# Chrome 101+ gerçek tarayıcılarda UA sürümü daima "MAJOR.0.0.0" olarak sıfırlanmış
+# gönderilir (UA reduction). "Chrome/145.0.7632.6" gibi tam sürüm bildiren bir UA,
+# major >= 101 ise spoof/otomasyon işaretidir (2026-07-29'da canlıda tespit edildi:
+# aynı dev-build sürümü aynı gün hem Windows hem Android'den geldi).
+_CHROME_FULL_VERSION_RE = re.compile(r"Chrome/(\d+)\.(\d+\.\d+\.\d+)")
+
+
+def is_bot_user_agent(user_agent: str) -> bool:
+    """Sayaçlara dahil edilmemesi gereken bot/otomasyon UA'larını tespit eder."""
+    if not user_agent or not user_agent.strip():
+        return True  # UA göndermeyen istemci tarayıcı değildir
+    if _BOT_UA_RE.search(user_agent):
+        return True
+    m = _CHROME_FULL_VERSION_RE.search(user_agent)
+    if m and int(m.group(1)) >= 101 and m.group(2) != "0.0.0":
+        return True
+    return False
+
+
+def _excluded_ips() -> set[str]:
+    """ANALYTICS_EXCLUDE_IPS env'inden (virgülle ayrılmış) hariç tutulacak IP'ler.
+
+    Site sahibinin kendi ziyaretlerini sayım dışı bırakmak için; sunucu .env'inde tutulur.
+    """
+    raw = os.getenv("ANALYTICS_EXCLUDE_IPS", "")
+    return {ip.strip() for ip in raw.split(",") if ip.strip()}
+
 
 def _ip_hash(ip: str) -> str:
     salt = os.getenv("ANALYTICS_SALT", "cv-doktoru-varsayilan-tuz")
     return hashlib.sha256(f"{salt}:{ip}".encode("utf-8")).hexdigest()[:16]
 
 
-def log_event(event: str, ip: str) -> None:
-    """Bir sayfa görüntüleme / buton tıklaması olayını append-only log'a yazar."""
+def log_event(event: str, ip: str, user_agent: str | None = None) -> None:
+    """Bir sayfa görüntüleme / buton tıklaması olayını append-only log'a yazar.
+
+    Bot UA'ları ve ANALYTICS_EXCLUDE_IPS'teki IP'ler (site sahibi) sayılmaz.
+    user_agent=None (eski çağrı imzası) UA filtresini atlar; boş string "istemci
+    UA göndermedi" demektir ve bot sayılır.
+    """
     if event not in VALID_EVENTS:
+        return
+    if user_agent is not None and is_bot_user_agent(user_agent):
+        return
+    if ip in _excluded_ips():
         return
     entry = {
         "ts": datetime.utcnow().isoformat(),

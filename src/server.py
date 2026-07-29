@@ -107,13 +107,13 @@ def api_remaining(request: Request):
 
 @app.post("/api/track/visit")
 def api_track_visit(request: Request):
-    analytics.log_event("page_view", _client_ip(request))
+    analytics.log_event("page_view", _client_ip(request), request.headers.get("user-agent", ""))
     return {"ok": True}
 
 
 @app.post("/api/track/premium-click")
 def api_track_premium_click(request: Request):
-    analytics.log_event("premium_click", _client_ip(request))
+    analytics.log_event("premium_click", _client_ip(request), request.headers.get("user-agent", ""))
     return {"ok": True}
 
 
