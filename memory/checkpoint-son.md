@@ -178,6 +178,26 @@ Redesign deploy edildikten hemen sonra kullanıcı şu veriyi paylaştı: `days:
 - [ ] Search Console → URL Inspection → "Request Indexing" hâlâ yapılmadı.
 - [ ] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et (dosya yükleme akışı ayrıca doğrulanmadı).
 
+## Bu Oturumda Yapılanlar (2026-07-29) — Trafik Düşüşü Araştırması + Bot Filtresi
+
+**Trafik düşüşü (55→51→39) araştırıldı — gerçek bir trend DEĞİL:**
+- Sunucudaki `analytics_events.jsonl` günlük kırılımı: taban trafik günde 1-6 tekil ziyaretçi; 10 Temmuz'da tek günlük 15'lik spike vardı, o gün 14 günlük pencereden çıktıkça toplam "düşüyor" göründü. Taban hiç değişmedi — asıl sorun düşüş değil, trafiğin zaten yok denecek kadar az olması.
+- **Sayaçlar bot içeriyordu:** nginx loglarında `POST /api/track/visit` isteklerinde HeadlessChrome (muhtemelen bizim canlı doğrulama screenshot'larımız), Googlebot render'ı, Dataprovider.com ve sahte tam-sürümlü Chrome UA'ları (`Chrome/145.0.7632.6` aynı gün hem Windows hem Android'den — otomasyon) tespit edildi. Önceki fake-door verdict'leri (GREEN_LIGHT dahil) bu kirlilik nedeniyle güvenilmez.
+- **Önemli teknik ders (yanlış varsayım düzeltildi):** `Chrome/150.0.0.0` gibi sıfırlanmış sürüm bot işareti DEĞİL — Chrome 101+ gerçek tarayıcılar UA reduction gereği daima `MAJOR.0.0.0` gönderir. Asıl anomali TAM sürüm bildiren Chrome 101+ UA'sıdır (gerçek tarayıcı bunu yapmaz → spoof).
+- 19 Temmuz'daki 624 istekli "Googlebot" taraması sahte Googlebot'tu — `.env`/`wp-config.php` arayan zafiyet tarayıcısı, hepsi 404 aldı, sızıntı yok. Gerçek Googlebot günde 4-12 istekle normal tarıyor.
+- Reddit/HN/Facebook referrer'ları referrer-spam botları (IP'ye doğrudan `.asp` yollarıyla geliyorlar). Gerçek organik kaynak sadece Google, günde ~1-9 istek.
+
+**Bot filtresi eklendi (commit `c290d9e`, deploy edildi, canlıda doğrulandı):**
+- `src/analytics.py`: `is_bot_user_agent()` — bot/headless/crawl/python/curl vb. anahtar kelimeler + boş UA + Chrome≥101 tam-sürüm anomalisi. 13 gerçek UA örneğiyle test edildi, hepsi geçti.
+- `ANALYTICS_EXCLUDE_IPS` env desteği (virgülle ayrılmış) — kullanıcının ev IP'si (`176.54.59.46`, SSH_CLIENT'tan tespit edildi) sunucu `.env`'ine eklendi. **Dikkat: ev IP'si dinamik olabilir (Türk ISS'leri), değişirse sunucuda `.env` güncellenmeli.**
+- `src/server.py` track endpoint'leri UA'yı `log_event`'e geçiriyor; `log_event(event, ip, user_agent=None)` geriye uyumlu.
+- Canlı doğrulama: curl UA'lı ve gerçek-Chrome-UA'lı-ama-hariç-IP'li iki test isteği atıldı, olay dosyası 205→205 satır (ikisi de sayılmadı). Endpoint botlara bilgi sızdırmamak için yine `{"ok":true}` döner.
+- **Not:** Geçmiş veri retroaktif temizlenemez (olay dosyasında UA saklanmıyor) — redesign sonrası ölçüm penceresi zaten sıfırdan başlayacaktı, temiz veri bundan sonra birikecek.
+
+**Açık kalan (bu araştırmadan çıkan):**
+- [ ] Search Console → Request Indexing hâlâ yapılmadı; ayrıca Performans raporundaki gerçek gösterim/tıklama verisine bakılmalı (bot içermez) — kullanıcının kendi Google hesabıyla yapması gerekiyor.
+- [ ] Asıl darboğaz trafik edinimi: fake-door'un anlamlı sonuç vermesi için önce gerçek trafik lazım. İçerik/SEO veya küçük bütçeli Ads tartışması öne çekilmeli (Ads kararı önceden ertelenmişti).
+
 ## Bilinen Riskler / Dosya Notları
 - Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
 - İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.

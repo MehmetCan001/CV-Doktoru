@@ -446,7 +446,8 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 - [x] Deneyim süresi ↔ tarih tutarlılığı ön kontrolü — 2026-07-20'de gerçek Claude API çağrılarıyla 2 senaryoda test edildi, bir ihlal bulundu ve düzeltildi (detay Bölüm 12), commit + deploy edildi.
 
 ### Sıradaki (Öncelik Sırasıyla)
-- [ ] **Fake-door sonucu değerlendirme** (~2026-07-14 – 2026-07-21): `unique_visitors >= 30` olunca `/api/analytics/summary` verdict'ine bak, go/no-go kararı ver
+- [ ] **Fake-door sonucu değerlendirme** (~2026-07-14 – 2026-07-21): `unique_visitors >= 30` olunca `/api/analytics/summary` verdict'ine bak, go/no-go kararı ver. **DİKKAT (2026-07-29):** Bot filtresi eklenmeden önceki tüm ölçümler (GREEN_LIGHT dahil) bot+kendi-test kirliliği içeriyor, güvenilmez — temiz veri 2026-07-29 sonrası birikecek.
+- [x] Analytics bot filtresi + kendi IP hariç tutma — 2026-07-29'da eklendi (`src/analytics.py` `is_bot_user_agent` + `ANALYTICS_EXCLUDE_IPS` env, sunucu `.env`'inde `176.54.59.46`; ev IP'si dinamikse güncellenmeli). **Ders:** `Chrome/150.0.0.0` (sıfırlı sürüm) bot işareti DEĞİLDİR — Chrome 101+ UA reduction gereği tüm gerçek tarayıcılar böyle gönderir; asıl bot işareti Chrome≥101'de TAM sürüm bildirmektir. Ayrıca UA'sı "Googlebot" diyen her istek gerçek Googlebot değildir (19 Tem 2026'da 624 istekli sahte-Googlebot zafiyet taraması `.env`/`wp-config` aradı, hepsi 404).
 - [ ] Search Console → URL Inspection → ana sayfa için "Request Indexing" henüz yapılmadı
 - [ ] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et (dosya yükleme akışı ayrıca doğrulanmadı)
 - [ ] **Belge güncelliği alışkanlığı**: Bir özellik `analysis_prompt.md`'ye eklendiğinde AYNI ANDA bu roadmap'te işaretlensin — 2026-07-02'de 3 madde aylardır tamamlanmış olduğu halde "sıradaki" görünüyordu, kullanıcı raporu incelerken fark edildi
