@@ -195,8 +195,47 @@ Redesign deploy edildikten hemen sonra kullanıcı şu veriyi paylaştı: `days:
 - **Not:** Geçmiş veri retroaktif temizlenemez (olay dosyasında UA saklanmıyor) — redesign sonrası ölçüm penceresi zaten sıfırdan başlayacaktı, temiz veri bundan sonra birikecek.
 
 **Açık kalan (bu araştırmadan çıkan):**
-- [ ] Search Console → Request Indexing hâlâ yapılmadı; ayrıca Performans raporundaki gerçek gösterim/tıklama verisine bakılmalı (bot içermez) — kullanıcının kendi Google hesabıyla yapması gerekiyor.
+- [x] Search Console → Request Indexing — 2026-07-31'de kullanıcı tarafından yapıldı (bkz. aşağıdaki 2026-07-31 bölümü).
 - [ ] Asıl darboğaz trafik edinimi: fake-door'un anlamlı sonuç vermesi için önce gerçek trafik lazım. İçerik/SEO veya küçük bütçeli Ads tartışması öne çekilmeli (Ads kararı önceden ertelenmişti).
+
+## Bu Oturumda Yapılanlar (2026-07-31) — SEO/İndeksleme Teşhisi + Request Indexing
+
+Trafik düşüklüğünün kök nedeni araştırıldı. `WebSearch` ile `site:cvdoktoru.com` sorgusu **sıfır sonuç** döndürdü, genel "cvdoktoru CV analiz yapay zeka" araması da siteyi hiç göstermedi — site muhtemelen Google tarafından hiç indekslenmemişti.
+
+**Teknik taraf doğrulandı, engel yok:** Canlı `curl` ile kontrol edildi — `<meta name="robots" content="index, follow">` doğru, `X-Robots-Tag` header'ı yok, `canonical` doğru (`https://cvdoktoru.com/`), `title`/`description`/OG etiketleri sağlıklı, `robots.txt` ve `sitemap.xml` doğru serviste (dinamik, `src/server.py`).
+
+**Sonuç:** Sorun kod/config değil — muhtemelen Search Console'da "Request Indexing" hiç tetiklenmemiş olması + domain'in yeni olup henüz organik keşfedilmemiş olması. Kullanıcıya bu adım manuel olarak (kendi Google hesabıyla) yaptırıldı, kullanıcı "dizine ekleme istedim" diye onayladı.
+
+**Sıradaki adım (birkaç gün sonra kontrol edilecek):** Search Console → URL Inspection → "Sayfa Google'da mı?" durumuna bak + Performans raporunda gösterim (impression) sayısı 0'dan çıktı mı bak. İndeksleme genelde saatler-birkaç gün sürer, hemen sonuç beklenmemeli.
+
+## Bu Oturumda Yapılanlar (2026-08-01) — Mobil Test Bug'ları + UI Skill Kurulumu
+
+Kullanıcı LinkedIn paylaşımı öncesi telefondan gerçek mobil test yaptı, 2 gerçek bug buldu — ikisi de aynı oturumda kök nedeniyle bulunup düzeltildi ve canlıya deploy edildi.
+
+### Bug 1: PDF raporu hiç inmiyordu
+**Kök neden:** `src/pdf_export.py::_find_unicode_fonts()` sadece sabit OS yollarında (`/usr/share/fonts/truetype/dejavu/...`, `/usr/share/fonts/truetype/liberation/...`) font arıyor; sunucuda (Ubuntu 26.04) bu font paketleri hiç kurulu değildi, hatta `fontconfig` bile yoktu. Fonksiyon `(None, None)` döndürüp `generate_pdf_report` her seferinde `RuntimeError` fırlatıyordu → `/api/pdf` sessizce 500 veriyordu.
+**Düzeltme:** Sunucuya `apt-get install -y fonts-dejavu-core` kuruldu (kod değişikliği yok, sistem paketi). SSH ile doğrulandı: `ls /usr/share/fonts/truetype/dejavu/` artık dosyaları listeliyor, `systemctl restart cv-doktoru` sonrası canlı `/api/pdf` testi HTTP 200 + geçerli PDF döndü.
+
+### Bug 2: PDF'te metin header arka planıyla üst üste biniyordu
+**Kök neden:** `pdf_export.py` header dikdörtgenini 32pt yükseklikte çiziyordu (`pdf.rect(0,0,210,32,"F")`), ama başlık hücresinden sonra `pdf.ln(6)` ile içerik y=28'den başlıyordu — 28 < 32 olduğu için ilk satırlar koyu lacivert zemin üzerine koyu gri renkte (40,40,40) yazılıp görünmez/karışık oluyordu.
+**Düzeltme:** `pdf.ln(6)` yerine `pdf.set_y(40)` — header'ın 8pt net altından başlıyor artık. Commit `5c1d8a0`, deploy edildi, canlı test edildi (Türkçe karakterli örnek raporla).
+
+### Bug 3: TXT indirmede Türkçe karakterler bozuluyordu
+**Kök neden:** `templates/index.html`'deki TXT indirme Blob'u `text/plain;charset=utf-8` tipiyle oluşturuluyordu ama BOM (byte order mark) yoktu — bazı mobil görüntüleyiciler BOM'suz UTF-8'i yanlış encoding ile açıyor.
+**Düzeltme:** Blob içeriğinin başına UTF-8 BOM (`﻿`, bayt olarak `EF BB BF`) eklendi. Commit `fe009e4`, deploy edildi. **Kullanıcı ilk testte hâlâ bozuk gördü ama muhtemelen tarayıcı önbelleği eski sayfayı gösteriyordu** (curl ile canlı HTML'de BOM'un mevcut olduğu doğrulandı) — kullanıcıdan hard-refresh sonrası tekrar test etmesi istendi, sonucu bu checkpoint'e kadar teyit edilmedi, **yarın ilk iş bunu sormak.**
+
+### Bug 4 (ui-ux-pro-max skill ile bulundu): `.demo-badge` WCAG kontrast yetersizliği
+"ÖRNEK · DEMO" rozeti (`--accent` rengi, saydam `--accent` tint zemin üzerinde) hesaplanan kontrastı 2.86:1 idi (WCAG AA küçük metin eşiği 4.5:1). Zaten tanımlı `--accent-dark`/`--accent-softer` token'larına geçilerek (saydam yerine düz renk) 4.5:1 üzerine çıkarıldı, görsel dil bozulmadı. Commit `a1fb825`, deploy edildi.
+
+### `ui-ux-pro-max` design skill kuruldu (proje-özel, `.claude/skills/`)
+Kullanıcı https://github.com/nextlevelbuilder/ui-ux-pro-max-skill skill'ini `npm install -g ui-ux-pro-max-cli` + `uipro init --ai claude` ile kurdu. Paket 6 alt skill getirdi (`ui-ux-pro-max`, `banner-design`, `brand`, `design`, `design-system`, `slides`, `ui-styling`). **`ui-styling` kaldırıldı** çünkü Tailwind/shadcn'e özel — CLAUDE.md'nin başındaki uyarıyla birebir çelişen bir risk taşıyordu (proje vanilla CSS kullanıyor). `.claude/` zaten `.gitignore`'da, bu skill dosyaları repoya girmiyor.
+
+**Skill'in gerçek davranışı test edildi, önemli bulgu:** `--design-system` (bütünsel tam-sayfa öneri) modu **güvenilmez** — iki farklı, isabetli sorguda bile projenin kimliğiyle alakasız sonuçlar verdi (bir seferinde koyu lacivert "Enterprise Gateway" B2B stili — tam olarak daha önce reddettiğimiz yön; diğerinde siyah+pembe "Anti-Polish/Raw" el-çizimi indie sanat sitesi stili). Anahtar kelime eşleştirmesi yüzeysel, proje geçmişini/kararlarını bilmiyor. **Buna karşılık `--domain <alan>` ile dar kapsamlı sorgular (color, typography, ux) gerçekten değerli** — Bug 4'ü böyle bulduk. **Kural: Bu skill'i "tasarımcı" gibi kullanma, nokta atışı danışma/doğrulama kaynağı olarak kullan** (özellikle WCAG kontrast kontrolü için); büyük tasarım kararları yine kullanıcıyla birlikte, projenin gerçek bağlamına göre alınmalı.
+
+## Açık Kalan / Yarın İlk İş
+- [ ] **TXT indirme BOM düzeltmesinin gerçekten çalıştığını doğrula** — kullanıcı hard-refresh sonrası tekrar test etmedi/sonucu paylaşmadı.
+- [ ] LinkedIn paylaşımı hâlâ yapılmadı — mobil bug'lar düzeltildi, paylaşım metni ve profil güncellemesi (headline/about/deneyim) bu oturumda hazırlandı ama henüz LinkedIn'e girilmedi/paylaşılmadı, kullanıcı elle giriyor.
+- [ ] FastAPI dosya yükleme akışı gerçek mobil cihazda test edildi ve **çalıştığı doğrulandı** (bu oturumda) — eski açık madde kapatılabilir.
 
 ## Bilinen Riskler / Dosya Notları
 - Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
