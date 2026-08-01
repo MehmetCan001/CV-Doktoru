@@ -1008,7 +1008,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
       "</div>";
 
     document.getElementById("dl-txt-btn").addEventListener("click", function () {
-      var blob = new Blob([lastReportText], { type: "text/plain;charset=utf-8" });
+      var blob = new Blob(["﻿" + lastReportText], { type: "text/plain;charset=utf-8" });
       var url = URL.createObjectURL(blob);
       var a = document.createElement("a");
       a.href = url;
