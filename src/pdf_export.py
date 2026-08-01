@@ -52,7 +52,7 @@ def generate_pdf_report(markdown_text: str) -> bytes:
     pdf.set_text_color(255, 255, 255)
     pdf.set_xy(15, 10)
     pdf.cell(W, 12, "CV Doktoru - Analiz Raporu", ln=True, align="C")
-    pdf.ln(6)
+    pdf.set_y(40)
 
     pdf.set_font("Arial", "", 11)
     pdf.set_text_color(40, 40, 40)
