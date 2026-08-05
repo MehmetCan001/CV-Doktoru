@@ -6,16 +6,19 @@
 
 # Proje Tasarım ve Mühendislik Standartları
 
-> **Not (2026-07-23):** Bu bölüm bir önceki oturumda yanlışlıkla React/TypeScript/Tailwind/shadcn öngören genel bir şablon metniyle dolduruldu — bu, projenin gerçek yığınıyla (aşağıda) doğrudan çelişiyordu. İçerik, gerçek teknoloji yığınına ve bu oturumda onaylanıp uygulanan tasarım yönüne göre düzeltildi.
+> **Not (2026-08-05):** Bu bölüm önceki bir oturumda (2026-07-23) "flat/nötr" bir yöne göre yazılmıştı, ama kullanıcı bunu bir sonraki oturumda (2026-07-24) açıkça reddedip "fotoğraf, animasyon, GIF ile dolu dolu, sıcak, samimi VE profesyonel" bir yön istedi. O talep uygulandı ve **v1.12 olarak canlıda** — bu bölüm artık gerçek uygulanmış tasarımı (`templates/index.html`) yansıtacak şekilde güncellendi. Aşağıdaki flat yön artık geçerli değil, tarihi referans için `memory/checkpoint-son.md`'de duruyor.
 
-## 1. UI/UX Tasarım Felsefesi (Şablon Hissini Kırmak)
-- **Tasarım kalitesi:** Jenerik "AI SaaS şablonu" hissi veren kalıplardan kaçın — koyu lacivert hero + gradient blob + her bölümü ayrı ayrı border/gölgeli kutuya alma, 2025-2026'da aşırı kullanılmış ve "şablon" olarak tanınan bir görsel dil (bkz. `memory/checkpoint-son.md`, 2026-07-23 redesign notu).
-- **Kanıtlanmış yön (easy.tools/supliful.com/cvcim.com karşılaştırmasından, bu oturumda uygulandı):**
-  - Açık/nötr arkaplan + büyük, düz, kalın tipografi; koyu tema veya parıltılı gradient hero değil.
-  - Kutulama (border+gölge) sadece gerçekten "özel" 1-2 unsurda (form, ücretli teklif, örnek rapor demosu) kullanılır — her bölümü kutuya almak şablon hissi yaratır.
-  - Bölümler arası boşluk cömert olmalı (referans sitelerin 2-3 katı); sıkışık, art arda dizilmiş kart yığını yerine nefes alan bir düzen.
-  - Gerçek ürün ekran görüntüsü/veri > stilize edilmiş sahte mockup/dekoratif ikon kutuları.
-- **Görsel/Placeholder:** Boş gri kutu bırakma. ama sahte stok fotoğraf/Unsplash görseli de kullanma — CLAUDE.md'nin dürüstlük ilkesi gereği (bkz. madde 6 ve 11), yalnızca gerçek ürün ekran görüntüleri veya dürüstçe etiketlenmiş örnek/demo içerik kullanılır.
+## 1. UI/UX Tasarım Felsefesi (v1.12 — Sıcak/Samimi Yön)
+- **Tasarım kalitesi:** Jenerik "AI SaaS şablonu" hissi veren kalıplardan kaçın — ama bunun karşılığı "soğuk minimalizm" değil, **sıcak, insan, fotoğraf/animasyon dolu ama yine de profesyonel** bir görünüm. Kullanıcı flat/nötr yönü "estetik değil, öncekilerden farksız" diye reddetti (bkz. `memory/checkpoint-son.md`, 2026-07-24 notu).
+- **Uygulanan yön (canlıda, `templates/index.html`):**
+  - Palet: krem/kağıt zemin (`--paper` ≈ `#FBF5EB`) + terracotta vurgu (`--accent: #DD5C22`) + sıcak kahve koyu tonlar (`--dark`/`--dark-2`, ≈ `#241A10`/`#38281A`) — koyu lacivert/mavi **yok**.
+  - Tipografi: başlıklarda `Fraunces` (serif, karakterli/sıcak), gövde metninde `Inter` — iki fontlu bilinçli kontrast.
+  - **Gerçek insan fotoğrafı kullanılır** — founder fotoğrafı (`static/founder-photo.jpg`) hero'da ve "founder-note" bölümünde. Önceki "hiç fotoğraf/stok görsel yok" kuralı artık geçerli değil; kural hâlâ geçerli: **sahte/stok/Unsplash görsel yasak**, sadece gerçek kişi/ürün görüntüsü.
+  - **Ürün akış GIF'i** (`static/urun-akisi.gif`) hero'da — gerçek DOM/CSS/JS'ten üretilmiş, dürüstçe "örnek CV/ilan metniyle" etiketlenmiş, sahte "canlı analiz" iddiası yok.
+  - Scroll-reveal mikro-animasyonları (`IntersectionObserver` + `.reveal`/`.reveal-stagger`), `prefers-reduced-motion` desteğiyle.
+  - Kutulama (border+gölge) yine sadece gerçekten "özel" unsurlarda (form, ücretli teklif kartı, örnek rapor demosu) — her bölümü kutuya almak hâlâ şablon hissi yaratır, bu kısıtlama değişmedi.
+  - Bölümler arası boşluk cömert kalmaya devam ediyor; nav bar + açık hero yapısı (2026-07-24 öncesi yapısal redesign'dan) korundu, üzerine sıcak palet/foto/animasyon eklendi.
+- **Görsel/Placeholder:** Boş gri kutu bırakma, sahte stok fotoğraf/Unsplash görseli de kullanma (dürüstlük ilkesi, bkz. madde 6 ve 11) — ama artık **gerçek kişi fotoğrafı ve gerçek üründen üretilmiş GIF/ekran görüntüsü teşvik edilir**, sadece gerçek ürün ekran görüntüleri veya dürüstçe etiketlenmiş örnek/demo içerik kullanılır.
 
 ## 2. Gerçek Teknoloji Yığını (bkz. Bölüm 11 "Teknik Yığın")
 - **Backend:** FastAPI (Python) — `src/server.py`, `src/app.py`, `src/analyzer.py` vb.

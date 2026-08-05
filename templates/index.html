@@ -445,6 +445,37 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 .download-btn:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(221,92,34,0.15); }
 
 .footer-note { text-align: center; color: var(--ink-faint); font-size: 0.82rem; padding: 2rem 0 1rem; }
+
+/* ── Mobil sabit (sticky) CTA çubuğu ── */
+.mobile-sticky-cta {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+    padding: 0.6rem 0.9rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(251, 245, 235, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgba(39, 31, 22, 0.1);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+}
+.mobile-sticky-cta.visible { transform: translateY(0); opacity: 1; }
+.mobile-sticky-cta-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    width: 100%; min-height: 48px;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 0.95rem;
+    font-family: 'Inter', sans-serif; border: none; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(221, 92, 34, 0.35);
+}
+.mobile-sticky-cta-btn:hover { background: var(--accent-dark); }
+.mobile-sticky-cta-btn:focus-visible { outline: 2px solid var(--dark); outline-offset: 2px; }
+@media (max-width: 768px) {
+    .mobile-sticky-cta { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mobile-sticky-cta { transition: none; }
+}
 </style>
 </head>
 <body>
@@ -778,6 +809,10 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
   <div class="footer-note">CV Doktoru — Türkiye'nin iş ilanına özel CV analiz aracı</div>
 </div>
 
+<div class="mobile-sticky-cta" id="mobile-sticky-cta" aria-hidden="true">
+  <button type="button" class="mobile-sticky-cta-btn" id="mobile-sticky-cta-btn" tabindex="-1">⬆️ Forma Dön</button>
+</div>
+
 <script>
 (function () {
   "use strict";
@@ -968,6 +1003,52 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
   var loadingSlot = document.getElementById("loading-slot");
   var reportSlot = document.getElementById("report-slot");
   var lastReportText = "";
+
+  // ── Mobil sabit CTA çubuğu ──
+  // Hero geçildikten sonra belirir (hero'daki asıl CTA zaten görünürken gerekmiyor),
+  // rapor ekranda gösterilirken (kullanıcı zaten formu doldurup sonucu görüyorken)
+  // kafa karışıklığı yaratmaması için tekrar gizlenir.
+  (function () {
+    var stickyCta = document.getElementById("mobile-sticky-cta");
+    var stickyBtn = document.getElementById("mobile-sticky-cta-btn");
+    var heroEl = document.querySelector(".hero-wrapper");
+    if (!stickyCta || !stickyBtn || !heroEl) { return; }
+
+    var scrolledPastHero = false;
+    var reportVisible = false;
+
+    function setStickyVisible(shouldShow) {
+      stickyCta.classList.toggle("visible", shouldShow);
+      stickyCta.setAttribute("aria-hidden", shouldShow ? "false" : "true");
+      stickyBtn.tabIndex = shouldShow ? 0 : -1;
+    }
+
+    function refreshStickyVisibility() {
+      setStickyVisible(scrolledPastHero && !reportVisible);
+    }
+
+    if ("IntersectionObserver" in window) {
+      var heroObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          scrolledPastHero = !entry.isIntersecting;
+          refreshStickyVisibility();
+        });
+      }, { threshold: 0 });
+      heroObserver.observe(heroEl);
+    }
+
+    if ("MutationObserver" in window) {
+      var reportObserver = new MutationObserver(function () {
+        reportVisible = reportSlot.children.length > 0;
+        refreshStickyVisibility();
+      });
+      reportObserver.observe(reportSlot, { childList: true });
+    }
+
+    stickyBtn.addEventListener("click", function () {
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  })();
 
   function showAlert(message, kind) {
     alertSlot.innerHTML = '<div class="alert alert-' + kind + '">' + escapeHtml(message) + "</div>";
