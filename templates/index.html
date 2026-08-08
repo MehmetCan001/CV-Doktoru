@@ -285,6 +285,8 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 .faq-empty { display: none; text-align: center; color: var(--ink-faint); font-size: 0.88rem; padding: 1.5rem 0; }
 .faq-empty.show { display: block; }
 .faq-support-note { text-align: center; margin-top: 2rem; font-size: 0.85rem; color: var(--ink-faint); }
+.faq-support-note a { color: var(--accent-dark); font-weight: 700; text-decoration: none; }
+.faq-support-note a:hover { text-decoration: underline; }
 
 /* ── Premium teaser (fake-door talep testi) ── */
 .premium-card {
@@ -435,6 +437,11 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 .download-btn:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(221,92,34,0.15); }
 
 .footer-note { text-align: center; color: var(--ink-faint); font-size: 0.82rem; padding: 2rem 0 1rem; }
+
+.footer-links { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-top: 1.5rem; font-size: 0.82rem; }
+.footer-links a { color: var(--ink-soft); text-decoration: none; font-weight: 600; }
+.footer-links a:hover { color: var(--accent-dark); }
+.footer-links span { color: var(--ink-faint); }
 
 /* ── Mobil sabit (sticky) CTA çubuğu ── */
 .mobile-sticky-cta {
@@ -774,9 +781,14 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 
     <div class="faq-empty" id="faq-empty">Aramanızla eşleşen bir soru bulunamadı. Farklı bir kelimeyle tekrar deneyin.</div>
 
-    <div class="faq-support-note">Aradığınız cevabı bulamadınız mı? Yakında buradan destek ekibimize de ulaşabileceksiniz.</div>
+    <div class="faq-support-note">Aradığınız cevabı bulamadınız mı? <a href="mailto:destek@cvdoktoru.com">destek@cvdoktoru.com</a> adresinden bize ulaşabilirsiniz.</div>
   </div>
 
+  <div class="footer-links">
+    <a href="/gizlilik">Gizlilik &amp; KVKK</a>
+    <span aria-hidden="true">·</span>
+    <a href="mailto:destek@cvdoktoru.com">İletişim</a>
+  </div>
   <div class="footer-note">CV Doktoru — Türkiye'nin iş ilanına özel CV analiz aracı</div>
 </div>
 
