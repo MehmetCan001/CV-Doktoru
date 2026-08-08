@@ -76,6 +76,11 @@ def index():
     return (TEMPLATES_DIR / "index.html").read_text(encoding="utf-8")
 
 
+@app.get("/gizlilik", response_class=HTMLResponse)
+def gizlilik():
+    return (TEMPLATES_DIR / "gizlilik.html").read_text(encoding="utf-8")
+
+
 @app.get("/robots.txt", response_class=Response)
 def robots_txt():
     body = f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n"
