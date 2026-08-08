@@ -144,13 +144,6 @@ def _run_analysis_job(job_id: str, cv_text: str, job_text: str) -> None:
             _jobs[job_id]["error"] = f"Analiz hatası ({type(e).__name__}): {e}"
         return
 
-    try:
-        report_file = config.DATA_DIR / "last_report.txt"
-        report_file.parent.mkdir(exist_ok=True)
-        report_file.write_text(report, encoding="utf-8")
-    except Exception:
-        pass
-
     with _jobs_lock:
         _jobs[job_id]["status"] = "done"
         _jobs[job_id]["report"] = report
