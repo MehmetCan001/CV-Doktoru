@@ -51,7 +51,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=Poppins:wght@300;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 :root {
@@ -133,7 +133,15 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
     max-width: 1120px; margin: 0 auto; padding: var(--sp-3) var(--sp-5);
     display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5);
 }
-.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); font-weight: 800; font-size: var(--fs-md); color: var(--ink); text-decoration: none; }
+/* Wordmark logo gorselindeki bicimi izliyor: geometrik sans, hepsi buyuk
+   harf, "CV" ince (300) + "DOKTORU" kalin (700). Marka isareti sitenin
+   govde/baslik fontlarindan bagimsiz bir yuz kullanabilir - tek yerde,
+   navbar markasinda gecerli. */
+.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink); text-decoration: none; }
+.marka-adi { font-family: 'Poppins', 'Inter', sans-serif; font-size: var(--fs-md);
+    line-height: 1; letter-spacing: 0.005em; display: inline-flex; align-items: baseline; gap: 0.28em; }
+.marka-cv { font-weight: 300; }
+.marka-doktoru { font-weight: 700; }
 .navbar-brand img { width: 26px; height: 26px; border-radius: var(--r-md); }
 .navbar-links { display: none; align-items: center; gap: var(--sp-6); }
 @media (min-width: 760px) { .navbar-links { display: flex; } }
@@ -663,7 +671,7 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
 
 <nav class="navbar">
   <div class="navbar-inner">
-    <a href="/" class="navbar-brand"><img src="/static/logo-mark.png?v=3" alt="" class="marka-logo" width="28" height="28">CV Doktoru</a>
+    <a href="/" class="navbar-brand" aria-label="CV Doktoru ana sayfa"><img src="/static/logo-mark.png?v=3" alt="" class="marka-logo" width="28" height="28"><span class="marka-adi"><span class="marka-cv">CV</span><span class="marka-doktoru">DOKTORU</span></span></a>
     <div class="navbar-links">
       <a href="#how">Nasıl Çalışır</a>
       <a href="#demo">Örnek Analiz</a>
