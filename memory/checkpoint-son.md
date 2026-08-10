@@ -442,7 +442,9 @@ Kendi ürettiğim belge+nabız mark'ı reddedildikten ve logo dış kaynağa ver
 
 **Kullanıcıya ölçerek bildirilen, karar bekleyen iki sorun:**
 1. **Mark 26-32px'te okunmuyor.** İç içe geçmiş çerçeve + yüz profili + stetoskop bu boyutta turuncu bir lekeye dönüşüyor; ancak ~96px'te seçiliyor. Navbar (28px) ve favicon (32/16px) tam o boyutlarda çalışıyor. Boyut testi görseliyle gösterildi. Seçenekler sunuldu (olduğu gibi bırak / navbar'da sadece wordmark / mark'ı sadeleştir), karar verilmedi.
-2. **Renk uyuşmazlığı.** Logo turuncusu `#ED4506`, sitenin accent'i `#DD5C22` — logo daha kırmızı/doygun. Ayrıca iki tonlu sürümdeki **mavi çerçeve koyu kahve navbar'da neredeyse kayboluyor**; pratikte sadece turuncu iç kısım görünüyor. Normalde marka rengini logo belirler; paleti logoya çekme seçeneği sunuldu, karar verilmedi.
+2. **Renk uyuşmazlığı.** Logo turuncusu `#ED4506`, sitenin accent'i `#DD5C22` — logo daha kırmızı/doygun. Normalde marka rengini logo belirler; paleti logoya çekme seçeneği sunuldu, **karar verilmedi.**
+
+**Çözülen (oturumun son işi): mavi çerçeve → beyaz.** İki tonlu logodaki mavi çerçeve koyu navbar'da kayboluyordu. Çerçeve beyaza çevrildi (18.847 piksel; alfa korunarak, kenar yumuşaklığı bozulmadan, turuncu iç kısma dokunulmadan) ve **ayrı dosya** olarak üretildi: `static/logo-mark-koyu.png`. **Yalnızca navbar'a bağlı** — beyaz çerçeve açık zeminde görünmez olduğu için favicon ve sosyal görsel mavi çerçeveli sürümde kaldı. Bir logonun açık/koyu iki varyantı olması standart uygulama. Canlıda doğrulandı.
 
 ### Wordmark — logodaki tipografiye göre yeniden kuruldu
 Kullanıcı "logo görselindeki yazı fontunu ve biçimini kullan, CV ince Doktoru kalın" dedi. **Poppins** yüklendi (logodaki geometrik sans'a en yakın Google Font — kesin tanımlanamadı, alternatifler Montserrat/DM Sans/Outfit), yalnızca 2 ağırlık (300/700). Wordmark iki span'e bölündü: `.marka-cv` (300) + `.marka-doktoru` (700), hepsi büyük harf. Bu siteye üçüncü yazı tipini ekliyor ama tek yerde (navbar markası) geçerli.
