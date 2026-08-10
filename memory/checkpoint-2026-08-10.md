@@ -448,7 +448,8 @@ Kendi ürettiğim belge+nabız mark'ı reddedildikten ve logo dış kaynağa ver
 Kullanıcı üçüncü bir logo yükledi: **kalkan formu** (lacivert çerçeve + altın yüz/belge/stetoskop, üstünde "UZMAN" ve altında kavisli "CV DOKTORU" yazıları). Talep: çerçeve beyaz, iç turuncu, yazılar kullanılmayacak.
 
 - Kalkan gövdesi kırpıldı (y 168-406, x 392-634) — kavisli yazı y=410'da x 354..670'e yayıldığı için kırpma sınırı ona göre seçildi.
-- Lacivert → beyaz, altın → `#DD5C22` (site accent'i).
+- Lacivert → beyaz, altın → **`#F28A4E`**. İlk denemede site accent rengi (`#DD5C22`) kullanıldı ama koyu navbar zemininde 4.57:1 ile grafik eşiğini geçmesine rağmen zeminle aynı sıcaklıkta olduğu için görsel olarak öne çıkmıyordu. Dört aday ölçülüp yan yana gösterildi; `#F28A4E` (6.93:1) seçildi. En açık aday `#F9A06A` (8.34:1) peach tonuna kaçıp beyaz çerçeveyle yarıştığı için elendi.
+- **Favicon köşeleri yuvarlatıldı** (yarıçap %22; 4x çizilip küçültülerek pürüzsüz kenar) — keskin kare köşe sert duruyordu.
 - **Renk eşikleri ölçüyle kuruldu:** zemin medyanı 244, lacivert 86, altın 149. İlk denemede eşiği 45'e kurmuştum ve altın çizgiler yarı saydam çıktı — 170 (tam opak) / 228 (şeffaf) aralığıyla düzeltildi. Alfa korunarak kenar yumuşaklığı bozulmadı.
 - **Favicon koyu kare zemine oturtuldu** (32/180px): beyaz çerçeve açık tarayıcı sekmesinde kaybolurdu.
 - Kaynak dosya UUID adından `logo-kaynak-kalkan.jpg`'e çevrildi. Cache-bust `?v=6`.
