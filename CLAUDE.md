@@ -399,11 +399,11 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 ### Türk Rakipler
 | Rakip | Tür | Bize Öğrettikleri |
 |---|---|---|
-| cvanaliz.com.tr | Bireysel geliştirici | Mülakat simülasyonu, HuggingFace limitleri |
+| cvanaliz.com.tr | Bireysel geliştirici | Mülakat simülasyonu, HuggingFace limitleri. **SEO uyarısı (2026-08-08):** Google'da "cv analiz" aramasında 1. sırada — Gemini kullanıyor (Claude değil), yani ürün derinliği değil SEO gücüyle önde. Muhtemel sebep: domain adı ("cvanaliz.com.tr") aratılan kelimeyle birebir aynı — klasik exact-match-domain SEO taktiği. **Monetizasyon kontrolü (canlı sitede doğrulandı, 2026-08-08):** Gerçek uygulama bir Hugging Face Space'te (`apoloxer-cvanaliz.hf.space`) çalışıyor, cvanaliz.com.tr sadece onu iframe'liyor; fiyatlandırma/premium/ödeme altyapısı/reklam/analytics hiçbiri yok, tek geliştirici imzalı (Arda Bölükbaşı) — muhtemelen para kazanmıyor, bireysel/portföy projesi. Bize dersi: bu iyi finanse edilmiş bir rakip değil, sadece iyi bir domain adına sahip bir hobi projesi — asıl tehdit ürünü değil, o arama trafiğini kapmış olması. Kendi SEO'muzu (bkz. Bölüm 14 "Sıradaki") hızlandırmazsak ürün üstünlüğümüz görünmez kalır. |
 | Anabasis.ai | Türk tam platform | GitHub analizi fikri, feature bloat riski |
 | anbean KAMPÜS | Öğrenci kariyer platformu | Marka gücü, öğrenci ekosistemi stickiness |
 | Youthall | Türk Glassdoor | Maaş verisi kaynağı, mülakat deneyimleri |
-| CVCIM | İnsan CV yazım servisi | 149-899 TL fiyat kanıtı, LinkedIn talebi |
+| CVCIM | İnsan CV yazım servisi | 149-899 TL fiyat kanıtı, LinkedIn talebi. **Gerçek gelir doğrulaması (2026-08-08):** Bu, incelenen rakipler arasında gerçekten para kazandığı somut kanıtlarla doğrulanan tek örnek. Kayıtlı şirket (Moose Danışmanlık Yazılım Elektronik Ltd. Şti., Ticaret Sicil No: 415450), 2010'dan beri kesintisiz faaliyette (16 yıl), canlı iyzico ödeme entegrasyonu, Mesafeli Satış Sözleşmesi gibi tam yasal uyum belgeleri, ₺249-499 aralığında fiyatlı hizmet kataloğu + atanmış danışman/telefon görüşmesiyle gerçek teslimat süreci. Karşılaştırma: cvanaliz.com'da KVKK metninde doldurulmamış şablon parantezi ve hiç ticaret sicil/vergi no yok, cvanaliz.com.tr salt HuggingFace Space üzerinde ücretsiz hobi projesi — CVCIM ikisinden de köklü ve güvenilir. Bize dersi: Türk kullanıcı CV danışmanlığına gerçekten para ödüyor (bkz. Bölüm 14 "Derin Analiz Paketi" hipotezimizi doğrular), ama insan-destekli/danışmanlık modeliyle — saf otomatik AI aracı değil. |
 | Ono (onenewone) | HR-Tech B2B | İşveren tarafı AI büyüyor → aday fırsatı |
 | Bilsoft Kariyer | Şirketin kendi CV aracı | Şirketler AI ile eliyor → core mesajımız |
 
@@ -448,10 +448,18 @@ Başlangıçta olmayan, iterasyonlarla eklenen bölümler:
 - [x] Fake-door talep testi altyapısı — 2026-07-07'de eklendi: "Derin Analiz Paketi — 189 ₺" kartı + çerezsiz sunucu-taraflı sayaç (`src/analytics.py`) + otomatik KILL/OPTIMIZE/GREEN_LIGHT karar matrisi (`/api/analytics/summary`). 1-2 haftalık gözlem penceresi 2026-07-07'de başladı, sonuç ~2026-07-14/21 civarı değerlendirilecek.
 - [x] Deneyim süresi ↔ tarih tutarlılığı ön kontrolü — 2026-07-20'de gerçek Claude API çağrılarıyla 2 senaryoda test edildi, bir ihlal bulundu ve düzeltildi (detay Bölüm 12), commit + deploy edildi.
 
+### Rakip Farklılaşma Stratejisi — 5 Fazlı Merdiven (2026-08-08'de kararlaştırıldı)
+Tam spec: `docs/superpowers/specs/2026-08-08-rakip-farklilasma-stratejisi-design.md`. Sıralama en ucuz/az riskliden en pahalıya: **Güven → Dağıtım → Para Kazanma → SEO → Ölçek.** Gelir modeli freemium; insan-destekli üst paket bilinçli olarak YOK (solo ekipte ölçeklenmez) — farklılaşma hız (30 sn vs 3 gün), fiyat, ilana-özel derinlik ve Türk iş kültürü nüansı üzerinden.
+- [x] **Faz 0 — Güven katmanı** (2026-08-10'da tamamlandı, canlıda): `/gizlilik` KVKK aydınlatma sayfası (`templates/gizlilik.html` + `src/server.py` route), footer'da Gizlilik/İletişim linkleri, SSS'te gerçek `destek@cvdoktoru.com` linki, `last_report.txt` debug yazımının kaldırılması, sitemap'e `/gizlilik`. Konumlanma "kayıtlı şirket" değil **"gerçek isim + tam şeffaflık"** üzerinden (CV Doktoru şahıs olarak yürütülüyor, uydurma şirket/vergi bilgisi yazılmadı).
+- [ ] **Faz 1 — Dağıtım** (2-4 hafta): LinkedIn, kariyer toplulukları, üniversite kulüpleri. Çıkış kriteri: haftalık gerçek kullanıcı sayısı ölçülebilir şekilde artıyor. **Kendi brainstorming/spec turunu bekliyor.**
+- [ ] Faz 2 — Derin Analiz Paketi'ni gerçek ödemeli ürüne çevir (iyzico). Çıkış kriteri: ilk gerçek ödeme.
+- [ ] Faz 3 — SEO/içerik momentumu + küçük reklam bütçesi testi.
+- [ ] Faz 4 — Ölçek (B2B, üniversite kariyer merkezi ortaklığı, PR).
+
 ### Sıradaki (Öncelik Sırasıyla)
 - [ ] **Fake-door sonucu değerlendirme** (~2026-07-14 – 2026-07-21): `unique_visitors >= 30` olunca `/api/analytics/summary` verdict'ine bak, go/no-go kararı ver. **DİKKAT (2026-07-29):** Bot filtresi eklenmeden önceki tüm ölçümler (GREEN_LIGHT dahil) bot+kendi-test kirliliği içeriyor, güvenilmez — temiz veri 2026-07-29 sonrası birikecek.
 - [x] Analytics bot filtresi + kendi IP hariç tutma — 2026-07-29'da eklendi (`src/analytics.py` `is_bot_user_agent` + `ANALYTICS_EXCLUDE_IPS` env, sunucu `.env`'inde `176.54.59.46`; ev IP'si dinamikse güncellenmeli). **Ders:** `Chrome/150.0.0.0` (sıfırlı sürüm) bot işareti DEĞİLDİR — Chrome 101+ UA reduction gereği tüm gerçek tarayıcılar böyle gönderir; asıl bot işareti Chrome≥101'de TAM sürüm bildirmektir. Ayrıca UA'sı "Googlebot" diyen her istek gerçek Googlebot değildir (19 Tem 2026'da 624 istekli sahte-Googlebot zafiyet taraması `.env`/`wp-config` aradı, hepsi 404).
-- [x] Search Console → URL Inspection → ana sayfa için "Request Indexing" — 2026-07-31'de yapıldı. O gün yapılan teşhis: `site:cvdoktoru.com` Google'da sıfır sonuç veriyordu, genel "cvdoktoru CV analiz" araması da hiç çıkmıyordu — site muhtemelen hiç indekslenmemişti. Teknik taraf temizdi (meta `robots: index, follow`, `noindex`/`X-Robots-Tag` engeli yok, canonical/sitemap/robots.txt doğru). Sonraki adım: birkaç gün sonra Search Console → URL Inspection'da "Sayfa Google'da mı?" durumuna ve Performans raporundaki gösterim sayısına tekrar bak.
+- [x] Search Console → URL Inspection → ana sayfa için "Request Indexing" — 2026-07-31'de yapıldı. O gün yapılan teşhis: `site:cvdoktoru.com` Google'da sıfır sonuç veriyordu, genel "cvdoktoru CV analiz" araması da hiç çıkmıyordu — site muhtemelen hiç indekslenmemişti. Teknik taraf temizdi (meta `robots: index, follow`, `noindex`/`X-Robots-Tag` engeli yok, canonical/sitemap/robots.txt doğru). **Sonuç doğrulandı (2026-08-07):** Google'dan "cvdoktoru.com siteniz için yeni rekor" bildirimi geldi — son 28 günde Google Arama'dan gelen tıklama sayısı 10'a ulaştı. Site indexlendi ve organik trafik almaya başladı, madde kapatıldı.
 - [x] FastAPI sürümünü mobil dahil gerçek cihazlarla kapsamlı test et — 2026-08-01'de kullanıcı gerçek telefonuyla test etti: dosya yükleme akışı sorunsuz çalıştı, ancak PDF indirme (sunucuda font paketi eksikliği) ve TXT indirmede Türkçe karakter bozulması (BOM eksikliği) bulundu ve düzeltildi (bkz. `memory/checkpoint-son.md` 2026-08-01 bölümü).
 - [ ] **Belge güncelliği alışkanlığı**: Bir özellik `analysis_prompt.md`'ye eklendiğinde AYNI ANDA bu roadmap'te işaretlensin — 2026-07-02'de 3 madde aylardır tamamlanmış olduğu halde "sıradaki" görünüyordu, kullanıcı raporu incelerken fark edildi
 - [ ] **Fake-door kopyası her zaman gerçekten inşa edilebilir bir şeyi test etmeli**: 2026-07-07'de ilk taslakta "İK uzmanı görüşmesi" vaat edildi ama kullanıcının böyle bir planı yoktu — yanıltıcı test olurdu. "Derin Analiz Paketi" (tamamen AI-tabanlı) olarak düzeltildi. Gelecekte benzer teklif yazarken önce "bunu gerçekten inşa eder misin?" diye sor.
@@ -503,6 +511,18 @@ Bu mesajlar reklamda, landing page'de, sosyal medyada kullanılabilir. Rakip ana
 2. Yeni bölüm çıktı mı? Format doğru mu? Koşul düzgün çalışıyor mu?
 3. Eski bölümler bozulmadı mı? (Regresyon kontrolü)
 4. Kullanıcıya test sonucunu göster, kör teslim etme.
+
+### Yayınlanan Her İddia Kodla Eşleştirilir (2026-08-10'da öğrenildi)
+Gizlilik metni, KVKK sayfası, pazarlama kopyası, LinkedIn gönderisi — kullanıcıya/kamuya giden her cümle, iddia ettiği şeyin kodda birebir karşılığı olduğu doğrulanmadan yayınlanmaz.
+
+**Somut kanıt:** Faz 0 planının kendi kuralı "iddia edilen her cümle kodda karşılığı olmalı" idi, ama plan içinde yazılan gizlilik metni bu kuralı **üç yerde ihlal ediyordu**: (a) nginx erişim loglarının IP tuttuğu hiç yazılmamıştı (oysa o logları daha önce bizzat okumuştuk), (b) "her yeni istekte eski kayıtlar silinir" denmişti ama silme yalnızca yeni bir *analiz* talebinde oluyordu, (c) Google Fonts'a giden istek atlanmıştı. Üçü de ancak metin satır satır `server.py`/`rate_limiter.py`/`analytics.py` ile karşılaştırılınca bulundu.
+
+**Kural:** Yasal/güven metni yazarken her cümlenin yanına "bunu hangi dosyanın hangi satırı garanti ediyor?" sorusunu sor. Cevap yoksa cümleyi ya sil ya da kodu iddiaya uyacak şekilde düzelt (Faz 0'daki `last_report.txt` silme işi tam olarak buydu). **Ek uyarı:** "hiçbir zaman diske yazılmaz" gibi mutlak ifadelerin kapsamını açıkça belirt — projede aynı anda hem ham IP yazan (rate limiter) hem hash'leyen (analytics) iki yol vardı, kapsamsız cümle iki paragrafı çelişkili gösteriyordu.
+
+### Worktree'de Yarım Kalan İş — Oturum Sonu Kontrolü (2026-08-10'da öğrenildi)
+2026-08-08 oturumunda Faz 0 bir git worktree'sinde 4 commit ile tam olarak uygulandı, ama main'e birleştirilmedi, deploy edilmedi ve checkpoint güncellenmedi. İki oturum boyunca iş "yapılmamış" göründü; yeni oturum `git worktree list` çalıştırmasa tekrar sıfırdan yazılacaktı.
+
+**Kural:** Oturum sonunda (ve yeni oturum başında checkpoint okurken) `git worktree list` + `git log --oneline -5` çalıştır. Bir branch/worktree'de commit varsa checkpoint'e **"birleştirildi mi / deploy edildi mi"** durumu açıkça yazılır. Commit atılmış olması işin teslim edildiği anlamına gelmez.
 
 ### Oturum Sonu Rutini
 Her oturumun sonunda bu CLAUDE.md dosyasını güncelle:
