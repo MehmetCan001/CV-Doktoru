@@ -9,7 +9,8 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://cvdoktoru.com/">
 
-<link rel="icon" type="image/png" href="/static/logo.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v=3">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=3">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -637,9 +638,9 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
    Sayfanin kararlarini ureten fikir: bu bir muayene raporu. Kenar notlari,
    elle cizilmis vurgular ve ince ayrac cizgileri o dilden geliyor —
    dekorasyon degil, konseptin sonucu. */
-svg.marka-logo { width: 26px; height: 26px; fill: none; stroke: var(--accent-dark);
-    stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-svg.marka-logo path { stroke-dasharray: none; stroke-dashoffset: 0; }
+/* Logo artik raster (PNG). 26px yerine 28px: markta ic ice gecmis cerceve,
+   yuz ve stetoskop var; kucuk boyutta okunurlugu zaten sinirda. */
+img.marka-logo { width: 28px; height: 28px; flex-shrink: 0; display: block; }
 
 .hero-title .accent { position: relative; display: inline-block; }
 svg.ciz-alti {
@@ -662,7 +663,7 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
 
 <nav class="navbar">
   <div class="navbar-inner">
-    <a href="/" class="navbar-brand"><svg class="marka-logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M8.2 4.4 C8.0 4.3 7.7 4.5 7.7 4.9 L7.4 27.2 C7.4 27.7 7.8 28.1 8.3 28.1 L23.8 28.4 C24.3 28.4 24.7 28.0 24.6 27.5 L24.3 11.9 L17.4 4.6 Z"/><path d="M17.3 4.7 L17.2 11.0 C17.2 11.5 17.5 11.8 18.0 11.8 L24.3 11.9"/><path d="M10.4 19.6 L13.6 19.7 L15.4 15.2 L18.2 23.6 L20.0 19.9 L22.4 20.0"/></svg>CV Doktoru</a>
+    <a href="/" class="navbar-brand"><img src="/static/logo-mark.png?v=3" alt="" class="marka-logo" width="28" height="28">CV Doktoru</a>
     <div class="navbar-links">
       <a href="#how">Nasıl Çalışır</a>
       <a href="#demo">Örnek Analiz</a>
