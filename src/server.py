@@ -99,6 +99,12 @@ def sitemap_xml():
         "    <changefreq>weekly</changefreq>\n"
         "    <priority>1.0</priority>\n"
         "  </url>\n"
+        "  <url>\n"
+        f"    <loc>{SITE_URL}/gizlilik</loc>\n"
+        f"    <lastmod>{today}</lastmod>\n"
+        "    <changefreq>yearly</changefreq>\n"
+        "    <priority>0.3</priority>\n"
+        "  </url>\n"
         "</urlset>\n"
     )
     return Response(content=body, media_type="application/xml")

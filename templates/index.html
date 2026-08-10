@@ -438,8 +438,9 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 
 .footer-note { text-align: center; color: var(--ink-faint); font-size: 0.82rem; padding: 2rem 0 1rem; }
 
-.footer-links { display: flex; align-items: center; justify-content: center; gap: 0.6rem; padding-top: 1.5rem; font-size: 0.82rem; }
-.footer-links a { color: var(--ink-soft); text-decoration: none; font-weight: 600; }
+.footer-links { display: flex; align-items: center; justify-content: center; gap: 0.2rem; padding-top: 1rem; font-size: 0.82rem; }
+/* Dikey dolgu, metin boyutunu büyütmeden dokunma hedefini 44px'e çıkarır (mobil a11y). */
+.footer-links a { display: inline-block; padding: 0.875rem 0.6rem; color: var(--ink-soft); text-decoration: none; font-weight: 600; }
 .footer-links a:hover { color: var(--accent-dark); }
 .footer-links span { color: var(--ink-faint); }
 

@@ -34,7 +34,9 @@ body {
 .legal-back { display: inline-block; margin-bottom: 2rem; color: var(--ink-soft); text-decoration: none; font-size: 0.9rem; font-weight: 600; }
 .legal-back:hover { color: var(--accent-dark); }
 h1 { font-family: 'Fraunces', Georgia, serif; font-size: 1.9rem; margin: 0 0 0.4rem; }
-.legal-updated { color: var(--ink-faint); font-size: 0.85rem; margin-bottom: 2.2rem; }
+/* --ink-faint (#9C8E78) bu zeminde 2.95:1 — WCAG AA (4.5:1) altinda kaliyor,
+   bu yuzden kucuk metinde --ink-soft (5.88:1) kullaniliyor. */
+.legal-updated { color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 2.2rem; }
 h2 { font-family: 'Fraunces', Georgia, serif; font-size: 1.25rem; margin: 2.2rem 0 0.8rem; color: var(--ink); }
 p { margin: 0 0 1rem; color: var(--ink-soft); }
 strong { color: var(--ink); }
@@ -57,8 +59,9 @@ a { color: var(--accent-dark); }
 
   <h2>Hangi Verileri İşliyoruz, Ne Kadar Süre Saklıyoruz</h2>
   <p><strong>CV'niz ve iş ilanı metni:</strong> Analiz üretmek için Anthropic'in Claude yapay zeka modeline iletilir (bkz. "Yurt Dışı Aktarım" bölümü). CV'nizi metin olarak yapıştırdıysanız hiçbir zaman diske yazılmaz. PDF/DOCX dosyası yüklediyseniz, dosya içeriğini okuyabilmek için yalnızca aynı istek süresince geçici bir dosyaya yazılır ve metin çıkarılır çıkarılmaz (aynı istek içinde) kalıcı olmadan silinir — arşivlenmez, yedeklenmez. Analiz raporunuz sunucu belleğinde (RAM) tutulur ve en az 30 dakika sonra, bir sonraki analiz isteğiyle birlikte otomatik olarak silinir; rapor hiçbir zaman dosya olarak diske yazılmaz veya bir veritabanında saklanmaz.</p>
-  <p><strong>IP adresiniz:</strong> Kötüye kullanımı önlemek amacıyla (günlük 3 ücretsiz analiz sınırı) IP adresiniz yalnızca o gün için sunucuda tutulur; her yeni istekte önceki günlere ait kayıtlar otomatik olarak silinir.</p>
-  <p><strong>Sayfa ziyaretleri ve buton tıklamaları:</strong> Ürünü iyileştirmek için anonim kullanım istatistiği tutuyoruz. Ham IP adresiniz hiçbir zaman diske yazılmaz — yalnızca tuzlanmış (geri döndürülemez şekilde şifrelenmiş) bir özet tutulur, bu özet sizi kimliklendirmek için kullanılamaz. Google Analytics, Facebook Pixel gibi üçüncü taraf bir analitik veya reklam servisi kullanılmaz.</p>
+  <p><strong>IP adresiniz (günlük analiz hakkı sayacı):</strong> Günlük 3 ücretsiz analiz sınırını uygulayabilmek için IP adresiniz, o gün kaç analiz yaptığınız bilgisiyle birlikte sunucuda bir dosyada tutulur. Her yeni analiz talebinde önceki günlere ait tüm kayıtlar otomatik olarak silinir — yani bu kayıt en fazla o gün için saklanır. CV'nizle, raporunuzla veya analiz içeriğinizle ilişkilendirilmez; yalnızca "bu adresten bugün kaç analiz yapıldı" sayısını tutar.</p>
+  <p><strong>Sunucu erişim kayıtları:</strong> Her web sitesinde olduğu gibi, siteye yapılan istekler web sunucusunun standart erişim kayıtlarına (log) IP adresinizle birlikte yazılır. Bu kayıtları yalnızca teknik arıza tespiti ve saldırı/kötüye kullanım incelemesi için kullanırız; reklam veya profilleme amacıyla kullanılmaz, üçüncü taraflarla paylaşılmaz ve düzenli aralıklarla otomatik olarak silinir.</p>
+  <p><strong>Sayfa ziyaretleri ve buton tıklamaları:</strong> Ürünü iyileştirmek için anonim kullanım istatistiği tutuyoruz. Bu istatistiklerde ham IP adresiniz hiçbir zaman kaydedilmez — yalnızca tuzlanmış (geri döndürülemez şekilde şifrelenmiş) bir özet tutulur, bu özet sizi kimliklendirmek için kullanılamaz. Google Analytics, Facebook Pixel gibi üçüncü taraf bir analitik veya reklam servisi kullanılmaz. Sayfanın yazı tipleri Google Fonts üzerinden yüklendiği için tarayıcınız bu sırada Google'a bir istek gönderir; bu istek analiz/reklam amacı taşımaz, tarafımızca herhangi bir veriyle eşleştirilmez.</p>
   <p><strong>E-posta adresiniz:</strong> Yalnızca "Derin Analiz Paketi" bekleme listesine kendi isteğinizle kaydolursanız e-posta adresiniz ve kayıt tarihi saklanır. Bu kaydın silinmesini istediğiniz her an <a href="mailto:destek@cvdoktoru.com">destek@cvdoktoru.com</a> üzerinden talep edebilirsiniz.</p>
 
   <h2>Neden İşliyoruz</h2>
