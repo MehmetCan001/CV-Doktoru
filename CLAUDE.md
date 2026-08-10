@@ -524,6 +524,27 @@ Gizlilik metni, KVKK sayfası, pazarlama kopyası, LinkedIn gönderisi — kulla
 
 **Kural:** Oturum sonunda (ve yeni oturum başında checkpoint okurken) `git worktree list` + `git log --oneline -5` çalıştır. Bir branch/worktree'de commit varsa checkpoint'e **"birleştirildi mi / deploy edildi mi"** durumu açıkça yazılır. Commit atılmış olması işin teslim edildiği anlamına gelmez.
 
+### TASARIM TOKEN SİSTEMİ — BAĞLAYICI (2026-08-10)
+`templates/index.html` içindeki stil katmanı artık bir ölçeğe oturuyor. **Ham değer yazmak yasak.**
+
+- **Tipografi:** `--fs-2xs` … `--fs-display` (8 kademe, ~1.25 oranlı). `font-size: 0.87rem` gibi bir değer **yazılmaz** — en yakın kademe kullanılır.
+- **Boşluk:** `--sp-1` … `--sp-9` (8px tabanlı). `padding`/`margin`/`gap` için aynı kural.
+- **Yarıçap:** `--r-sm/md/lg/full`. Ara değer (13px gibi) karar değil gürültüdür.
+
+**Neden bağlayıcı:** Bu sistemden önce sayfada **36 farklı `font-size`**, 19 padding, 21 margin, 9 yarıçap değeri vardı — çoğu 0.02rem aralıklarla birbirine yapışık. Kullanıcı tasarımın "gerçek prodüksiyon kalitesinde durmadığını" defalarca söyledi; ölçülebilir sebep buydu. Her eleman tek tek "gözüme iyi geldi" diye ayarlanınca sonuç **yerel olarak makul, bütün olarak tutarsız** oluyor — "AI vibe" denen şeyin teknik karşılığı bu. İkon/renk/animasyon değiştirmek bunu çözmez.
+
+**Bir kademe yetmiyorsa:** ara değer uydurma. Ölçeğin kendisini tartış ve `:root`'ta değiştir — tek yerden, her yeri etkileyerek.
+
+**Doğrulama:** `curl -s https://cvdoktoru.com/ | grep -cE "font-size: [0-9.]+rem"` → **0** dönmeli.
+
+### "Orijinal" Kelimesinin İki Anlamı (2026-08-10'da yanlış anlaşıldı)
+Kullanıcı "ikonları orijinal yap" dediğinde ben **özgün/benzersiz tasarım** anladım ve elle çizilmiş özel işaretler ürettim. Kastettiği **gerçeğin kendisi**ydi: gerçek Türk bayrağı, Claude'un gerçek logosu. İki tur boşa gitti.
+
+**Kural:** Marka/ülke/platform simgelerinde "orijinal" istendiğinde önce **gerçek varlığı mı yoksa özgün yorumu mu** istediğini sor — ikisi zıt yönler. Ek not: bir sağlayıcının markasını *"X ile çalışır"* atfında kullanmak doğru ve olağandır; bunu "başkasının markası" diye reddetmek fazla temkinliliktir.
+
+### Bayrak Emojisi Windows'ta Çalışmaz (2026-08-10)
+`🇹🇷` gibi bayraklar regional indicator çiftidir ve **Windows onları bayrak olarak render etmez** — "TR" harfleri çıkar. Bayrak gerekiyorsa satır içi SVG kullan.
+
 ### Görsel Değişiklikte Ekran Görüntüsü Kapsamı (2026-08-10'da öğrenildi)
 Bir elemanın **kendi kutusundan** alınan ekran görüntüsü, o elemanın sayfadaki **konumunu** doğrulamaz. Problem bandı sayfanın ortasından başlayıp sağa taşıyordu; ben elemanın bounding box'ını kırpıp baktığım için bant "doğru" görünüyordu ve hatayı kullanıcı fark etti.
 

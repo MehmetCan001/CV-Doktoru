@@ -409,6 +409,30 @@ Commit `ba6aa7f`, deploy edildi, canlıda doğrulandı (video 836 KB / foto 69 K
 - [ ] Kullanılmayan ham Pexels varlıkları `static/` içinde duruyor (17+26+6.5 MB video, ~12 MB foto) — commit edilmedi, silinmesi kullanıcı kararına bırakıldı.
 - [ ] Logo mavi, palet krem/terracotta — çatışıyor, konuşulmadı.
 
+## Bu Oturumda Yapılanlar (2026-08-10, devam) — Editoryal Yeniden Tasarım (canlıda)
+
+Kullanıcı tasarımın "gerçek prodüksiyon kalitesinde, özgün ve yaratıcı durmadığını" söyledi ve sebebini sordu (promptları mı, skiller mi, altyapı mı, kaynak eksikliği mi). **Ölçüm yapıldı ve sebep bulundu:** sayfada 36 farklı `font-size`, 19 padding, 21 margin, 9 yarıçap değeri vardı — çoğu 0.02rem aralıklarla birbirine yapışık. Tipografi ölçeği yoktu; her eleman tek tek ayarlanmıştı. Sonuç yerel olarak makul, bütün olarak tutarsız — "AI vibe"ın teknik karşılığı bu.
+
+**Kullanıcının hipotezlerinin cevabı:** promptlar zayıf değildi, skiller sebep değildi, vanilla CSS engel değildi. Sorun **sistem kurmak yerine yama yapmam**, ve kararları üreten bir konseptin hiç olmamasıydı.
+
+**Yapılanlar (dal: `redesign-editoryal`, sonra main'e ff-merge, commit `50e2275`):**
+1. **Token sistemi** — 8 kademeli tipografi, 9 kademeli boşluk, 4 yarıçap. Tüm CSS ölçeğe oturtuldu; **ham `font-size`/`border-radius` sıfır** (canlıda doğrulandı). Kural CLAUDE.md'ye bağlayıcı olarak yazıldı.
+2. **Konsept: tanı raporu** — elle çizilmiş hero vurgusu (kendini çizen), ince ayraç çizgileri, kademeli/asimetrik 3 adım (büyük 01/02/03 rakamları), sola dayalı bölüm etiketleri, SSS kutuları → ayraç çizgileri, yeşil "why-card" → editoryal liste.
+3. **Emoji ikonografi kaldırıldı** — 30 emoji yerine 6 elle çizilmiş SVG çizgi ikon (`stroke-dasharray` + `getTotalLength()` ile kendini çizen). Demo raporundaki ❌/✅ ve uyarı ⚠️'leri bilinçli bırakıldı (gerçek çıktıyı taklit ediyorlar / işlevsel sinyal).
+4. **Zemin beyaz** + `--ink-faint` düzeltmesi: krem üzerinde **2.95:1** ile WCAG AA'nın altındaydı, beyazda **5.23:1**. Dört metin rengi de artık geçiyor.
+5. **Gerçek Türk bayrağı ve gerçek Claude logosu** (kullanıcı `static/`e ekledi, `claude-logo.svg` olarak yeniden adlandırıldı, yolu satır içine gömüldü).
+
+**İki tur boşa giden yanlış anlama:** Kullanıcı "ikonları orijinal yap" dediğinde *özgün tasarım* anladım, *gerçeğin kendisi*ni kastediyordu. CLAUDE.md'ye kural olarak yazıldı.
+
+**Logo:** Kendi ürettiğim belge+nabız mark'ı kullanıcı tarafından reddedildi ("alelade bir icon, hikâyesi yok" — haklıydı, kategorinin en bariz sembolünü seçmiştim). Üç fikirli alternatif sunuldu (işaretlenmiş satır / iki belge kesişimi / onay hamlesi), kullanıcı logoyu **dış kaynağa vermeye** karar verdi. Mevcut mark **geçici yer tutucu** olarak canlıda; yeni mark gelince navbar + favicon + og-image birlikte güncellenecek.
+
+## Açık Kalan / Sıradaki (2026-08-10 sonu)
+- [ ] **Logo dış kaynaktan bekleniyor.** Geldiğinde: navbar (satır içi SVG), `templates/index.html` + `templates/gizlilik.html` favicon referansları (hâlâ eski mavi `logo.png`), `static/og-image.png`.
+- [ ] **Huni verisi** — bir hafta bekle, sonra `/api/analytics/summary` `funnel` alanına bak. %0 aktivasyon bulgusunun sebebini bu gösterecek. Faz 1'den (dağıtım) ÖNCE gelir.
+- [ ] Form ve premium kart token sisteminden geçti ama **konsept uygulanmadı** — hâlâ eski kutu dilinde. Demo rapor kartı konseptin en doğal yeri, dokunulmadı.
+- [ ] Referrer/UTM takibi + gizlilik metni güncellemesi — Faz 1 başlarken birlikte.
+- [ ] Kullanılmayan ham Pexels varlıkları `static/` içinde (17+26+6.5 MB video, ~12 MB foto) — commit edilmedi, silinmesi kullanıcı kararı.
+
 ## Bilinen Riskler / Dosya Notları
 - Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
 - İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.
