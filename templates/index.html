@@ -126,8 +126,8 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 /* ── Nav bar ── */
 .navbar {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(251,245,235,0.88); backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
+    background: rgba(36,26,16,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(231,217,191,0.16);
 }
 .navbar-inner {
     max-width: 1120px; margin: 0 auto; padding: var(--sp-3) var(--sp-5);
@@ -137,16 +137,16 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
    harf, "CV" ince (300) + "DOKTORU" kalin (700). Marka isareti sitenin
    govde/baslik fontlarindan bagimsiz bir yuz kullanabilir - tek yerde,
    navbar markasinda gecerli. */
-.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink); text-decoration: none; }
+.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: #FFFFFF; text-decoration: none; }
 .marka-adi { font-family: 'Poppins', 'Inter', sans-serif; font-size: var(--fs-md);
     line-height: 1; letter-spacing: 0.005em; display: inline-flex; align-items: baseline; gap: 0.28em; }
 .marka-cv { font-weight: 300; }
 .marka-doktoru { font-weight: 700; }
-.navbar-brand img { width: 26px; height: 26px; border-radius: var(--r-md); }
+.navbar-brand img { width: 26px; height: 26px; border-radius: 0; }
 .navbar-links { display: none; align-items: center; gap: var(--sp-6); }
 @media (min-width: 760px) { .navbar-links { display: flex; } }
-.navbar-links a { color: var(--ink-soft); text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
-.navbar-links a:hover { color: var(--ink); }
+.navbar-links a { color: #D9CDBA; text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
+.navbar-links a:hover { color: #FFFFFF; }
 .navbar-cta {
     background: var(--accent); color: white; font-weight: 700; font-size: var(--fs-xs);
     padding: var(--sp-2) var(--sp-4); border-radius: var(--r-full); text-decoration: none; white-space: nowrap;
