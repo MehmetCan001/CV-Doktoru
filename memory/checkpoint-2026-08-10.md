@@ -433,6 +433,35 @@ Kullanıcı tasarımın "gerçek prodüksiyon kalitesinde, özgün ve yaratıcı
 - [ ] Referrer/UTM takibi + gizlilik metni güncellemesi — Faz 1 başlarken birlikte.
 - [ ] Kullanılmayan ham Pexels varlıkları `static/` içinde (17+26+6.5 MB video, ~12 MB foto) — commit edilmedi, silinmesi kullanıcı kararı.
 
+## Bu Oturumda Yapılanlar (2026-08-10, son bölüm) — Logo, Koyu Navbar, Wordmark
+
+### Logo — kullanıcı Gemini ile üretti, iki turda güncellendi (canlıda)
+Kendi ürettiğim belge+nabız mark'ı reddedildikten ve logo dış kaynağa verilmeye karar verildikten sonra kullanıcı **Gemini ile logo üretti** ve `static/`e attı. İki sürüm geldi: önce tek renk turuncu, sonra iki tonlu (dış çerçeve mavi + iç kısım turuncu). İkincisi canlıda.
+
+**Üretilen varlıklar** (kaynak PNG'den kırpılıp beyaz zemin şeffaflaştırılarak): `logo-mark.png` (84px, navbar), `favicon-32.png`, `apple-touch-icon.png` (180px), `logo-kilit.png` (mark+wordmark). Favicon her iki sayfada güncellendi, eski mavi `logo.png?v=2` referansı kalmadı. Cache-bust `?v=4`.
+
+**Kullanıcıya ölçerek bildirilen, karar bekleyen iki sorun:**
+1. **Mark 26-32px'te okunmuyor.** İç içe geçmiş çerçeve + yüz profili + stetoskop bu boyutta turuncu bir lekeye dönüşüyor; ancak ~96px'te seçiliyor. Navbar (28px) ve favicon (32/16px) tam o boyutlarda çalışıyor. Boyut testi görseliyle gösterildi. Seçenekler sunuldu (olduğu gibi bırak / navbar'da sadece wordmark / mark'ı sadeleştir), karar verilmedi.
+2. **Renk uyuşmazlığı.** Logo turuncusu `#ED4506`, sitenin accent'i `#DD5C22` — logo daha kırmızı/doygun. Ayrıca iki tonlu sürümdeki **mavi çerçeve koyu kahve navbar'da neredeyse kayboluyor**; pratikte sadece turuncu iç kısım görünüyor. Normalde marka rengini logo belirler; paleti logoya çekme seçeneği sunuldu, karar verilmedi.
+
+### Wordmark — logodaki tipografiye göre yeniden kuruldu
+Kullanıcı "logo görselindeki yazı fontunu ve biçimini kullan, CV ince Doktoru kalın" dedi. **Poppins** yüklendi (logodaki geometrik sans'a en yakın Google Font — kesin tanımlanamadı, alternatifler Montserrat/DM Sans/Outfit), yalnızca 2 ağırlık (300/700). Wordmark iki span'e bölündü: `.marka-cv` (300) + `.marka-doktoru` (700), hepsi büyük harf. Bu siteye üçüncü yazı tipini ekliyor ama tek yerde (navbar markası) geçerli.
+
+### Koyu navbar
+Kullanıcı "yazı beyaz olsun" dedi; açık krem zeminde beyaz yazı görünmez olduğu için (kontrast ~1:1) **navbar zemini koyuya alındı** (`rgba(36,26,16,0.92)` + blur). Wordmark beyaz (15.33:1), nav linkleri `#D9CDBA` (9.78:1), alt kenarlık saydam açık tona çevrildi. Beklenmedik kazanç: turuncu mark koyu zeminde krem üzerindekinden belirgin şekilde daha net çıkıyor.
+
+### Ölçülüp düzeltilmeyen: CTA buton kontrastı
+"Ücretsiz Analiz" butonunda beyaz yazı `#DD5C22` üzerinde **3.73:1** — 13px kalın metin için WCAG AA eşiği 4.5:1, yani kalıyor. Baştan beri öyle. Kullanıcıya normal ekran + "güneş altında telefon" benzetimiyle görsel olarak gösterildi. Öneri: butonu `#B3450F` yap (5.56:1). **Karar verilmedi, dokunulmadı** — ana marka rengi olduğu için tek taraflı değiştirilmedi.
+
+## Açık Kalan / Yarın İlk İş (2026-08-10 sonu)
+- [ ] **Logo kararları:** (a) 28px okunaklılık — bırak mı, navbar'da sadece wordmark mı, mark'ı sadeleştir mi? (b) palet uyumu — site accent'ini logoya mı çekelim?
+- [ ] **CTA buton kontrastı** — `#B3450F`'e çekilsin mi? (3.73:1 → 5.56:1)
+- [ ] **`og-image.png` hâlâ eski logoyla** — yeni kilitle (`logo-kilit.png`) yenilenmeli.
+- [ ] **Huni verisi** — bir hafta doldurunca `/api/analytics/summary` `funnel` alanına bak. %0 aktivasyonun sebebi orada. Faz 1'den (dağıtım) ÖNCE gelir.
+- [ ] Form ve premium kart token sisteminden geçti ama konsept uygulanmadı; demo rapor kartı konseptin en doğal yeri, dokunulmadı.
+- [ ] Referrer/UTM takibi + gizlilik metni güncellemesi — Faz 1 başlarken birlikte.
+- [ ] `static/` içinde kullanılmayan ham dosyalar birikiyor (Pexels videoları/fotoğrafları ~60 MB, iki Gemini logo kaynağı) — temizlik kullanıcı kararı.
+
 ## Bilinen Riskler / Dosya Notları
 - Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
 - İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.
