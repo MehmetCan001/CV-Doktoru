@@ -524,6 +524,18 @@ Gizlilik metni, KVKK sayfası, pazarlama kopyası, LinkedIn gönderisi — kulla
 
 **Kural:** Oturum sonunda (ve yeni oturum başında checkpoint okurken) `git worktree list` + `git log --oneline -5` çalıştır. Bir branch/worktree'de commit varsa checkpoint'e **"birleştirildi mi / deploy edildi mi"** durumu açıkça yazılır. Commit atılmış olması işin teslim edildiği anlamına gelmez.
 
+### Görsel Değişiklikte Ekran Görüntüsü Kapsamı (2026-08-10'da öğrenildi)
+Bir elemanın **kendi kutusundan** alınan ekran görüntüsü, o elemanın sayfadaki **konumunu** doğrulamaz. Problem bandı sayfanın ortasından başlayıp sağa taşıyordu; ben elemanın bounding box'ını kırpıp baktığım için bant "doğru" görünüyordu ve hatayı kullanıcı fark etti.
+
+**Kural:** Konum/yerleşim/genişlik etkileyen her değişiklikte **tam sayfa** ekran görüntüsü al. Eleman kırpması yalnızca renk/kontrast/tipografi gibi eleman-içi ayrıntılar için yeterlidir. Ayrıca `Page.getLayoutMetrics` ile taşma ölçerken önceki `captureBeyondViewport` çağrısının durumu ölçümü kirletebilir — taşma için `document.documentElement.scrollWidth > window.innerWidth` daha güvenilir.
+
+### CSS Katman Tuzakları (2026-08-10'da ikisi de canlıya girmeden yakalandı)
+1. **`transform` çakışması:** `.reveal` sınıfı scroll animasyonu için `transform` kullanıyor. Aynı elemana ortalama amacıyla `transform: translateX(-50%)` verirsen reveal onu ezer. Tam genişlik (`100vw`) hilesi `.reveal` taşıyan elemanda **çalışmaz** — ya `margin-left: calc(50% - 50vw)` kullan ya da kapsayıcı genişliğinde bırak.
+2. **`::after` perdesi içeriğin üstüne boyanır:** `::after` son çocuk gibi davrandığı için, arka plan perdesini `::after`'a koyarsan metnin üzerini örter. İçeriğe açıkça `z-index: 1` vermek zorunlu. Belirti: metin soluk/okunmaz görünür ama CSS'te renk doğrudur.
+
+### Analytics Testinde Bot Filtresi (2026-08-10'da öğrenildi)
+CDP/headless Chrome ile gönderilen olaylar `is_bot_user_agent` tarafından elenir (UA'da "headless" geçer) — huni testim bu yüzden "hiç olay düşmedi" diye görünüyordu, oysa kod doğruydu. **Kural:** Analytics/olay akışını CDP ile test ederken `Network.setUserAgentOverride` ile gerçek bir tarayıcı UA'sı ver (Chrome 101+ için sıfırlanmış sürüm: `Chrome/150.0.0.0`). Ayrıca canlı uçları doğrularken **geçerli olay adı gönderme** — gerçek veriyi kirletir; izin listesi dışında bir ad kullan, yönlendirme yine doğrulanır.
+
 ### Oturum Sonu Rutini
 Her oturumun sonunda bu CLAUDE.md dosyasını güncelle:
 - Bölüm 12'ye yeni prompt öğrenmeleri ekle

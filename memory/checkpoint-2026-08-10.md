@@ -368,6 +368,47 @@ Kullanıcı `static/` içine 6 fotoğraf + 3 video (Pexels kaynaklı) ekledi, "s
 - `src/app.py` (eski Streamlit arayüzü) hâlâ raporu `data/last_report.txt`'ye yazıyor. Üretimde çalışmıyor (FastAPI deploy ediliyor) ama biri çalıştırırsa yayınlanmış "rapor diske yazılmaz" iddiasını bozar. Silinmesi/arşivlenmesi ayrı bir karar.
 - **nginx log saklama süresi doğrulanamadı** — SSH salt-okuma isteği izin katmanı tarafından reddedildi ("Production Reads: generic 'devam' consent bar'ı karşılamıyor"). Metinde sayı uydurmak yerine "düzenli aralıklarla otomatik olarak silinir" yazıldı. Kesin süre (muhtemelen logrotate varsayılanı) doğrulanırsa metne eklenebilir.
 
+## Bu Oturumda Yapılanlar (2026-08-10, devam) — Görsel Katman + Huni Ölçümü + KRİTİK BULGU
+
+### 🔴 En önemli bulgu: %0 aktivasyon
+Sunucudaki gerçek veriye bakıldı (`analytics_events.jsonl`, `rate_limits.json`, nginx logları):
+- **1-10 Ağustos arası 29 tekil ziyaretçi geldi, HİÇBİRİ analiz çalıştırmadı.** Premium karta da tık yok.
+- Sunucudaki toplam analiz sayısı: **2**, ikisi de 1 Ağustos'ta, tek IP'den (`5.229.81.108`, Türk mobil aralığı) — kullanıcının kendi telefon testi. `rate_limits.json` her yeni analizde önceki günleri sildiği için hâlâ 1 Ağustos kaydını tutuyor olması, o tarihten beri hiç analiz çalışmadığının kanıtı.
+- Tek lead kullanıcının kendi e-postası (2026-07-22).
+
+**İstatistiksel dürüstlük notu:** n=29 küçük. Gerçek aktivasyon %5 olsa bile 29 kişide sıfır görmek ~%23 olasılıkla mümkün. "Sıfır" kesin kanıt değil ama 10 gün boyunca tek kişinin bile akışa girmemesi güçlü bir sinyal.
+
+**Bu bulgu önceliklendirmeyi değiştirdi:** Model yükseltmesi ve Faz 1 (dağıtım) ikisi de bu delik kapanana kadar anlamsız — %0 aktivasyonlu bir sayfaya trafik getirmek o trafiği harcamaktır.
+
+### Huni ölçümü eklendi (canlıda)
+Neden düştüklerini bilmiyorduk çünkü sadece `page_view` + `premium_click` topluyorduk. Eklenen 5 olay: `form_focus`, `cv_provided` (40+ karakter eşiği), `analyze_clicked`, `validation_error`, `analysis_started`.
+- `src/server.py`: tek genel `/api/track/{event_name}` ucu. İzin listesi dışındaki ad sessizce yok sayılıyor, yanıt her durumda aynı (bot'a bilgi sızmıyor). Mevcut `/visit` ve `/premium-click` uçları dokunulmadan bırakıldı (rota sırası: özel yollar önce).
+- `analysis_started` **sunucu tarafında** loglanıyor — işin gerçekten kabul edildiği tek nokta, taklit edilemez.
+- `summary()` artık huniyi ve adımlar arası kaybı döndürüyor (`funnel` + `validation_error_visitors`).
+- Her adım sayfa başına en fazla bir kez gönderiliyor (kaç kişi ULAŞTI, kaç kez tekrarladı değil).
+- **Referrer takibi bilinçli olarak eklenmedi** — gizlilik sayfasında metin güncellemesi gerektirir; Faz 1 başlarken ikisi birlikte yapılmalı.
+
+### Görsel katman (stok varlıklardan)
+Kullanıcı sınırı belirledi: *doku + tematik fotoğraf, açıkça dekoratif; hiçbir stok görsel gerçek kullanıcı/rapor/kurucu izlenimi veren yere konmaz; jenerik klavye videoları kullanılmaz.*
+- **Yükleme kartına parçacık videosu** (`static/analiz-animasyonu.mp4`, 960×540/CRF33, 0.80 MB — 17.2 MB'tan). Yer seçimi bilinçli: video yalnızca analiz gerçekten sürerken oynuyor, sistemin durumunu gösteriyor. Kart JS ile enjekte edildiği için analiz yapmayan ziyaretçi indirmiyor; `prefers-reduced-motion` açıkken `<video>` etiketi hiç üretilmiyor. Döngü dikişsiz (ilk-son kare farkı ~3/255).
+- **Problem bandı** founder notu ile "3 Adımda Sonuç" arasında (`static/is-arayis.jpg`, 67 KB): *"Her ilana aynı CV'yi göndermek, en sık yapılan hata."* Sayfada eksik olan "dert" anını kuruyor.
+- Gazete fotoğrafındaki metin **İngilizce ve Rusya iş piyasasına aitti** ("Labor Code of the Russian Federation", "Bitrix24") — 2.6px Gaussian blur ile okunmaz hale getirildi, "Jobs wanted" başlığı ve kırmızı daireler okunur kaldı.
+- Founder-note dokusu denendi ve **kaldırıldı**: kart o fotoğraf için fazla alçak/geniş (1072×162), doku ince bir şeride dönüşüyordu — 70 KB görünmeyen etki için.
+- Yükleme kartındaki mor 🩺 emojisi kaldırıldı (sıcak paletle çatışıyordu), ölü `.cv-loading-icon` CSS'i temizlendi.
+
+Commit `ba6aa7f`, deploy edildi, canlıda doğrulandı (video 836 KB / foto 69 KB HTTP 200, `problem-band` ve huni olay adları sayfada, `cv-loading-icon` yok, geçersiz olay adı dosyaya yazılmıyor).
+
+### Model kararı (bu oturumda tartışıldı, ertelendi)
+`config.py` hâlâ `claude-sonnet-4-6`. Ölçülen girdi: 25.215 token (Sonnet 4.6) → 31.442 (Sonnet 5/Opus 5, yeni tokenizer). Analiz başına ~$0.27 → ~$0.34 (Sonnet 5) / ~$0.56 (Opus 5). Aylık ~60 analizde fark sadece $4-18 — **maliyet engel değil.**
+**Karar:** Geçiş Faz 2'ye (ödemeli ürün inşası) bağlandı, **tek seferde** yapılacak (Sonnet 5 ve Opus 5'in kırıcı değişiklikleri aynı: `temperature` 400 veriyor, thinking varsayılan açık, yeni tokenizer — iki ayrı migration test bedelini iki kez ödetir). Ücretsiz katman Sonnet, Derin Analiz Paketi Opus 5 fikri benimsendi.
+
+## Açık Kalan / Sıradaki (2026-08-10 sonrası)
+- [ ] **Bir hafta huni verisi bekle**, sonra nerede düştüklerine bakıp tasarımı ona göre değiştir. Bu, Faz 1'den ÖNCE gelir.
+- [ ] Faz 1 (dağıtım) — kariyer merkezleri/kulüpler için taslak e-posta hazır (bu oturumda yazıldı), ama aktivasyon deliği kapanmadan gönderilmemeli. Instagram Faz 3'e bırakıldı (niyet uyuşmazlığı: ürün "şu an ihtiyacım var" anında kullanılıyor, Instagram gezinme modu).
+- [ ] Referrer/UTM takibi + gizlilik metni güncellemesi — Faz 1 başlarken birlikte.
+- [ ] Kullanılmayan ham Pexels varlıkları `static/` içinde duruyor (17+26+6.5 MB video, ~12 MB foto) — commit edilmedi, silinmesi kullanıcı kararına bırakıldı.
+- [ ] Logo mavi, palet krem/terracotta — çatışıyor, konuşulmadı.
+
 ## Bilinen Riskler / Dosya Notları
 - Proje kökünde `Gemini_Generated_Image_vcdhajvcdhajvcdh.png` ve `Logo.png` hâlâ commit edilmemiş kaynak dosyalar olarak duruyor — dokunma, kullanıcının kendi dosyaları.
 - İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.
