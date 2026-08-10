@@ -16,7 +16,7 @@
 - Tasarım: Mevcut CSS değişkenleri kullanılır (`--paper`, `--accent`, `--ink` vb., `templates/index.html:56-76`), yeni bir renk paleti icat edilmez.
 - Dürüstlük ilkesi (CLAUDE.md Bölüm 6/11): Gizlilik metnindeki her cümle kodda karşılığı olmalı — var olmayan bir şirket unvanı, var olmayan bir garanti yazılmaz.
 - İletişim e-postası: `destek@cvdoktoru.com` (kullanıcı tarafından ImprovMX ile bu oturumda kuruldu).
-- Veri Sorumlusu: "Mehmet" (şahıs olarak yürütülüyor, kayıtlı şirket yok — 2026-08-08'de netleşen karar).
+- Veri Sorumlusu: "Mehmet Can ALIN" (şahıs olarak yürütülüyor, kayıtlı şirket yok — 2026-08-08'de netleşen karar; 2026-08-10'da kullanıcı talebiyle yalnızca "Mehmet" yerine tam isim kullanılmasına geçildi).
 
 ---
 
@@ -181,7 +181,7 @@ a { color: var(--accent-dark); }
   <div class="legal-updated">Son güncelleme: 8 Ağustos 2026</div>
 
   <h2>Veri Sorumlusu</h2>
-  <p>CV Doktoru (cvdoktoru.com), Mehmet tarafından şahıs olarak yürütülen bir hizmettir; kayıtlı bir şirket bulunmamaktadır. 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu Mehmet'tir. Sorularınızı veya taleplerinizi <a href="mailto:destek@cvdoktoru.com">destek@cvdoktoru.com</a> adresine iletebilirsiniz.</p>
+  <p>CV Doktoru (cvdoktoru.com), Mehmet Can ALIN tarafından şahıs olarak yürütülen bir hizmettir; kayıtlı bir şirket bulunmamaktadır. 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu Mehmet Can ALIN'dır. Sorularınızı veya taleplerinizi <a href="mailto:destek@cvdoktoru.com">destek@cvdoktoru.com</a> adresine iletebilirsiniz.</p>
 
   <h2>Hangi Verileri İşliyoruz, Ne Kadar Süre Saklıyoruz</h2>
   <p><strong>CV'niz ve iş ilanı metni:</strong> Analiz üretmek için Anthropic'in Claude yapay zeka modeline iletilir (bkz. "Yurt Dışı Aktarım" bölümü). CV'nizi metin olarak yapıştırdıysanız hiçbir zaman diske yazılmaz. PDF/DOCX dosyası yüklediyseniz, dosya içeriğini okuyabilmek için yalnızca aynı istek süresince geçici bir dosyaya yazılır ve metin çıkarılır çıkarılmaz (aynı istek içinde) kalıcı olmadan silinir — arşivlenmez, yedeklenmez. Analiz raporunuz sunucu belleğinde (RAM) tutulur ve en az 30 dakika sonra, bir sonraki analiz isteğiyle birlikte otomatik olarak silinir; rapor hiçbir zaman dosya olarak diske yazılmaz veya bir veritabanında saklanmaz.</p>

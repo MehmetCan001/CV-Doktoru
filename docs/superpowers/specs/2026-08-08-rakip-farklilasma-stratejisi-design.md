@@ -44,7 +44,7 @@ Faz 1-4'ün detaylı spec'i bu doküman kapsamında değil — her biri kendi za
 
 **Kapsam dışı (bilinçli olarak yapılmayacak — YAGNI):** Resmi şirket kurmak, Mersis/vergi no almak. Bu bir hukuki/mali karar, kod değişikliği değil, ve Faz 0'ın amacı bu değil. Konumlanma "kayıtlı şirket" değil, "gerçek isim + tam şeffaflık" üzerinden kuruluyor.
 
-**Netleşen karar:** CV Doktoru şahıs olarak yürütülüyor, kayıtlı bir şirket yok (2026-08-08). Gizlilik/KVKK metninde "Veri Sorumlusu" gerçek isimle (Mehmet) yazılır, şirket unvanı/vergi no/ticaret sicil no gibi var olmayan bilgiler **eklenmez** — cvanaliz.com'un yaptığı "varmış gibi" görünme hatasına düşülmez, dürüstlük ilkesi (CLAUDE.md Bölüm 6/11) korunur.
+**Netleşen karar:** CV Doktoru şahıs olarak yürütülüyor, kayıtlı bir şirket yok (2026-08-08). Gizlilik/KVKK metninde "Veri Sorumlusu" gerçek ve tam isimle (Mehmet Can ALIN — 2026-08-10'da netleşti) yazılır, şirket unvanı/vergi no/ticaret sicil no gibi var olmayan bilgiler **eklenmez** — cvanaliz.com'un yaptığı "varmış gibi" görünme hatasına düşülmez, dürüstlük ilkesi (CLAUDE.md Bölüm 6/11) korunur.
 
 ## Test / Doğrulama
 
