@@ -21,7 +21,20 @@ _lock = threading.Lock()
 
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-VALID_EVENTS = {"page_view", "premium_click"}
+VALID_EVENTS = {
+    "page_view",
+    "premium_click",
+    # ── Huni adımları (2026-08-10) ──
+    # 10 günde 29 tekil ziyaretçi geldi, hiçbiri analiz çalıştırmadı. Nerede
+    # düştüklerini bilmediğimiz için hangi düzeltmenin işe yaradığını da
+    # ölçemiyorduk. Adımlar iç içe geçmiş kümeler: her biri bir öncekinin alt
+    # kümesi olmalı, böylece iki adım arasındaki fark doğrudan kayıp oranıdır.
+    "form_focus",        # CV veya ilan alanına ilk kez odaklandı
+    "cv_provided",       # CV dosyası seçildi ya da metin yapıştırıldı
+    "analyze_clicked",   # "Analiz Et" tetiklendi
+    "validation_error",  # istemci tarafı doğrulama akışı durdurdu
+    "analysis_started",  # sunucu işi kabul etti (sunucu tarafında loglanır)
+}
 
 # Bot/otomasyon tespiti (2026-07-29): nginx loglarında sayaca karışan HeadlessChrome,
 # Googlebot render'ı ve Dataprovider.com görüldü. Anahtar kelime listesi bilinen
@@ -118,8 +131,8 @@ def summary(days: int = 14) -> dict:
     """Son N gün için tekil ziyaretçi, tıklama ve lead sayılarını özetler."""
     cutoff = date.today() - timedelta(days=days - 1)
 
-    page_view_hashes: set[str] = set()
-    premium_click_hashes: set[str] = set()
+    # Olay adı -> o olaya ulaşan tekil (gün, ip) kümesi.
+    olay_kumeleri: dict[str, set[str]] = {ad: set() for ad in VALID_EVENTS}
 
     if _EVENTS_FILE.exists():
         with _EVENTS_FILE.open(encoding="utf-8") as f:
@@ -134,11 +147,12 @@ def summary(days: int = 14) -> dict:
                     continue
                 if entry_day < cutoff:
                     continue
-                key = f'{entry["day"]}:{entry["ip_hash"]}'
-                if entry["event"] == "page_view":
-                    page_view_hashes.add(key)
-                elif entry["event"] == "premium_click":
-                    premium_click_hashes.add(key)
+                kume = olay_kumeleri.get(entry["event"])
+                if kume is not None:
+                    kume.add(f'{entry["day"]}:{entry["ip_hash"]}')
+
+    page_view_hashes = olay_kumeleri["page_view"]
+    premium_click_hashes = olay_kumeleri["premium_click"]
 
     try:
         leads = json.loads(_LEADS_FILE.read_text(encoding="utf-8"))
@@ -156,9 +170,28 @@ def summary(days: int = 14) -> dict:
 
     verdict, verdict_detail = _decision_matrix(unique_visitors, click_rate_pct)
 
+    # Huni: ziyaretten analize kadar her adımda kaç kişi kaldı ve nerede düştü.
+    # Yüzdeler ziyaretçi tabanına göre; taban 0 ise oran hesaplanmaz.
+    huni_sirasi = ["page_view", "form_focus", "cv_provided", "analyze_clicked", "analysis_started"]
+    huni = []
+    onceki = None
+    for ad in huni_sirasi:
+        sayi = len(olay_kumeleri[ad])
+        adim = {
+            "adim": ad,
+            "kisi": sayi,
+            "ziyaretin_yuzdesi": round(100 * sayi / unique_visitors, 1) if unique_visitors else 0.0,
+        }
+        if onceki is not None:
+            adim["onceki_adimdan_kayip"] = onceki - sayi
+        huni.append(adim)
+        onceki = sayi
+
     return {
         "days": days,
         "unique_visitors": unique_visitors,
+        "funnel": huni,
+        "validation_error_visitors": len(olay_kumeleri["validation_error"]),
         "premium_click_visitors": unique_clickers,
         "leads_captured": lead_count,
         "total_leads_all_time": len(leads),

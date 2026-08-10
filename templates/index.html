@@ -205,6 +205,52 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 .founder-note-sign { font-size: 0.85rem; color: var(--ink-soft); }
 .founder-note-sign strong { color: var(--accent-dark); }
 
+/* ── Problem bandı — görsel mola ──
+   Tam genişlik (100vw + translateX) denendi ve BIRAKILDI: bu eleman aynı zamanda
+   `.reveal` taşıyor, o da transform kullanıyor ve translateX'i eziyordu — bant
+   ekranın ortasından başlıyordu. Sayfanın geri kalanıyla aynı genişlikte,
+   yuvarlak köşeli bir blok hem bu çakışmayı ortadan kaldırıyor hem de founder
+   kartıyla aynı görsel dili konuşuyor. */
+.problem-band {
+    position: relative; border-radius: 20px; overflow: hidden;
+    min-height: 340px; margin: 3.5rem 0;
+    display: flex; align-items: center; justify-content: center;
+}
+/* Fotoğraf ayrı katmanda: yavaş yakınlaşma animasyonu ancak böyle verilebiliyor
+   (background-image doğrudan transform edilemez). Kırpma konumu üstte, çünkü
+   "Jobs wanted" başlığı bandın tematik çapası. */
+.problem-band::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: url('/static/is-arayis.jpg') center 18% / cover no-repeat;
+    animation: band-zoom 26s ease-in-out infinite alternate;
+}
+@keyframes band-zoom { from { transform: scale(1); } to { transform: scale(1.09); } }
+@media (prefers-reduced-motion: reduce) { .problem-band::before { animation: none; } }
+.problem-band::after {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(90deg, rgba(36,26,16,0.88) 0%, rgba(36,26,16,0.66) 55%, rgba(36,26,16,0.82) 100%);
+}
+/* z-index şart: perde ::after'da duruyor ve ::after son çocuk gibi boyanıyor —
+   z-index verilmezse metnin üstünü örtüyor. */
+.problem-band-inner { position: relative; z-index: 1; max-width: 640px; padding: 2.75rem 1.5rem; text-align: center; }
+/* Düz beyaz — krem/bej tonları sepya fotoğrafın kendi ton ailesine giriyor ve
+   metin zemine karışıyordu. Beyaz, fotoğraftan net biçimde ayrılıyor. */
+.problem-band-line {
+    font-family: 'Fraunces', Georgia, serif; font-size: 1.75rem; font-weight: 600;
+    color: #FFFFFF; line-height: 1.35; margin: 0 0 0.8rem;
+    text-shadow: 0 1px 12px rgba(20,12,4,0.45);
+}
+.problem-band-sub {
+    font-size: 0.95rem; color: #FFFFFF; margin: 0; line-height: 1.65;
+    text-shadow: 0 1px 10px rgba(20,12,4,0.45);
+}
+.problem-band-sub strong { color: #F3A87A; }
+@media (max-width: 640px) {
+    .problem-band { min-height: 290px; margin: 2.5rem 0; }
+    .problem-band-line { font-size: 1.3rem; }
+    .problem-band-sub { font-size: 0.9rem; }
+}
+
 /* ── Steps ── */
 .steps-grid { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
 .step-item { flex: 1; min-width: 150px; max-width: 210px; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 0.75rem; }
@@ -376,12 +422,26 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 
 /* ── Loading ── */
 .cv-loading-card {
+    position: relative; overflow: hidden;
     background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%); border-radius: 18px;
     padding: 2.5rem 2rem; text-align: center; margin: 1.5rem 0;
     border: 1px solid rgba(221,92,34,0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
-.cv-loading-icon { font-size: 2.4rem; display: block; animation: cv-pulse 1.6s ease-in-out infinite; }
-@keyframes cv-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+/* Analiz animasyonu yalnızca analiz gerçekten sürerken görünür — sistemin
+   o anki durumunu gösterir, dekor değildir. */
+.cv-loading-video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: 0.85; z-index: 0; pointer-events: none;
+}
+/* Parçacık patlaması tam merkezde en parlak, metin de merkezde duruyor.
+   Perde bu yüzden merkezde en koyu, kenarlara doğru açılıyor — metnin arkasını
+   korurken parçacıkların kartın kenarlarında görünmesine izin veriyor. */
+.cv-loading-card::after {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 55% 90% at center,
+                rgba(36,26,16,0.86) 0%, rgba(36,26,16,0.72) 45%, rgba(36,26,16,0.42) 100%);
+}
+.cv-loading-card > *:not(.cv-loading-video) { position: relative; z-index: 1; }
 .cv-loading-title { font-size: 1.05rem; font-weight: 700; color: #FBF5EB; margin: 0.9rem 0 0.5rem; }
 .cv-loading-dots span {
     display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
@@ -529,6 +589,13 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     <div class="founder-note-body">
       <p class="founder-note-quote">"Kendi CV'mi güncellerken ne kadar çok kişinin bu konuda tek başına kaldığını fark ettim — bu yüzden bunu yaptım."</p>
       <div class="founder-note-sign"><strong>Mehmet Can ALIN</strong> — CV Doktoru'nun kurucusu ve tek geliştiricisi</div>
+    </div>
+  </div>
+
+  <div class="problem-band reveal">
+    <div class="problem-band-inner">
+      <p class="problem-band-line">Her ilana aynı CV'yi göndermek, en sık yapılan hata.</p>
+      <p class="problem-band-sub">İlanlar birbirinden farklı; CV'niz de öyle olmalı. CV Doktoru, CV'nizi <strong>başvurduğunuz o ilana göre</strong> değerlendirir — jenerik bir uyum skoru vermez.</p>
     </div>
   </div>
 
@@ -858,6 +925,8 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
   fileInput.addEventListener("change", function () {
     if (fileInput.files.length > 0) {
       fileStatus.textContent = "✅ Yüklendi: " + fileInput.files[0].name;
+      huni("form_focus");
+      huni("cv_provided");
     } else {
       fileStatus.textContent = "";
     }
@@ -865,6 +934,28 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 
   // ── Trafik ölçümü (fake-door testi) — çerezsiz, sunucu-taraflı sayaç ──
   fetch("/api/track/visit", { method: "POST" }).catch(function () {});
+
+  // ── Huni ölçümü ──
+  // Her adım sayfa başına en fazla bir kez gönderilir; amaç kaç kişinin o adıma
+  // ULAŞTIĞI, kaç kez tekrarladığı değil. Aksi halde tek bir kararsız kullanıcı
+  // sayıyı şişirip düşüş oranını okunamaz hale getirirdi.
+  var gonderilenAdimlar = {};
+  function huni(adim) {
+    if (gonderilenAdimlar[adim]) { return; }
+    gonderilenAdimlar[adim] = true;
+    fetch("/api/track/" + adim, { method: "POST" }).catch(function () {});
+  }
+
+  var cvAlani = document.getElementById("cv-textarea");
+  var ilanAlani = document.getElementById("job-textarea");
+  [cvAlani, ilanAlani, document.getElementById("file-drop-label")].forEach(function (el) {
+    if (el) { el.addEventListener("focus", function () { huni("form_focus"); }, true); }
+  });
+  // Tek harf yazıp vazgeçeni "CV girdi" saymamak için eşik: 40 karakter.
+  // Gerçek bir CV metni bunun çok üstünde; altındaki her şey deneme sayılır.
+  cvAlani.addEventListener("input", function () {
+    if (cvAlani.value.trim().length >= 40) { huni("cv_provided"); }
+  });
 
   // ── Örnek analiz kartındaki CTA → forma kaydır ──
   var demoCtaBtn = document.getElementById("demo-cta-btn");
@@ -1040,9 +1131,14 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
   function clearAlert() { alertSlot.innerHTML = ""; }
 
   function showLoading() {
+    // Hareket hassasiyeti olan kullanıcı için videoyu CSS ile gizlemek yetmez —
+    // etiketi hiç üretmiyoruz ki dosya indirilmesin.
+    var azHareket = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var videoEtiketi = azHareket ? "" :
+      '<video class="cv-loading-video" src="/static/analiz-animasyonu.mp4" ' +
+      'autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>';
     loadingSlot.innerHTML =
-      '<div class="cv-loading-card">' +
-      '<span class="cv-loading-icon">🩺</span>' +
+      '<div class="cv-loading-card">' + videoEtiketi +
       '<div class="cv-loading-title">Analiz yapılıyor</div>' +
       '<div class="cv-loading-dots"><span></span><span></span><span></span></div>' +
       '<div class="cv-loading-steps">' +
@@ -1108,6 +1204,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     e.preventDefault();
     clearAlert();
     reportSlot.innerHTML = "";
+    huni("analyze_clicked");
 
     var activeTab = document.querySelector(".tab-btn.active").dataset.tab;
     var cvText = document.getElementById("cv-textarea").value.trim();
@@ -1115,14 +1212,17 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     var jobText = document.getElementById("job-textarea").value.trim();
 
     if (activeTab === "upload" && !hasFile) {
+      huni("validation_error");
       showAlert("⚠️ Lütfen bir CV dosyası yükleyin.", "warning");
       return;
     }
     if (activeTab === "paste" && !cvText) {
+      huni("validation_error");
       showAlert("⚠️ Lütfen CV metnini yapıştırın.", "warning");
       return;
     }
     if (!jobText) {
+      huni("validation_error");
       showAlert("⚠️ Lütfen iş ilanı metnini girin.", "warning");
       return;
     }

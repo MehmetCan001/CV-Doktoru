@@ -128,6 +128,17 @@ def api_track_premium_click(request: Request):
     return {"ok": True}
 
 
+# Huni adımları için tek genel uç. Yukarıdaki iki özel yol önce tanımlandığı için
+# onlar bu desene düşmez (FastAPI rotaları tanım sırasına göre eşleştirir).
+# `event_name` istemciden geliyor ama `log_event` izin listesi dışındaki her adı
+# sessizce yok sayıyor — allow-list, deny-list değil (CLAUDE.md Bölüm 6.1).
+# Yanıt her durumda aynı: hangi olay adlarının geçerli olduğunu botlara sızdırmıyoruz.
+@app.post("/api/track/{event_name}")
+def api_track_event(event_name: str, request: Request):
+    analytics.log_event(event_name, _client_ip(request), request.headers.get("user-agent", ""))
+    return {"ok": True}
+
+
 @app.post("/api/leads")
 def api_leads(email: str = Form(...)):
     ok = analytics.record_lead(email)
@@ -226,6 +237,11 @@ async def api_analyze_start(
         target=_run_analysis_job, args=(job_id, text, job_text.strip()), daemon=True
     )
     thread.start()
+
+    # Huninin son adımı. İstemci tarafında değil burada loglanıyor: sunucunun
+    # işi gerçekten kabul ettiği tek nokta burası (dosya/limit/anahtar kontrolleri
+    # geçildikten sonra), dolayısıyla taklit edilemez.
+    analytics.log_event("analysis_started", ip, request.headers.get("user-agent", ""))
 
     return {"job_id": job_id, "remaining": remaining}
 
