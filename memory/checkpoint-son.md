@@ -483,7 +483,7 @@ Kullanıcı "yazı beyaz olsun" dedi; açık krem zeminde beyaz yazı görünmez
 - Yerel test yöntemi: `"./venv/Scripts/python.exe" -m uvicorn src.server:app --host 127.0.0.1 --port 85XX` + headless Chrome. Mobil genişlik testi için CDP `Emulation.setDeviceMetricsOverride` kullan (`--window-size` tek başına yeterli değil).
 - Prompt değişikliklerini gerçek API çağrısıyla test etmek için: `.env`'de `ANTHROPIC_API_KEY` mevcut, `"./venv/Scripts/python.exe"` ile `src.analyzer.CVDoctor().analyze(cv_text, job_ad)` doğrudan çağrılabilir (Windows konsolunda emoji içeren sonucu `print()` etme — `cp1254` codec `UnicodeEncodeError` verir, dosyaya UTF-8 ile yaz).
 
-## Bu Oturumda Yapılanlar (2026-08-13) — Turuncudan Maviye (v1.13), HENÜZ DEPLOY EDİLMEDİ
+## Bu Oturumda Yapılanlar (2026-08-13) — Turuncudan Maviye (v1.13), ✅ CANLIDA
 
 Kullanıcı turuncu/terracotta vurgu rengini ve kalkan logosunu reddetti ("itici", "belirsiz bir karalama gibi görünüyor"). Netleştirme turunda gerçek şikayet ikiye indirgendi: navbar çok koyu, logo küçük boyutta (16-32px) okunmuyor. Bir HTML önizleme (renk paleti + navbar önce/sonra + logonun gerçek dosyadan 16/32/28/128px render'ları, Artifact olarak yayınlandı) onaylandı. Spec: `docs/superpowers/specs/2026-08-13-mavi-marka-rengi-design.md`.
 
@@ -499,10 +499,9 @@ Kullanıcı turuncu/terracotta vurgu rengini ve kalkan logosunu reddetti ("itici
 
 **Doğrulama:** Yerel `uvicorn` (`venv/Scripts/python.exe -m uvicorn src.server:app`) ile hem masaüstü (1440px) hem mobil (390px, doğru CDP `Emulation.setDeviceMetricsOverride` ile) tam sayfa ekran görüntüsü alındı — taşma yok, SSS/form/premium kart/scroll-reveal bozulmadı. Navbar'da yeni logo 28px'te gerçekten okunaklı (önceki turuncu kalkanla doğrudan karşılaştırıldı).
 
-**DURUM: Deploy edilmedi.** Kullanıcıdan ayrı onay alınmadan `git push` + sunucuda `git pull`/`systemctl restart` yapılmadı (CLAUDE.md hard-stop + genel git safety protokolü gereği). Sıradaki oturumun ilk işi: kullanıcıya deploy'u sorup onaylanırsa yukarıdaki "Deploy Prosedürü"nü uygulamak.
+**DURUM: ✅ Deploy edildi ve doğrulandı (2026-08-13).** `git push origin main` (commit `b49941f`) → sunucuda `git pull` (fast-forward `46edcf3..b49941f`) + `systemctl restart cv-doktoru` (`active`). Canlı doğrulama: `curl https://cvdoktoru.com/` → 200, `/static/favicon-32.png` → 200, `/static/logo-mark-blue.png` → 200, sayfadaki `--accent` değeri `#2563EB`, `DD5C22` (eski turuncu) geçen satır sayısı 0.
 
 ## Açık Kalan / Sıradaki (2026-08-13 sonu)
-- [ ] **Deploy onayı bekleniyor** — yerelde tamamlanmış, production'a yansımadı.
 - [ ] `static/urun-akisi.gif` turuncu buton içeriyor, mavi ile tutarsız — yeniden üretilmeli (CDP-simülasyon yöntemi, 2026-07-24 notuna bkz.).
 - [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası, ne turuncu ne yeni mavi kalkanla eşleşiyor.
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık (2026-08-10 notlarına bkz., bu oturumda dokunulmadı).
