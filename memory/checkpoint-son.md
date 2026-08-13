@@ -482,3 +482,27 @@ Kullanıcı "yazı beyaz olsun" dedi; açık krem zeminde beyaz yazı görünmez
 - İki venv karışıklığı (`venv/` vs `source/`) — `venv/` çalışan, `source/`'da fastapi yok, kullanma.
 - Yerel test yöntemi: `"./venv/Scripts/python.exe" -m uvicorn src.server:app --host 127.0.0.1 --port 85XX` + headless Chrome. Mobil genişlik testi için CDP `Emulation.setDeviceMetricsOverride` kullan (`--window-size` tek başına yeterli değil).
 - Prompt değişikliklerini gerçek API çağrısıyla test etmek için: `.env`'de `ANTHROPIC_API_KEY` mevcut, `"./venv/Scripts/python.exe"` ile `src.analyzer.CVDoctor().analyze(cv_text, job_ad)` doğrudan çağrılabilir (Windows konsolunda emoji içeren sonucu `print()` etme — `cp1254` codec `UnicodeEncodeError` verir, dosyaya UTF-8 ile yaz).
+
+## Bu Oturumda Yapılanlar (2026-08-13) — Turuncudan Maviye (v1.13), HENÜZ DEPLOY EDİLMEDİ
+
+Kullanıcı turuncu/terracotta vurgu rengini ve kalkan logosunu reddetti ("itici", "belirsiz bir karalama gibi görünüyor"). Netleştirme turunda gerçek şikayet ikiye indirgendi: navbar çok koyu, logo küçük boyutta (16-32px) okunmuyor. Bir HTML önizleme (renk paleti + navbar önce/sonra + logonun gerçek dosyadan 16/32/28/128px render'ları, Artifact olarak yayınlandı) onaylandı. Spec: `docs/superpowers/specs/2026-08-13-mavi-marka-rengi-design.md`.
+
+**Uygulanan değişiklikler (`templates/index.html`, `templates/gizlilik.html`):**
+1. Renk token'ları: `--accent` ailesi turuncudan maviye (`#2563EB`/`#1D4ED8`/`#DBEAFE`/`#EFF6FF`), yeni `--accent-light` (`#60A5FA`, eski hard-code `#F3A87A`'nın yerine) ve `--accent-rgb` (`37,99,235`, eski hard-code `rgba(221,92,34,...)`'nın yerine) token'ları eklendi. 32 `var(--accent...)` kullanımı + 21 hard-code değer güncellendi. `grep -c "DD5C22\|221,92,34\|F3A87A"` → 0.
+2. Navbar zemini `rgba(36,26,16,0.92)` (koyu kahve) → `rgba(255,255,255,0.92)` (beyaz) + ince alt gölge. `.navbar-brand`/`.navbar-links` metin renkleri beyaz/krem'den `var(--ink)`/`var(--ink-soft)`'a çevrildi (beyaz zeminde beyaz yazı görünmez).
+3. **Kapsam dışı bırakıldı (bilinçli):** `--paper` krem zemin, `--dark`/`--dark-2` (demo/premium/loading/rapor kartı başlıkları — sadece navbar'ın kendi zemini değişti, bu iç bileşenler hâlâ sıcak kahve), premium kartın altın/amber rengi, `--danger`/`--success`, Türk bayrağı kırmızısı.
+4. **Logo:** Kalkan+stetoskop+belge kavramı korunup kafa silüeti çıkarıldı, mavi oldu. **Yöntem notu:** Serbest elle SVG path yazmayı 2 kez denedim (viewBox 120x140, bold stroke), ikisi de gerçek 16/28/32px render testinde (Chrome screenshot ile doğrulandı) okunaksız çıktı — kafa+stetoskop+belge küçük boyutta birbirine karışıyordu. Onun yerine OpenArt MCP aracı (`gpt-image-2`, text2image, prompt: "flat vector shield icon, stethoscope + document, no face, thick uniform strokes, #2563EB, legible at 16px") ile 2 aday üretildi, ikisi de büyük ölçüde daha temiz çıktı; PIL ile beyaz zemin şeffaflaştırılıp (whiteness-threshold alpha), içerik bbox'ına göre kare kırpılıp 32/128/180px'e indirgendi, tekrar gerçek render testinden geçirildi (16/20/32/64/128px, beyaz+koyu+teal zeminde halo kontrolü) — bu kez okunaklı. Üretilen dosyalar: `static/favicon-32.png` (32px, şeffaf), `static/apple-touch-icon.png` (180px, beyaz zemin — iOS konvansiyonu), `static/logo-mark-blue.png` (128px, şeffaf, navbar `<img width=28 height=28>`). Cache-bust `?v=8`. Eski `static/logo-mark-koyu.png` artık hiçbir yerden referans edilmiyor (silinmedi, geçmiş tasarım dosyası olarak bırakıldı, diğer eski logo dosyaları gibi).
+5. **Bilinçli AÇIK bırakılan (deploy öncesi karar gerekmiyor, ayrı iş):**
+   - `static/urun-akisi.gif` (hero ürün akışı) hâlâ 2026-07-24'te turuncu paletle üretildi, içindeki "Analizi Başlat" butonu piksel olduğu için hâlâ turuncu — CSS değişikliğinden etkilenmedi, şimdi site geneliyle tutarsız. Aynı CDP-simülasyon yöntemiyle yeniden üretilmesi gerekiyor.
+   - `static/og-image.png` (paylaşım banner'ı) hâlâ eski (2026-07 öncesi) stetoskop+ok markasını kullanıyor, yeni kalkan mark'ıyla hiç güncellenmemişti (2026-08-10 checkpoint'inde de aynı not vardı) — bu oturumda da dokunulmadı.
+   - Eski açık soru "CTA buton kontrastı" (`#DD5C22` üzerinde beyaz yazı 3.73:1, AA eşiğinin altında) **kendiliğinden çözüldü**: yeni mavi `#2563EB` üzerinde beyaz yazı ~5.17:1, AA'yı geçiyor.
+
+**Doğrulama:** Yerel `uvicorn` (`venv/Scripts/python.exe -m uvicorn src.server:app`) ile hem masaüstü (1440px) hem mobil (390px, doğru CDP `Emulation.setDeviceMetricsOverride` ile) tam sayfa ekran görüntüsü alındı — taşma yok, SSS/form/premium kart/scroll-reveal bozulmadı. Navbar'da yeni logo 28px'te gerçekten okunaklı (önceki turuncu kalkanla doğrudan karşılaştırıldı).
+
+**DURUM: Deploy edilmedi.** Kullanıcıdan ayrı onay alınmadan `git push` + sunucuda `git pull`/`systemctl restart` yapılmadı (CLAUDE.md hard-stop + genel git safety protokolü gereği). Sıradaki oturumun ilk işi: kullanıcıya deploy'u sorup onaylanırsa yukarıdaki "Deploy Prosedürü"nü uygulamak.
+
+## Açık Kalan / Sıradaki (2026-08-13 sonu)
+- [ ] **Deploy onayı bekleniyor** — yerelde tamamlanmış, production'a yansımadı.
+- [ ] `static/urun-akisi.gif` turuncu buton içeriyor, mavi ile tutarsız — yeniden üretilmeli (CDP-simülasyon yöntemi, 2026-07-24 notuna bkz.).
+- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası, ne turuncu ne yeni mavi kalkanla eşleşiyor.
+- [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık (2026-08-10 notlarına bkz., bu oturumda dokunulmadı).

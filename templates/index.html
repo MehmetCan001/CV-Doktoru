@@ -9,8 +9,8 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://cvdoktoru.com/">
 
-<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v=7">
-<link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=7">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v=8">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=8">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -62,10 +62,12 @@
     --ink-soft: #6B5D4B;
     --ink-faint: #7A6A54;
     --line: #E7D9BF;
-    --accent: #DD5C22;
-    --accent-dark: #B3450F;
-    --accent-soft: #FBE3CE;
-    --accent-softer: #FCEEE1;
+    --accent: #2563EB;
+    --accent-dark: #1D4ED8;
+    --accent-soft: #DBEAFE;
+    --accent-softer: #EFF6FF;
+    --accent-light: #60A5FA;
+    --accent-rgb: 37,99,235;
     --success: #3F7D4C;
     --success-bg: #E9F2E1;
     --success-border: #BFE0AE;
@@ -126,8 +128,9 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 /* ── Nav bar ── */
 .navbar {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(36,26,16,0.92); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(231,217,191,0.16);
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 3px rgba(39,31,22,0.05);
 }
 .navbar-inner {
     max-width: 1120px; margin: 0 auto; padding: var(--sp-3) var(--sp-5);
@@ -137,7 +140,7 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
    harf, "CV" ince (300) + "DOKTORU" kalin (700). Marka isareti sitenin
    govde/baslik fontlarindan bagimsiz bir yuz kullanabilir - tek yerde,
    navbar markasinda gecerli. */
-.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: #FFFFFF; text-decoration: none; }
+.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink); text-decoration: none; }
 .marka-adi { font-family: 'Poppins', 'Inter', sans-serif; font-size: var(--fs-md);
     line-height: 1; letter-spacing: 0.005em; display: inline-flex; align-items: baseline; gap: 0.28em; }
 .marka-cv { font-weight: 300; }
@@ -145,8 +148,8 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 .navbar-brand img { width: 26px; height: 26px; border-radius: 0; }
 .navbar-links { display: none; align-items: center; gap: var(--sp-6); }
 @media (min-width: 760px) { .navbar-links { display: flex; } }
-.navbar-links a { color: #D9CDBA; text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
-.navbar-links a:hover { color: #FFFFFF; }
+.navbar-links a { color: var(--ink-soft); text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
+.navbar-links a:hover { color: var(--ink); }
 .navbar-cta {
     background: var(--accent); color: white; font-weight: 700; font-size: var(--fs-xs);
     padding: var(--sp-2) var(--sp-4); border-radius: var(--r-full); text-decoration: none; white-space: nowrap;
@@ -157,7 +160,7 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 /* ── Hero ── */
 .hero-wrapper {
     background:
-        radial-gradient(560px 420px at 88% -10%, rgba(221,92,34,0.14), transparent 70%),
+        radial-gradient(560px 420px at 88% -10%, rgba(var(--accent-rgb),0.14), transparent 70%),
         radial-gradient(500px 380px at 6% 100%, rgba(63,125,76,0.10), transparent 70%),
         var(--bg);
     padding: var(--sp-7) var(--sp-6) var(--sp-7);
@@ -198,9 +201,9 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 .hero-cta-btn {
     background: var(--accent); color: white; font-weight: 700; font-size: var(--fs-sm);
     padding: var(--sp-3) var(--sp-6); border-radius: var(--r-md); text-decoration: none; display: inline-block;
-    box-shadow: 0 10px 24px rgba(221,92,34,0.28); transition: all 0.22s ease;
+    box-shadow: 0 10px 24px rgba(var(--accent-rgb),0.28); transition: all 0.22s ease;
 }
-.hero-cta-btn:hover { background: var(--accent-dark); box-shadow: 0 12px 28px rgba(221,92,34,0.38); transform: translateY(-2px); }
+.hero-cta-btn:hover { background: var(--accent-dark); box-shadow: 0 12px 28px rgba(var(--accent-rgb),0.38); transform: translateY(-2px); }
 .hero-stats { display: flex; gap: var(--sp-3); flex-wrap: wrap; }
 /* Pill rozet yerine ince ikon + metin. 6 yuvarlak dolgu rozeti sayfadaki en
    şablon-hissi veren öğelerdendi; dolgu ve yuvarlaklık kaldırılıp yerini
@@ -323,7 +326,7 @@ svg.hero-stat-ikon { width: 15px; height: 15px; color: var(--accent-dark); flex-
     font-size: var(--fs-sm); color: #FFFFFF; margin: 0; line-height: 1.65;
     text-shadow: 0 1px 10px rgba(20,12,4,0.45);
 }
-.problem-band-sub strong { color: #F3A87A; }
+.problem-band-sub strong { color: var(--accent-light); }
 @media (max-width: 640px) {
     .problem-band { min-height: 290px; margin: var(--sp-6) 0; }
     .problem-band-line { font-size: var(--fs-lg); }
@@ -387,9 +390,9 @@ svg.step-ikon {
     background: var(--accent); color: white;
     font-family: 'Inter', sans-serif; font-size: var(--fs-sm); font-weight: 700;
     padding: var(--sp-3) var(--sp-5); border-radius: var(--r-md); border: none; cursor: pointer;
-    box-shadow: 0 6px 18px rgba(221,92,34,0.3); transition: all 0.22s ease;
+    box-shadow: 0 6px 18px rgba(var(--accent-rgb),0.3); transition: all 0.22s ease;
 }
-.demo-cta-btn:hover { background: var(--accent-dark); box-shadow: 0 8px 22px rgba(221,92,34,0.4); transform: translateY(-2px); }
+.demo-cta-btn:hover { background: var(--accent-dark); box-shadow: 0 8px 22px rgba(var(--accent-rgb),0.4); transform: translateY(-2px); }
 .demo-note { font-size: var(--fs-2xs); color: var(--ink-faint); margin-top: var(--sp-3); }
 
 /* ── Why card ── */
@@ -417,7 +420,7 @@ svg.why-check { width: 16px; height: 16px; color: var(--accent-dark); flex-shrin
     font-family: 'Inter', sans-serif; font-size: var(--fs-sm); background-color: var(--paper); color: var(--ink);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
-.faq-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,34,0.14); outline: none; }
+.faq-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.14); outline: none; }
 /* Kutu + golge yerine ince ayrac. On iki kutulu satir sayfanin en
    "sablon" duran bolgesiydi. */
 .faq-item { border-bottom: 1px solid var(--line); margin-bottom: 0; overflow: hidden; text-align: left; background: transparent; }
@@ -445,7 +448,7 @@ svg.why-check { width: 16px; height: 16px; color: var(--accent-dark); flex-shrin
 .premium-card {
     background: linear-gradient(135deg, var(--dark) 0%, #4A2E1A 60%, var(--dark) 100%);
     border-radius: var(--r-lg); padding: var(--sp-5) var(--sp-6); margin: var(--sp-7) 0;
-    border: 1px solid rgba(221,92,34,0.35); position: relative; overflow: hidden;
+    border: 1px solid rgba(var(--accent-rgb),0.35); position: relative; overflow: hidden;
 }
 .premium-badge {
     display: inline-flex; align-items: center; gap: var(--sp-2);
@@ -501,7 +504,7 @@ textarea, .file-drop {
     transition: border-color 0.2s, box-shadow 0.2s; padding: var(--sp-3);
 }
 textarea { resize: vertical; }
-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,34,0.12); background-color: var(--paper); outline: none; }
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12); background-color: var(--paper); outline: none; }
 #cv-textarea { height: 280px; }
 #job-textarea { height: 350px; }
 .file-drop {
@@ -517,9 +520,9 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     background: var(--accent); color: white;
     font-family: 'Inter', sans-serif; font-size: var(--fs-md); font-weight: 700;
     padding: var(--sp-4) var(--sp-6); border-radius: var(--r-md); border: none;
-    box-shadow: 0 8px 22px rgba(221,92,34,0.35); cursor: pointer; transition: all 0.25s ease;
+    box-shadow: 0 8px 22px rgba(var(--accent-rgb),0.35); cursor: pointer; transition: all 0.25s ease;
 }
-#analyze-btn:hover { background: var(--accent-dark); box-shadow: 0 10px 26px rgba(221,92,34,0.45); transform: translateY(-2px); }
+#analyze-btn:hover { background: var(--accent-dark); box-shadow: 0 10px 26px rgba(var(--accent-rgb),0.45); transform: translateY(-2px); }
 #analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .remaining-note { text-align: center; color: var(--ink-faint); font-size: var(--fs-xs); margin-top: var(--sp-2); }
 
@@ -532,7 +535,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%); border-radius: var(--r-lg);
     padding: var(--sp-6) var(--sp-6); text-align: center; margin: var(--sp-5) 0;
-    border: 1px solid rgba(221,92,34,0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    border: 1px solid rgba(var(--accent-rgb),0.25); box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 /* Analiz animasyonu yalnızca analiz gerçekten sürerken görünür — sistemin
    o anki durumunu gösterir, dekor değildir. */
@@ -559,18 +562,18 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
 @keyframes cv-dot { 0%, 80%, 100% { transform: scale(0.55); opacity: 0.35; } 40% { transform: scale(1); opacity: 1; } }
 .cv-loading-steps { position: relative; height: 1.8rem; margin: var(--sp-4) 0; }
 .cv-step { font-size: var(--fs-xs); position: absolute; width: 100%; left: 0; opacity: 0; }
-@keyframes cv-s1 { 0% { opacity:0; color:#C9B79C; } 2% { opacity:1; color:#F3A87A; } 14% { opacity:1; color:#F3A87A; } 17% { opacity:0; } 100%{ opacity:0; } }
-@keyframes cv-s2 { 0%,16%{ opacity:0; } 18% { opacity:1; color:#F3A87A; } 30% { opacity:1; color:#F3A87A; } 33% { opacity:0; } 100% { opacity:0; } }
-@keyframes cv-s3 { 0%,32%{ opacity:0; } 34% { opacity:1; color:#F3A87A; } 50% { opacity:1; color:#F3A87A; } 53% { opacity:0; } 100% { opacity:0; } }
-@keyframes cv-s4 { 0%,52%{ opacity:0; } 54% { opacity:1; color:#F3A87A; } 70% { opacity:1; color:#F3A87A; } 73% { opacity:0; } 100% { opacity:0; } }
-@keyframes cv-s5 { 0%,72%{ opacity:0; } 74% { opacity:1; color:#F3A87A; } 100% { opacity:1; color:#F3A87A; } }
+@keyframes cv-s1 { 0% { opacity:0; color:#C9B79C; } 2% { opacity:1; color:var(--accent-light); } 14% { opacity:1; color:var(--accent-light); } 17% { opacity:0; } 100%{ opacity:0; } }
+@keyframes cv-s2 { 0%,16%{ opacity:0; } 18% { opacity:1; color:var(--accent-light); } 30% { opacity:1; color:var(--accent-light); } 33% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s3 { 0%,32%{ opacity:0; } 34% { opacity:1; color:var(--accent-light); } 50% { opacity:1; color:var(--accent-light); } 53% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s4 { 0%,52%{ opacity:0; } 54% { opacity:1; color:var(--accent-light); } 70% { opacity:1; color:var(--accent-light); } 73% { opacity:0; } 100% { opacity:0; } }
+@keyframes cv-s5 { 0%,72%{ opacity:0; } 74% { opacity:1; color:var(--accent-light); } 100% { opacity:1; color:var(--accent-light); } }
 .cv-step-1 { animation: cv-s1 150s linear 1 forwards; }
 .cv-step-2 { animation: cv-s2 150s linear 1 forwards; }
 .cv-step-3 { animation: cv-s3 150s linear 1 forwards; }
 .cv-step-4 { animation: cv-s4 150s linear 1 forwards; }
 .cv-step-5 { animation: cv-s5 150s linear 1 forwards; }
 .cv-loading-bar-wrap { background: rgba(255,255,255,0.08); border-radius: var(--r-full); height: 4px; overflow: hidden; margin: var(--sp-4) 0 var(--sp-3); }
-.cv-loading-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #F3A87A); border-radius: var(--r-full); animation: cv-progress 150s cubic-bezier(0.15,0.5,0.5,1) 1 forwards; }
+.cv-loading-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: var(--r-full); animation: cv-progress 150s cubic-bezier(0.15,0.5,0.5,1) 1 forwards; }
 @keyframes cv-progress { from { width: 3%; } to { width: 93%; } }
 .cv-loading-note { font-size: var(--fs-2xs); color: #B7A088; }
 
@@ -580,14 +583,14 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     padding: var(--sp-5) var(--sp-6); display: flex; align-items: center; gap: var(--sp-4);
 }
 .report-icon-box {
-    width: 46px; height: 46px; background: rgba(221,92,34,0.16); border: 1px solid rgba(221,92,34,0.3);
+    width: 46px; height: 46px; background: rgba(var(--accent-rgb),0.16); border: 1px solid rgba(var(--accent-rgb),0.3);
     border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: var(--fs-lg); flex-shrink: 0;
 }
 .report-header-info { flex: 1; }
 .report-header-info h2 { font-family: 'Inter', sans-serif; font-size: var(--fs-lg); font-weight: 800; color: #FBF5EB; margin: 0 0 var(--sp-1); }
 .report-header-info p { font-size: var(--fs-xs); color: #C9B79C; margin: 0; }
 .report-ai-badge {
-    background: rgba(221,92,34,0.16); border: 1px solid rgba(221,92,34,0.3); color: #F3A87A;
+    background: rgba(var(--accent-rgb),0.16); border: 1px solid rgba(var(--accent-rgb),0.3); color: var(--accent-light);
     font-size: var(--fs-2xs); font-weight: 700; padding: var(--sp-2) var(--sp-3); border-radius: var(--r-md); letter-spacing: 1.2px; white-space: nowrap;
 }
 .report-body { background: var(--paper); border-radius: 0 0 18px 18px; padding: var(--sp-6); border: 1px solid var(--line); border-top: none; }
@@ -601,7 +604,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     border-radius: var(--r-md); font-weight: 600; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink);
     padding: var(--sp-3) var(--sp-5); cursor: pointer; font-family: 'Inter', sans-serif; font-size: var(--fs-sm);
 }
-.download-btn:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(221,92,34,0.15); }
+.download-btn:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(var(--accent-rgb),0.15); }
 
 .footer-note { text-align: center; color: var(--ink-faint); font-size: var(--fs-xs); padding: var(--sp-6) 0 var(--sp-4); }
 
@@ -631,7 +634,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
     width: 100%; min-height: 48px;
     background: var(--accent); color: #fff; font-weight: 700; font-size: var(--fs-sm);
     font-family: 'Inter', sans-serif; border: none; border-radius: var(--r-md); cursor: pointer;
-    box-shadow: 0 6px 18px rgba(221, 92, 34, 0.35);
+    box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.35);
 }
 .mobile-sticky-cta-btn:hover { background: var(--accent-dark); }
 .mobile-sticky-cta-btn:focus-visible { outline: 2px solid var(--dark); outline-offset: 2px; }
@@ -671,7 +674,7 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
 
 <nav class="navbar">
   <div class="navbar-inner">
-    <a href="/" class="navbar-brand" aria-label="CV Doktoru ana sayfa"><img src="/static/logo-mark-koyu.png?v=7" alt="" class="marka-logo" width="28" height="28"><span class="marka-adi"><span class="marka-cv">CV</span><span class="marka-doktoru">DOKTORU</span></span></a>
+    <a href="/" class="navbar-brand" aria-label="CV Doktoru ana sayfa"><img src="/static/logo-mark-blue.png?v=8" alt="" class="marka-logo" width="28" height="28"><span class="marka-adi"><span class="marka-cv">CV</span><span class="marka-doktoru">DOKTORU</span></span></a>
     <div class="navbar-links">
       <a href="#how">Nasıl Çalışır</a>
       <a href="#demo">Örnek Analiz</a>
