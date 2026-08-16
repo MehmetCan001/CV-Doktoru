@@ -502,6 +502,55 @@ Kullanıcı turuncu/terracotta vurgu rengini ve kalkan logosunu reddetti ("itici
 **DURUM: ✅ Deploy edildi ve doğrulandı (2026-08-13).** `git push origin main` (commit `b49941f`) → sunucuda `git pull` (fast-forward `46edcf3..b49941f`) + `systemctl restart cv-doktoru` (`active`). Canlı doğrulama: `curl https://cvdoktoru.com/` → 200, `/static/favicon-32.png` → 200, `/static/logo-mark-blue.png` → 200, sayfadaki `--accent` değeri `#2563EB`, `DD5C22` (eski turuncu) geçen satır sayısı 0.
 
 ## Açık Kalan / Sıradaki (2026-08-13 sonu)
-- [ ] `static/urun-akisi.gif` turuncu buton içeriyor, mavi ile tutarsız — yeniden üretilmeli (CDP-simülasyon yöntemi, 2026-07-24 notuna bkz.).
-- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası, ne turuncu ne yeni mavi kalkanla eşleşiyor.
+- [x] `static/urun-akisi.gif` turuncu buton içeriyordu, mavi ile tutarsızdı — 2026-08-17'de site turuncuya döndüğü için tutarsızlık kendiliğinden çözüldü (aşağıya bkz.), yeniden üretmeye gerek kalmadı.
+- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası, ne turuncu ne mavi kalkanla eşleşiyor.
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık (2026-08-10 notlarına bkz., bu oturumda dokunulmadı).
+
+## Bu Oturumda Yapılanlar (2026-08-17) — Maviden Turuncuya Geri Dönüş (v1.13 → v1.14), YEREL, DEPLOY EDİLMEDİ
+
+Kullanıcı "eski turuncu halimize geri dönelim" dedi. Kapsam netleştirmesi için soruldu (sadece renk mi / renk+logo+navbar tam v1.13-öncesi hali mi) — kullanıcı **"Tam v1.13 öncesi hal"** dedi: renk + navbar zemini + logo + favicon hepsi geri alınsın.
+
+**Yöntem:** v1.13'ü getiren `b49941f` commit'i incelendi (`git show --stat`, tam diff). Reverse-patch stratejisi seçildi (manuel renk-renk Edit yerine) çünkü commit tek/temiz bir feature commit'iydi ve reverse patch `--check` ile temiz uygulandığı doğrulandı (o commit'ten beri `templates/index.html`/`templates/gizlilik.html`'de drift yoktu).
+
+**Uygulanan değişiklikler:**
+1. `git diff b49941f^ b49941f -- templates/index.html` ve `-- templates/gizlilik.html` çıkarılıp `git apply -R` ile working tree'ye tersten uygulandı. Sonuç: `--accent` ailesi tekrar turuncu (`#DD5C22`/`#B3450F`/`#FBE3CE`/`#FCEEE1`), `--accent-light`/`--accent-rgb` token'ları ve tüm `rgba(var(--accent-rgb),...)` kullanımları kaldırılıp eski hard-code `rgba(221,92,34,...)`/`#F3A87A` değerlerine döndü, navbar zemini `rgba(255,255,255,0.92)` → `rgba(36,26,16,0.92)`, `.navbar-brand`/`.navbar-links` metin renkleri `var(--ink)`/`var(--ink-soft)` → beyaz/krem, navbar logo `src` `logo-mark-blue.png?v=8` → `logo-mark-koyu.png?v=7`, favicon `?v=8` → `?v=7`.
+2. `static/favicon-32.png` ve `static/apple-touch-icon.png` binary'leri `git show b49941f^:<path>` ile b49941f'in **bir önceki** commit'teki (turuncu, yuvarlak köşe) byte'larına geri yazıldı — bu, HTML'in referans ettiği `?v=7` etiketiyle tam tutarlı (v=7 zaten o dönem bu tam byte'ları işaret ediyordu, cache-bust çakışması yok).
+3. **`static/logo-mark-blue.png` bilinçli olarak SİLİNMEDİ.** Proje konvansiyonu (bkz. 2026-08-13 notundaki `logo-mark-koyu.png` emsali: "silinmedi, geçmiş tasarım dosyası olarak bırakıldı") burada da uygulandı — dosya artık hiçbir yerden referans edilmiyor ama repoda duruyor, ileride mavi tekrar istenirse yeniden üretmeye gerek kalmaz.
+4. `CLAUDE.md` Bölüm 1 güncellendi: v1.13 notu "canlıya alındı" olarak düzeltildi (önceki metin yanlışlıkla "henüz deploy edilmedi" diyordu — checkpoint'teki gerçek deploy kaydıyla uyuşmuyordu, bu oturumda fark edilip düzeltildi), yeni 2026-08-17 notu + "v1.14" başlığı eklendi.
+
+**Doğrulama:** Yerel `uvicorn` (port 8611) ayağa kaldırıldı, gerçek Chrome (CDP, `superpowers-chrome` skill) ile hem masaüstü (1920px) hem mobil (390px, `set_viewport mobile:true`) tam sayfa ekran görüntüsü alındı. Navbar koyu kahve zemine, turuncu kalkan logoya, turuncu CTA/link/vurgu renklerine döndüğü görsel olarak doğrulandı; mobilde taşma yok. `grep` ile `templates/index.html` içinde mavi izi (`2563EB`/`accent-rgb`/`accent-light`/`logo-mark-blue`) **0**, turuncu/koyu-navbar izi (`DD5C22`/`221,92,34`/`F3A87A`/`logo-mark-koyu`) **23** doğrulandı.
+
+**DURUM: Deploy edilmedi.** Değişiklikler yalnızca working tree'de, commit atılmadı — kullanıcıdan commit/push/deploy onayı ayrıca alınacak (CLAUDE.md hard-stop + genel git safety protokolü gereği).
+
+## Bu Oturumda Yapılanlar (2026-08-17, devam) — Navbar Zemini Açık Kahverengiye Çevrildi
+
+Yukarıdaki turuncu revert'inin hemen ardından kullanıcı "navbar açık kahverengi tonunda yap" dedi. Eski (v1.13-öncesi) navbar zemini `rgba(36,26,16,0.92)` (çok koyu kahve/neredeyse siyah) idi — kullanıcı bunu değil, daha açık bir kahverengi istedi. **Dikkat edilen risk:** Bu projede navbar'ın koyu yapılmasının orijinal sebebi, mevcut kalkan logosunun (`logo-mark-koyu.png` — adı "koyu" zemin için tasarlandığını gösteriyor) açık/krem zeminde belirgin şekilde daha az net çıkmasıydı (bkz. yukarıdaki "Koyu navbar" bölümü, 2026-08-10 notu). Bu riski gözeterek yeni tonu koyu-kahve ile beyaz arası, belirgin biçimde "kahverengi" kalacak ama aşırı koyu olmayacak bir tan/açık-kahve seçildi (siyaha yakın değil).
+
+**Uygulanan değişiklik (`templates/index.html`):**
+- `.navbar` background: `rgba(36,26,16,0.92)` → `rgba(201,168,118,0.92)` (açık tan/kahverengi), `border-bottom`: `rgba(231,217,191,0.16)` → `rgba(107,93,75,0.25)` (yeni açık zeminde görünür ince ayraç).
+- `.navbar-brand` metin rengi: `#FFFFFF` → `var(--ink)` (koyu zeminde beyaz okunuyordu, açık zeminde okunmaz olurdu).
+- `.navbar-links a` metin rengi: `#D9CDBA` → `var(--ink)`, hover: `#FFFFFF` → `var(--accent-dark)` (turuncu vurgu ile hover tutarlılığı).
+- Kontrast hesabı (WCAG, manuel): `var(--ink)` (#271F16) yeni bg üzerinde ~7.2:1 — AA/AAA'yı rahatça geçiyor. `--ink-soft` (#6B5D4B) denendi ama yalnızca ~2.84:1 çıktı (yetersiz), bu yüzden linkler için de tam `--ink` kullanıldı.
+
+**Doğrulama:** Yerel sunucu (port 8612) + gerçek Chrome ile masaüstü (1440px) ve mobil (390px, CDP) tam sayfa ekran görüntüsü alındı. Kalkan logosu açık tan zeminde hâlâ görünür/okunaklı çıktı (endişe edilen legibility riski gerçekleşmedi, ama bu subjektif bir gözlem — kullanıcı kendi ekranında da kontrol etmeli). Metin kontrastı yeterli, mobilde taşma yok.
+
+**Not:** Bu renk (`rgba(201,168,118,0.92)`) henüz bir CSS değişkenine (`--navbar-bg` gibi) bağlanmadı, `.navbar` kuralı içinde hard-code duruyor — ileride tekrar değişecekse tek satır düzeltmek yeterli, ama proje genelindeki "renkleri hard-code etme, token kullan" ilkesiyle tam örtüşmüyor, küçük bir bilinen borç.
+
+## Bu Oturumda Yapılanlar (2026-08-17, devam 2) — Navbar Yazıları Beyaza Çevrildi (kontrast düzeltmesiyle birlikte)
+
+Kullanıcı "navbardaki yazılar beyaz renk olsun" dedi. **Doğrudan uygulanmadı önce durum bildirildi:** O anki navbar zemini (`rgba(201,168,118,0.92)`, açık tan) üzerinde beyaz metnin kontrastı hesaplandı (~2.25:1) — WCAG AA eşiğinin (4.5:1) çok altında, CLAUDE.md'nin "a11y opsiyonel değildir" kuralına açıkça girer. Kullanıcıya bu doğrudan söylenmeden sessizce riskli bir şey uygulanmadı; bunun yerine navbar zeminini de birlikte ayarlayarak hem "beyaz yazı" isteği hem okunabilirlik karşılandı.
+
+**Uygulanan değişiklik (`templates/index.html`):**
+- `.navbar` background: `rgba(201,168,118,0.92)` (açık tan) → `rgba(140,108,74,0.92)` (orta-açık kahverengi) — hâlâ orijinal çok koyu `--dark` (#241A10, neredeyse siyah) tonundan belirgin şekilde daha açık, ama beyaz metni taşıyabilecek kadar koyu.
+- `border-bottom`: `rgba(107,93,75,0.25)` → `rgba(231,217,191,0.18)` (açık ton zeminde görünür ince ayraç, orijinal koyu-navbar döneminin border deseniyle aynı mantık).
+- `.navbar-brand` ve `.navbar-links a` metin rengi: `var(--ink)` → `#FFFFFF`. Link hover: `var(--accent-dark)` → `var(--accent-soft)` (koyu zeminde okunaklı açık sıcak ton).
+- Kontrast (manuel WCAG hesabı): beyaz üzerinde yeni bg ~4.8:1 — AA eşiğini geçiyor (önceki tan tonunda ~2.25:1 idi, geçmiyordu).
+
+**Doğrulama:** Yerel sunucu (port 8613) + gerçek Chrome ile masaüstü (1440px) ve mobil (390px, CDP) ekran görüntüsü alındı — beyaz yazı net okunuyor, kalkan logosu hâlâ görünür, taşma yok.
+
+**DURUM: Kullanıcı onayı üzerine commit edilecek** (bu talebin kendisi "sonrasında commit et" içeriyordu).
+
+## Açık Kalan / Sıradaki (2026-08-17 sonu)
+- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — ne turuncu ne mavi kalkanla eşleşiyor, bu revert'ten bağımsız, eski açık madde.
+- [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
+- [ ] Deploy sonrası canlıda `curl` ile doğrulama yapılmalı (aşağıdaki commit sonrası bir sonraki oturumun ilk işi, eğer bu oturumda deploy'a kadar gidilmezse).
