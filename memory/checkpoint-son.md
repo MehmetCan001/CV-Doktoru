@@ -548,9 +548,8 @@ Kullanıcı "navbardaki yazılar beyaz renk olsun" dedi. **Doğrudan uygulanmad�
 
 **Doğrulama:** Yerel sunucu (port 8613) + gerçek Chrome ile masaüstü (1440px) ve mobil (390px, CDP) ekran görüntüsü alındı — beyaz yazı net okunuyor, kalkan logosu hâlâ görünür, taşma yok.
 
-**DURUM: Kullanıcı onayı üzerine commit edilecek** (bu talebin kendisi "sonrasında commit et" içeriyordu).
+**DURUM: ✅ Commit edildi ve deploy edildi (2026-08-17).** Commit `d7eab79`, `git push origin main` (`1007fd1..d7eab79`), sunucuda `git pull` (fast-forward `b49941f..d7eab79`) + `systemctl restart cv-doktoru` (`active`). Canlı doğrulama: `curl https://cvdoktoru.com/` → 200, `--accent: #DD5C22`, navbar bg `rgba(140,108,74,0.92)`, navbar-brand rengi `#FFFFFF`, `logo-mark-koyu.png?v=7`; `favicon-32.png`/`apple-touch-icon.png`/`logo-mark-koyu.png` hepsi 200; `2563EB` (mavi izi) sayfada 0.
 
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
 - [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — ne turuncu ne mavi kalkanla eşleşiyor, bu revert'ten bağımsız, eski açık madde.
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
-- [ ] Deploy sonrası canlıda `curl` ile doğrulama yapılmalı (aşağıdaki commit sonrası bir sonraki oturumun ilk işi, eğer bu oturumda deploy'a kadar gidilmezse).
