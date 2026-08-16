@@ -550,6 +550,26 @@ Kullanıcı "navbardaki yazılar beyaz renk olsun" dedi. **Doğrudan uygulanmad�
 
 **DURUM: ✅ Commit edildi ve deploy edildi (2026-08-17).** Commit `d7eab79`, `git push origin main` (`1007fd1..d7eab79`), sunucuda `git pull` (fast-forward `b49941f..d7eab79`) + `systemctl restart cv-doktoru` (`active`). Canlı doğrulama: `curl https://cvdoktoru.com/` → 200, `--accent: #DD5C22`, navbar bg `rgba(140,108,74,0.92)`, navbar-brand rengi `#FFFFFF`, `logo-mark-koyu.png?v=7`; `favicon-32.png`/`apple-touch-icon.png`/`logo-mark-koyu.png` hepsi 200; `2563EB` (mavi izi) sayfada 0.
 
+## Bu Oturumda Yapılanlar (2026-08-17, devam 3) — Yeni "Göz/CD" Logosu (v1.15)
+
+Kullanıcı Gemini ile logo tasarlatmak istedi, önce prompt istedi. `docs/logo-brief.md` (10 Ağustos, dış tasarımcı için yazılmış) incelendiğinde canlıdaki kalkan+stetoskop+baş logosunun brief'in kendi "istemediklerimiz" listesini ("stetoskop... jenerik durdu") ihlal ettiği görüldü — kullanıcıya söylendi. İlk yazdığım prompt (adım adım şekil tarifi) kullanıcı tarafından sert şekilde reddedildi ("rezalet"); ikinci denemede persona/creative-brief tarzı bir prompt yazıldı (Gemini'ye "sen kıdemli bir marka tasarımcısısın, konsepti sen seç" dendi, brief'in içeriği (ürün, kişilik, istemedikleri, palet, 26px kısıtı) context olarak verildi ama şekil dikte edilmedi).
+
+Kullanıcı bu promptla ürettiği görseli `static/Gemini_Generated_Image_841hkm841hkm841h.jpg` olarak ekledi: **göz şekli içinde "CD" (CV Doktoru) monogramı**, düz turuncu, kağıt dokulu krem zemin, klişe yok — brief'in "istemediklerimiz" listesiyle ilk kez tam uyumlu bir sonuç.
+
+**Kritik bulgu (dosya ekleme sırasında yan etki):** Yeni dosyayı eklerken `static/` içinde **11 tracked dosya kazara diskten silinmişti** (`git status` ile fark edildi) — aralarında hâlâ canlı kullanılan `og-image.png` (sosyal paylaşım görseli) ve `apple-touch-icon.png` vardı. Kullanıcıya bildirildi, onay alındı ("od dosyaları ben silmiştim" + "onaylıyorum"), `git restore` ile hepsi geri getirildi (ilk deneme auto-mode classifier'ı tarafından bloklandı, kullanıcı onayından sonra tekrar denendi, başardı).
+
+**İşleme adımları (`venv` + Pillow 12.2.0, scratchpad'te script, kalıcı değil):**
+1. Kaynak JPG'den R-kanal eksi B-kanal farkına göre alfa maskesi çıkarıldı (kağıt dokulu krem arka plan şeffaflaştı, turuncu mürekkep korundu), içerik bbox'ına göre %16 paylı kare kırpıldı.
+2. **İlk denemede 16-32px'te "CD" harfleri tamamen kayboldu, sadece bulanık bir oval kaldı** — bu projede daha önce de yaşanan bir ders (bkz. Bölüm 12, ince iç detay küçük boyutta erir). `ImageFilter.MaxFilter` ile çizgiler kalınlaştırıldı; ilk denemede RGB kanalları orijinal (kısmen şeffaf/siyaha yakın) değerlerden alınınca **siyah halka artefaktı** çıktı (premultiplied-alpha tuzağı) — düzeltme: RGB'yi tüm tuval boyunca düz marka rengiyle (`#DD5C22`) doldurup sadece alfa kanalını kalınlaştırarak yeniden birleştirmek.
+3. Üç türev üretildi ve gerçek piksel boyutunda (16/20/28/32/180px) test edildi:
+   - `static/favicon-32.png` — 32px, beyaz zemin, ~%22 yarıçaplı yuvarlak köşe, güçlü kalınlaştırma (k=25).
+   - `static/apple-touch-icon.png` — 180px, aynı stil, hafif kalınlaştırma (k=15) çünkü büyük boyutta "CD" zaten okunuyordu.
+   - `static/logo-mark-goz.png` — navbar için. **İlk halinde turuncu ikon navbar'ın kahverengi zeminiyle (`rgba(140,108,74)`) ölçülen kontrastı sadece ~1.3:1 çıktı** (WCAG luminance formülüyle hesaplandı) — ekran görüntüsünde de gerçekten soluk/kayboluyordu. Düzeltme: navbar'a özel bu tek türevi **beyaza** çevirdim (aynı navbar metninin kullandığı, önceden doğrulanmış ~4.8:1 kontrast oranıyla aynı mantık). Favicon/apple-touch-icon turuncu kaldı (kendi beyaz zeminlerinde turuncu zaten yüksek kontrastlı).
+   - `static/logo-goz.png` — düz turuncu master (gelecekte baskı/PDF/og-image için), ayrı bir dosya.
+4. `templates/index.html` + `templates/gizlilik.html`: favicon/apple-touch-icon cache-bust `?v=7` → `?v=9` (v=8 daha önce mavi döneminde kullanılmıştı, çakışmasın diye atlandı), navbar `<img src>` `logo-mark-koyu.png` → `logo-mark-goz.png`.
+
+**Doğrulama:** Yerel sunucu (port 8614) + gerçek Chrome ile masaüstü + mobil tam sayfa ekran görüntüsü, favicon URL'sinin doğru servis edildiği (`document.querySelector('link[rel="icon"]').href`), üç yeni dosyanın HTTP 200 döndüğü doğrulandı. Eski kalkan logosu dosyaları (`logo-mark-koyu.png` dahil) silinmedi, hâlâ repoda ama artık hiçbir yerden referans edilmiyor.
+
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
-- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — ne turuncu ne mavi kalkanla eşleşiyor, bu revert'ten bağımsız, eski açık madde.
+- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — ne turuncu kalkan ne yeni göz/CD logosuyla eşleşiyor, yeni logoyla güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
