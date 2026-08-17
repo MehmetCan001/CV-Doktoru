@@ -584,7 +584,18 @@ Navbar'a bu kez **orijinal gradyan/turuncu renginde** kondu (beyaza çevrilmedi)
 
 Üretilen/güncellenen dosyalar: `static/favicon-32.png`, `static/apple-touch-icon.png`, `static/logo-mark-goz.png`, `static/logo-goz.png` (hepsi içerik olarak değişti, cache-bust v=11'e çıkarıldı). Yerel sunucu (port 8616) + gerçek Chrome ile masaüstü+mobil doğrulandı, üç dosya da HTTP 200.
 
+## Bu Oturumda Yapılanlar (2026-08-17, devam 6) — Logo/Favicon Boyutu Büyütüldü
+
+Kullanıcı "logolar niye bu kadar küçük, navbarda da faviconda da belirgin değil" dedi. İki ayrı sorun bulundu:
+1. `templates/index.html` içinde navbar logosu için **iki çakışan CSS kuralı** vardı: `.navbar-brand img { width:26px }` (satır 145) ve `img.marka-logo { width:28px }` (satır 651) — aynı specificity, dosyada sonra gelen kazanıyordu (28px), ilk kural ölü koddu. Temizlendi, tek kural kaldı.
+2. Favicon/apple-touch-icon üretim pipeline'ında ikon, kendi kare tuvalinin sadece %74'ünü dolduruyordu (kalan %26 beyaz dolgu) — bu da küçük boyutta ikonu daha da küçük gösteriyordu.
+
+**Düzeltme:** Navbar logosu 28px → **38px** büyütüldü (`img.marka-logo`, HTML `width`/`height` attribute'ları da eşleştirildi). Favicon/apple-touch-icon/navbar mark'ları aynı gradyanlı kaynaktan (`static/Gemini_Generated_Image_brbn5rbrbn5rbrbn.jpg`) daha yüksek doluluk oranıyla (favicon %74→%88, apple-touch-icon %74→%86, navbar %92→%98) yeniden üretildi — beyaz/boş kenar payı azaltıldı. Cache-bust v=11→v=12.
+
+**Doğrulama:** Yerel sunucu (port 8617) + gerçek Chrome, masaüstü+mobil — logo gözle görülür şekilde büyüdü, navbar taşmadı (flex `align-items:center` sayesinde navbar sadece hafifçe yükseldi), mobilde CTA butonuyla çakışma yok.
+
+**DURUM: Kullanıcı "ET" dedi, commit/push/deploy ediliyor.**
+
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
-- [ ] **Commit + deploy onayı bekleniyor** — bu son (gradyanlı navbar) hâli yerelde, henüz commit edilmedi. Ondan önceki "beyaz navbar logosu" ara hâli de hiç deploy edilmemişti (production hâlâ ilk göz/CD logosunu — turuncu, düz, navbar'da beyaz — sunuyor, commit `c28c89a`).
 - [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — hiçbir göz/CD versiyonuyla eşleşmiyor, güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
