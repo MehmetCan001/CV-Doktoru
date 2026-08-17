@@ -606,6 +606,14 @@ Kullanıcı **üçüncü** bir Gemini üretimi ekledi (`static/Gemini_Generated_
 
 **DURUM: Kullanıcıya onay için soruldu, henüz commit edilmedi.**
 
+## Bu Oturumda Yapılanlar (2026-08-17, devam 8-9) — Logo/Favicon Büyütüldü + Navbar Bej Rengine Çevrildi
+
+Kullanıcı "logo belli olmuyor, büyüt" dedi (hem navbar hem favicon). Navbar logosu 38px→**48px**, favicon dolgu oranı %88→%96, apple-touch-icon %86→%94 (kenar payı iyice azaltıldı). Cache-bust v=13→v=14. Yerelde (1440px, mobil) doğrulandı, gözle görülür büyüme var.
+
+Ardından "navbarı bej rengi yap, sonra commit push deploy et" dendi. Navbar zemini `rgba(140,108,74,0.92)` (kahverengi) → `rgba(231,217,191,0.92)` — bu tam olarak mevcut `--line` design token'ının (`#E7D9BF`) rgba karşılığı, yeni bir renk icat edilmedi. Metin `#FFFFFF` → `var(--ink)` (açık zeminde beyaz okunmaz), link hover `var(--accent-dark)`. Turuncu logo bu açık bej zeminde önceki kahverengi zemine göre çok daha net okunuyor (görsel olarak doğrulandı, resmi kontrast ölçülmedi ama fark bariz — beyaz/krem'e yakın bir zemin üzerinde tam doygun turuncu, önceki orta-koyu kahverengiden çok daha güçlü bir zıtlık).
+
+**Doğrulama:** Yerel sunucu (port 8620) + gerçek Chrome, masaüstü+mobil, üç asset HTTP 200.
+
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
 - [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — hiçbir göz/CD versiyonuyla eşleşmiyor, güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
 - [ ] **Huni analizi kritik sinyal verdi (2026-08-17):** Son 14 günde 44 ziyaretçi, %0'ı forma dokunmadı (`form_focus: 0`), tüm zamanların toplam lead'i sadece 1, otomatik verdict `KILL`. Kullanıcıya bildirildi, trafik kaynağı/Faz 1 dağıtım konusu konuşulacak — henüz karar alınmadı, sıradaki oturumun önemli açık maddesi.

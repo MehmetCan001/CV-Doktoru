@@ -9,8 +9,8 @@
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://cvdoktoru.com/">
 
-<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v=13">
-<link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=13">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png?v=14">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png?v=14">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -126,8 +126,8 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 /* ── Nav bar ── */
 .navbar {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(140,108,74,0.92); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(231,217,191,0.18);
+    background: rgba(231,217,191,0.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(107,93,75,0.25);
 }
 .navbar-inner {
     padding: var(--sp-3) var(--sp-5);
@@ -137,7 +137,7 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
    harf, "CV" ince (300) + "DOKTORU" kalin (700). Marka isareti sitenin
    govde/baslik fontlarindan bagimsiz bir yuz kullanabilir - tek yerde,
    navbar markasinda gecerli. */
-.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: #FFFFFF; text-decoration: none; }
+.navbar-brand { display: flex; align-items: center; gap: var(--sp-2); color: var(--ink); text-decoration: none; }
 .marka-adi { font-family: 'Poppins', 'Inter', sans-serif; font-size: var(--fs-md);
     line-height: 1; letter-spacing: 0.005em; display: inline-flex; align-items: baseline; gap: 0.28em; }
 .marka-cv { font-weight: 300; }
@@ -145,8 +145,8 @@ h1, h2, .display-font { font-family: 'Fraunces', Georgia, serif; }
 .navbar-brand img { border-radius: 0; }
 .navbar-links { display: none; align-items: center; gap: var(--sp-6); }
 @media (min-width: 760px) { .navbar-links { display: flex; } }
-.navbar-links a { color: #FFFFFF; text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
-.navbar-links a:hover { color: var(--accent-soft); }
+.navbar-links a { color: var(--ink); text-decoration: none; font-size: var(--fs-sm); font-weight: 600; }
+.navbar-links a:hover { color: var(--accent-dark); }
 .navbar-cta {
     background: var(--accent); color: white; font-weight: 700; font-size: var(--fs-xs);
     padding: var(--sp-2) var(--sp-4); border-radius: var(--r-full); text-decoration: none; white-space: nowrap;
@@ -648,7 +648,7 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(221,92,
    dekorasyon degil, konseptin sonucu. */
 /* Logo artik raster (PNG). 26px yerine 28px: markta ic ice gecmis cerceve,
    yuz ve stetoskop var; kucuk boyutta okunurlugu zaten sinirda. */
-img.marka-logo { width: 38px; height: 38px; flex-shrink: 0; display: block; }
+img.marka-logo { width: 48px; height: 48px; flex-shrink: 0; display: block; }
 
 .hero-title .accent { position: relative; display: inline-block; }
 svg.ciz-alti {
@@ -671,7 +671,7 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
 
 <nav class="navbar">
   <div class="navbar-inner">
-    <a href="/" class="navbar-brand" aria-label="CV Doktoru ana sayfa"><img src="/static/logo-mark-goz.png?v=13" alt="" class="marka-logo" width="38" height="38"><span class="marka-adi"><span class="marka-cv">CV</span><span class="marka-doktoru">DOKTORU</span></span></a>
+    <a href="/" class="navbar-brand" aria-label="CV Doktoru ana sayfa"><img src="/static/logo-mark-goz.png?v=14" alt="" class="marka-logo" width="48" height="48"><span class="marka-adi"><span class="marka-cv">CV</span><span class="marka-doktoru">DOKTORU</span></span></a>
     <div class="navbar-links">
       <a href="#how">Nasıl Çalışır</a>
       <a href="#demo">Örnek Analiz</a>
