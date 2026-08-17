@@ -570,6 +570,21 @@ Kullanıcı bu promptla ürettiği görseli `static/Gemini_Generated_Image_841hk
 
 **Doğrulama:** Yerel sunucu (port 8614) + gerçek Chrome ile masaüstü + mobil tam sayfa ekran görüntüsü, favicon URL'sinin doğru servis edildiği (`document.querySelector('link[rel="icon"]').href`), üç yeni dosyanın HTTP 200 döndüğü doğrulandı. Eski kalkan logosu dosyaları (`logo-mark-koyu.png` dahil) silinmedi, hâlâ repoda ama artık hiçbir yerden referans edilmiyor.
 
+## Bu Oturumda Yapılanlar (2026-08-17, devam 4-5) — Navbar Rengi Turuncuya Geri Döndü + İkinci (Gradyanlı) Logo
+
+Kullanıcı navbar logosunun neden beyaz olduğunu sordu, "kendi orijinal renginde olsun" dedi. Ölçülen kontrast sorununu (~1.3:1) kısaca hatırlattım ama bu bir dekoratif marka ikonu (gövde metni değil, WCAG'in katı eşiği burada zorunlu değil) — kullanıcının estetik tercihi olarak kabul edip `static/logo-mark-goz.png` içeriğini `static/logo-goz.png` (düz turuncu master) ile değiştirdim, cache-bust v=9→v=10, yerelde doğruladım, henüz commit/deploy etmeden kullanıcıya sordum.
+
+Kullanıcı bu sırada **ikinci bir Gemini üretimi** ekledi (`static/Gemini_Generated_Image_brbn5rbrbn5rbrbn.jpg`) ve "onu kullan" dedi — aynı göz+CD konsepti ama gradyanlı (açık turuncu→koyu kızıl-turuncu), daha kalın çizgiler, gerçek pupil/highlight detayı. Bu sefer dosya ekleme kazara silme yaratmadı (kontrol edildi, temizdi).
+
+**Not (kısaca belirtildi, uzun itiraz yapılmadı — önceki turda uzun/adım-adım prompt kullanıcıyı rahatsız etmişti):** Bu gradyan, `docs/logo-brief.md`'nin "gradient yok, düz sistem" kuralını teknik olarak ihlal ediyor. Kullanıcı bilerek bu yönü seçti, üstüne gidilmedi.
+
+**İşleme:** Aynı pipeline (R-B alfa maskesi, bbox kırpma, kare tuval) ama bu kez **gradyan renkleri korundu** (tek renge düzleştirilmedi — önceki turda düz turuncuya sabitlemiştim, bu kez "orijinal renk" talebi devam ediyordu). Kaynak zemin bu kez düz beyazdı (öncekinin aksine kağıt dokusu yoktu), maskeleme daha temiz çıktı. Bu ikinci tasarımın çizgileri doğası gereği daha kalın olduğu için 16-32px testinde (`k=0` bile) önceki tasarımdan daha az post-processing gerekti — hafif kalınlaştırma (favicon k=15, apple-touch-icon k=9) yeterli oldu.
+
+Navbar'a bu kez **orijinal gradyan/turuncu renginde** kondu (beyaza çevrilmedi) — kullanıcı bunu istemişti ve ayrıca bu ikinci tasarımın daha parlak/kalın çizgileri navbar'ın kahverengi zemininde ilk tasarıma göre gözle görülür ölçüde daha okunaklı çıktı (kontrast resmi ölçülmedi, sadece görsel karşılaştırma).
+
+Üretilen/güncellenen dosyalar: `static/favicon-32.png`, `static/apple-touch-icon.png`, `static/logo-mark-goz.png`, `static/logo-goz.png` (hepsi içerik olarak değişti, cache-bust v=11'e çıkarıldı). Yerel sunucu (port 8616) + gerçek Chrome ile masaüstü+mobil doğrulandı, üç dosya da HTTP 200.
+
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
-- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — ne turuncu kalkan ne yeni göz/CD logosuyla eşleşiyor, yeni logoyla güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
+- [ ] **Commit + deploy onayı bekleniyor** — bu son (gradyanlı navbar) hâli yerelde, henüz commit edilmedi. Ondan önceki "beyaz navbar logosu" ara hâli de hiç deploy edilmemişti (production hâlâ ilk göz/CD logosunu — turuncu, düz, navbar'da beyaz — sunuyor, commit `c28c89a`).
+- [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — hiçbir göz/CD versiyonuyla eşleşmiyor, güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
