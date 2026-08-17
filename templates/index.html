@@ -225,6 +225,45 @@ svg.hero-stat-ikon { width: 15px; height: 15px; color: var(--accent-dark); flex-
 .hero-visual-caption {
     text-align: center; font-size: var(--fs-2xs); color: var(--ink-faint); margin-top: var(--sp-4);
 }
+/* Bulanık ön-satır: başlık netleşmeden önce görünen atmosferik ön izlenim,
+   Mainframe referansındaki "blur intro" tekniğinden uyarlandı. */
+.hero-preline {
+    pointer-events: none; user-select: none;
+    font-size: clamp(0.92rem, 1.6vw, 1.02rem); line-height: 1.35; font-weight: 400;
+    color: var(--ink-faint); filter: blur(3px); margin: 0 0 var(--sp-3);
+}
+.hero-preline span { display: block; }
+.hero-subtitle .typewriter-cursor {
+    display: inline-block; width: 2px; height: 1.1em; background: var(--ink);
+    vertical-align: middle; margin-left: 2px; animation: cv-blink 1s step-end infinite;
+}
+@keyframes cv-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.hero-pills {
+    display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 0 0 var(--sp-5);
+    opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.hero-pills.in-view { opacity: 1; transform: translateY(0); }
+.hero-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line);
+    border-radius: var(--r-full); font-size: var(--fs-xs); font-weight: 600;
+    padding: var(--sp-2) var(--sp-4); text-decoration: none; white-space: nowrap;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.hero-pill:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hero-pill-dark {
+    display: inline-flex; align-items: center; gap: var(--sp-2);
+    background: var(--dark); color: #fff; border: 1px solid var(--dark);
+    border-radius: var(--r-full); font-size: var(--fs-xs); font-weight: 600;
+    padding: var(--sp-2) var(--sp-4); white-space: nowrap; cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.hero-pill-dark:hover { background: var(--paper); color: var(--ink); }
+.hero-pill-dark svg { width: 12px; height: 12px; flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce) {
+    .hero-pills { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .typewriter-cursor { animation: none !important; }
+}
 
 /* ── Section rhythm ── */
 .section-flat { margin: var(--sp-8) 0; text-align: left; }
@@ -688,12 +727,22 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
         <img src="/static/founder-photo.jpg" alt="CV Doktoru'nu geliştiren kişi" class="hero-founder-photo" width="46" height="46">
         <div class="hero-founder-text"><strong>Merhaba, ben Mehmet Can.</strong> CV Doktoru'nu tek başıma geliştirdim.</div>
       </div>
+      <div class="hero-preline" aria-hidden="true"><span>Profesyonel bir CV danışmanı üç gün ister.</span><span>Siz otuz saniyede başlayabilirsiniz.</span></div>
       <div class="hero-title">CV'nizi <span class="accent">doğru iş için<svg class="ikon ciz-alti" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8.4 C42 3.4 96 2.9 140 5.2 C162 6.4 181 7.9 197 5.8"/></svg></span> optimize edin</div>
-      <div class="hero-subtitle">
+      <div class="hero-subtitle" id="hero-subtitle" data-typewriter="CV oluşturmak değil, hedeflediğiniz pozisyon için doğru mesajı vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.">
         CV oluşturmak değil, <span class="emph">hedeflediğiniz pozisyon için doğru mesajı</span> vermeniz önemlidir. Türk iş kültürünü bilen yapay zeka ile analiz edin.
       </div>
       <div class="hero-cta-row">
         <a href="#analyze-form" class="hero-cta-btn">Ücretsiz Analiz Et</a>
+      </div>
+      <div class="hero-pills" id="hero-pills">
+        <a href="#how" class="hero-pill">Nasıl çalışır</a>
+        <a href="#demo" class="hero-pill">Örnek analiz gör</a>
+        <a href="#faq" class="hero-pill">SSS'ye bak</a>
+        <button type="button" class="hero-pill-dark" id="hero-email-pill" data-email="destek@cvdoktoru.com">
+          <span id="hero-email-pill-text">Sorunuz mu var? <u>destek@cvdoktoru.com</u></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="1.5"/><path d="M5 15V4.5C5 3.7 5.7 3 6.5 3H15"/></svg>
+        </button>
       </div>
       <div class="hero-stats reveal">
         <span class="hero-stat-pill"><svg class="ikon hero-stat-ikon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 3.6 L20.2 4.1 C20.6 4.2 20.9 4.5 20.9 4.9 L20.4 11.6 L11.2 20.4 C10.8 20.8 10.2 20.8 9.9 20.4 L4.1 14.3 C3.8 13.9 3.8 13.4 4.2 13.1 Z"/><path d="M17.3 8.1 C16.9 8.4 16.4 8.3 16.2 7.9 C16.0 7.6 16.1 7.1 16.5 6.9 C16.9 6.7 17.3 6.9 17.5 7.3 C17.6 7.6 17.5 7.9 17.3 8.1"/></svg>Ücretsiz</span>
@@ -1016,6 +1065,55 @@ svg.renkli-ikon path, svg.renkli-ikon circle, svg.renkli-ikon rect {
   } else {
     document.querySelectorAll(".reveal, .reveal-stagger").forEach(function (el) { el.classList.add("in-view"); });
   }
+
+  // ── Hero: alt başlık daktilo efektiyle yazılıyor ──
+  (function () {
+    var el = document.getElementById("hero-subtitle");
+    if (!el) return;
+    var azHareket = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (azHareket) return;
+    var metin = el.getAttribute("data-typewriter") || el.textContent.trim();
+    var hiz = 38, baslangicGecikmesi = 600;
+    setTimeout(function () {
+      el.textContent = "";
+      var imlec = document.createElement("span");
+      imlec.className = "typewriter-cursor";
+      el.appendChild(imlec);
+      var i = 0;
+      var zamanlayici = setInterval(function () {
+        if (i >= metin.length) {
+          clearInterval(zamanlayici);
+          imlec.remove();
+          return;
+        }
+        imlec.insertAdjacentText("beforebegin", metin.charAt(i));
+        i++;
+      }, hiz);
+    }, baslangicGecikmesi);
+  })();
+
+  // ── Hero: aksiyon pilleri sayfa yüklendikten kısa süre sonra beliriyor (daktilo efektinden bağımsız) ──
+  (function () {
+    var el = document.getElementById("hero-pills");
+    if (!el) return;
+    setTimeout(function () { el.classList.add("in-view"); }, 400);
+  })();
+
+  // ── Hero: destek e-postasını panoya kopyala ──
+  (function () {
+    var btn = document.getElementById("hero-email-pill");
+    var textEl = document.getElementById("hero-email-pill-text");
+    if (!btn || !textEl) return;
+    var orijinalHTML = textEl.innerHTML;
+    btn.addEventListener("click", function () {
+      var email = btn.getAttribute("data-email") || "";
+      if (!navigator.clipboard || !email) return;
+      navigator.clipboard.writeText(email).then(function () {
+        textEl.textContent = "Kopyalandı!";
+        setTimeout(function () { textEl.innerHTML = orijinalHTML; }, 1500);
+      }).catch(function () {});
+    });
+  })();
 
   // ── Kendini çizen ikonlar ──
   // Her yolun gerçek uzunluğunu ölçüp CSS değişkenine yazıyoruz. Sabit bir
