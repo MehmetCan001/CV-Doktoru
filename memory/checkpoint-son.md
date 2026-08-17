@@ -596,6 +596,17 @@ Kullanıcı "logolar niye bu kadar küçük, navbarda da faviconda da belirgin d
 
 **DURUM: Kullanıcı "ET" dedi, commit/push/deploy ediliyor.**
 
+## Bu Oturumda Yapılanlar (2026-08-17, devam 7) — Üçüncü Logo Üretimi (Düz Turuncu) + Navbar Sol Hizalama
+
+Kullanıcı **üçüncü** bir Gemini üretimi ekledi (`static/Gemini_Generated_Image_mntp46mntp46mntp.jpg`) — aynı göz+CD konsepti ama bu kez **düz tek renk** (gradyan yok, ilk üretime döndü ama daha kalın/sade harf biçimleri), "onu kullan" dedi. Aynı R-B alfa maskesi pipeline'ıyla işlendi, bu kez marka rengine (`#DD5C22`) tam sabitlendi (kaynak zaten düz renkliydi, gradyan koruma ihtiyacı yoktu). `static/favicon-32.png`, `static/apple-touch-icon.png`, `static/logo-mark-goz.png`, `static/logo-goz.png` yeniden üretildi, cache-bust v=12→v=13. Navbar'da yine orijinal turuncu renginde bırakıldı (kullanıcının önceki tercihiyle tutarlı).
+
+**Ayrıca:** "logo ve CV Doktoru yazısı navbarın en solunda olsun" istendi. Kök neden: `.navbar-inner` `max-width:1120px; margin:0 auto` ile ortalanıyordu, geniş ekranlarda logo'dan önce büyük boş boşluk oluşuyordu (1440px ekranda ~160px). `max-width`/`margin:auto` kaldırıldı, navbar-inner artık tam genişlik + `var(--sp-5)` padding — logo artık gerçekten ekranın sol kenarına yakın, CTA sağ kenara yakın. 1920px genişlikte de test edildi, orta boşluk büyüyor ama kırılma/garip görünüm yok (yaygın bir navbar deseni). Sayfa içeriği (hero vb.) kendi max-width'ini koruyor, bu değişiklik sadece navbar'a izole.
+
+**Doğrulama:** Yerel sunucu (port 8618) + gerçek Chrome — 1440px, 1920px, 390px (mobil) hepsinde test edildi, üç asset de HTTP 200.
+
+**DURUM: Kullanıcıya onay için soruldu, henüz commit edilmedi.**
+
 ## Açık Kalan / Sıradaki (2026-08-17 sonu)
 - [ ] `static/og-image.png` hâlâ eski stetoskop+ok markası — hiçbir göz/CD versiyonuyla eşleşmiyor, güncellenmesi gerekiyor (ayrı bir iş, bu oturumda dokunulmadı).
+- [ ] **Huni analizi kritik sinyal verdi (2026-08-17):** Son 14 günde 44 ziyaretçi, %0'ı forma dokunmadı (`form_focus: 0`), tüm zamanların toplam lead'i sadece 1, otomatik verdict `KILL`. Kullanıcıya bildirildi, trafik kaynağı/Faz 1 dağıtım konusu konuşulacak — henüz karar alınmadı, sıradaki oturumun önemli açık maddesi.
 - [ ] Bir hafta huni verisi bekleme + Faz 1 (dağıtım) maddeleri hâlâ açık.
